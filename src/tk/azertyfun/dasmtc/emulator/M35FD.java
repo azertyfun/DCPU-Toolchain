@@ -53,6 +53,7 @@ public class M35FD extends DCPUHardware {
 			case 0: //POLL_DEVICE
 				dcpu.registers[1] = state;
 				dcpu.registers[2] = error;
+				error = Errors.ERROR_NONE;
 				break;
 			case 1: //SET_INTERRUPT
 				char x = dcpu.registers[3];
@@ -66,6 +67,19 @@ public class M35FD extends DCPUHardware {
 				readTo = dcpu.registers[4];
 				if(state != States.STATE_READY && state != States.STATE_READY_WP && readFrom >= SECTORS_PER_TRACK * TRACKS) {
 					dcpu.registers[1] = 0;
+					switch (state) {
+						case States.STATE_BUSY:
+							error = Errors.ERROR_BUSY;
+							break;
+						case States.STATE_NO_MEDIA:
+							error = Errors.ERROR_NO_MEDIA;
+							break;
+						default:
+							if(readFrom >= SECTORS_PER_TRACK * TRACKS)
+								error = Errors.ERROR_NO_MEDIA; //TODO: Check if this is what to actually do
+							else
+								error = Errors.ERROR_BROKEN; //We definitely should not have another value for state (that would be a bad programming error).
+					}
 					break;
 				}
 
@@ -77,8 +91,24 @@ public class M35FD extends DCPUHardware {
 			case 3: //WRITE_SECTOR
 				writeFrom = dcpu.registers[4];
 				writeTo = dcpu.registers[3];
-				if(state != States.STATE_READY && state != States.STATE_READY_WP && writeTo >= SECTORS_PER_TRACK * TRACKS) {
+				if(state != States.STATE_READY && writeTo >= SECTORS_PER_TRACK * TRACKS) {
 					dcpu.registers[1] = 0;
+					switch (state) {
+						case States.STATE_BUSY:
+							error = Errors.ERROR_BUSY;
+							break;
+						case States.STATE_NO_MEDIA:
+							error = Errors.ERROR_NO_MEDIA;
+							break;
+						case States.STATE_READY_WP:
+							error = Errors.ERROR_PROTECTED;
+							break;
+						default:
+							if(writeTo >= SECTORS_PER_TRACK * TRACKS)
+								error = Errors.ERROR_NO_MEDIA; //TODO: Check if this is what to actually do
+							else
+								error = Errors.ERROR_BROKEN; //We definitely should not have another value for state (that would be a bad programming error).
+					}
 					break;
 				}
 
