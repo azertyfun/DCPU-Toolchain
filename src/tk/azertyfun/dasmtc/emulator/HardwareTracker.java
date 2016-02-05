@@ -1,5 +1,6 @@
 package tk.azertyfun.dasmtc.emulator;
 
+import java.io.IOException;
 import java.util.LinkedList;
 
 public class HardwareTracker {
@@ -8,6 +9,7 @@ public class HardwareTracker {
 	private LinkedList<LEM1802> lems = new LinkedList<>();
 	private LinkedList<GenericClock> clocks = new LinkedList<>();
 	private LinkedList<M35FD> m35fds = new LinkedList<>();
+	private LinkedList<M525HD> m525hds = new LinkedList<>();
 
 	public HardwareTracker() {
 
@@ -38,9 +40,14 @@ public class HardwareTracker {
 		return m35fds.getLast();
 	}
 
-	public M35FD requestM35FD(char[] ram) {
-		m35fds.add(new M35FD("m35fd_" + m35fds.size(), ram));
+	public M35FD requestM35FD(String path) throws IOException {
+		m35fds.add(new M35FD("m35fd_" + m35fds.size(), path));
 		return m35fds.getLast();
+	}
+
+	public M525HD requestM525HD(String path) throws IOException {
+		m525hds.add(new M525HD("m525hd_" + m525hds.size(), path));
+		return m525hds.getLast();
 	}
 
 	public DCPU getDCPU(String id) {
@@ -79,6 +86,14 @@ public class HardwareTracker {
 		for(M35FD fd : m35fds) {
 			if(fd.getID().equals(id))
 				return fd;
+		}
+		return null;
+	}
+
+	public M525HD getM525HD(String id) {
+		for(M525HD hd : m525hds) {
+			if(hd.getID().equals(id))
+				return hd;
 		}
 		return null;
 	}

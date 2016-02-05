@@ -6,10 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 
-public class M35FD extends DCPUHardware {
-	public static final int TYPE = 0x4fd524c5, REVISION = 0x000b, MANUFACTURER = 0x1eb37e91;
+public class M525HD extends DCPUHardware {
+	public static final int TYPE = 0x525d4ac5, REVISION = 0x0001, MANUFACTURER = 0x1eb37e91;
 
-	public static final int TRACKS = 80, SECTORS_PER_TRACK = 18, WORDS_PER_SECTOR = 512;
+	public static final int TRACKS = 64*4, SECTORS_PER_TRACK = 20, WORDS_PER_SECTOR = 512;
 
 	public static final int WORDS_PER_SECOND = 30700;
 	public static final float SEEKING_TIME_MS = 2.4f;
@@ -22,10 +22,14 @@ public class M35FD extends DCPUHardware {
 	protected boolean reading = false;
 	protected boolean writing = false;
 	protected char readFrom, readTo, writeFrom, writeTo;
+	protected int ticksSkip = 0;
+	protected boolean spinning = false;
+	protected boolean spinningUp = false;
+	protected long spinUpStart = 0;
 
 	private String disk_path;
 
-	protected M35FD(String id, String path) throws IOException {
+	protected M525HD(String id, String path) throws IOException {
 		super(TYPE, REVISION, MANUFACTURER);
 		this.id = id;
 
@@ -50,16 +54,8 @@ public class M35FD extends DCPUHardware {
 			}
 		}
 
-		state = States.STATE_READY;
+		state = States.STATE_PARKED;
 		error = Errors.ERROR_NONE;
-	}
-
-	protected M35FD(String id) {
-		super(TYPE, REVISION, MANUFACTURER);
-		this.id = id;
-
-		state = States.STATE_NO_MEDIA;
-		error = Errors.ERROR_NO_MEDIA;
 	}
 
 	@Override
@@ -86,14 +82,17 @@ public class M35FD extends DCPUHardware {
 					dcpu.registers[1] = 0;
 					switch (state) {
 						case States.STATE_BUSY:
+						case States.STATE_INIT:
+						case States.STATE_INIT_WP:
 							error = Errors.ERROR_BUSY;
 							break;
-						case States.STATE_NO_MEDIA:
-							error = Errors.ERROR_NO_MEDIA;
+						case States.STATE_PARKED:
+						case States.STATE_PARKED_WP:
+							error = Errors.ERROR_PARKED;
 							break;
 						default:
 							if(readFrom >= SECTORS_PER_TRACK * TRACKS)
-								error = Errors.ERROR_NO_MEDIA; //TODO: Check if this is what to actually do
+								error = Errors.ERROR_BAD_ADDRESS;
 							else
 								error = Errors.ERROR_BROKEN; //We definitely should not have another value for state (that would be a bad programming error).
 					}
@@ -103,6 +102,7 @@ public class M35FD extends DCPUHardware {
 				dcpu.registers[1] = 1;
 				state = States.STATE_BUSY;
 				reading = true;
+				ticksSkip = 5; //Skipping 5 ticks because of the specified 80ms seek time. Ideal behaviour would be checking distance between tracks, but it doesn't affect the emulation enough that I will worry about it any time soon.
 
 				break;
 			case 3: //WRITE_SECTOR
@@ -112,17 +112,20 @@ public class M35FD extends DCPUHardware {
 					dcpu.registers[1] = 0;
 					switch (state) {
 						case States.STATE_BUSY:
+						case States.STATE_INIT:
 							error = Errors.ERROR_BUSY;
 							break;
-						case States.STATE_NO_MEDIA:
-							error = Errors.ERROR_NO_MEDIA;
+						case States.STATE_PARKED:
+							error = Errors.ERROR_PARKED;
 							break;
+						case States.STATE_PARKED_WP:
+						case States.STATE_INIT_WP:
 						case States.STATE_READY_WP:
 							error = Errors.ERROR_PROTECTED;
 							break;
 						default:
 							if(writeTo >= SECTORS_PER_TRACK * TRACKS)
-								error = Errors.ERROR_NO_MEDIA; //TODO: Check if this is what to actually do
+								error = Errors.ERROR_BAD_ADDRESS;
 							else
 								error = Errors.ERROR_BROKEN; //We definitely should not have another value for state (that would be a bad programming error).
 					}
@@ -132,8 +135,19 @@ public class M35FD extends DCPUHardware {
 				dcpu.registers[1] = 1;
 				state = States.STATE_BUSY;
 				writing = true;
+				ticksSkip = 5; //Skipping 5 ticks because of the specified 80ms seek time. Ideal behaviour would be checking distance between tracks, but it doesn't affect the emulation enough that I will worry about it any time soon.
 
 				break;
+			case 4: //SPIN_DOWN
+				spinning = false;
+				state = States.STATE_PARKED;
+				break;
+			case 5:
+				if(!spinning) {
+					spinUpStart = System.currentTimeMillis();
+					spinningUp = true;
+					state = States.STATE_INIT;
+				}
 		}
 	}
 
@@ -143,14 +157,23 @@ public class M35FD extends DCPUHardware {
 		 * The reading should ideally be spanned over several ticks. However, the drive reads a sector per tick and seek time is way less than a tick, so we don't need to.
 		 */
 
-		if(reading) {
+		if(spinningUp) {
+			long time = System.currentTimeMillis();
+			if(time - spinUpStart >= 15000) {
+				spinningUp = false;
+				spinning = true;
+				state = States.STATE_READY;
+			}
+		}
+
+		if(reading && (--ticksSkip == 0)) {
 			for(int i = 0; i < WORDS_PER_SECTOR; ++i) {
 				dcpu.ram[readTo + i] = disk[readFrom * WORDS_PER_SECTOR + i];
 			}
 
 			state = States.STATE_READY;
 			reading = false;
-		} else if(writing) {
+		} else if(writing && (--ticksSkip == 0)) {
 			for(int i = 0; i < WORDS_PER_SECTOR; ++i) {
 				disk[writeTo * WORDS_PER_SECTOR + i] = dcpu.ram[writeFrom + i];
 			}
@@ -184,20 +207,27 @@ public class M35FD extends DCPUHardware {
 		}
 	}
 
+	public char[] getDisk() {
+		return disk;
+	}
+
 	public static class States {
-		public static final int STATE_NO_MEDIA =   0x0000;
-		public static final int STATE_READY =      0x0001;
-		public static final int STATE_READY_WP =   0x0002;
-		public static final int STATE_BUSY =       0x0003;
+		public static final int STATE_READY =       0x0001;
+		public static final int STATE_READY_WP =    0x0002;
+		public static final int STATE_BUSY =        0x0003;
+		public static final int STATE_PARKED =      0x0004;
+		public static final int STATE_PARKED_WP =   0x0005;
+		public static final int STATE_INIT =        0x0006;
+		public static final int STATE_INIT_WP =     0x0007;
 	}
 
 	public static final class Errors {
-		public static final int ERROR_NONE =       0x0000;
-		public static final int ERROR_BUSY =       0x0001;
-		public static final int ERROR_NO_MEDIA =   0x0002;
-		public static final int ERROR_PROTECTED =  0x0003;
-		public static final int ERROR_EJECT =      0x0004;
-		public static final int ERROR_BAD_SECTOR = 0x0005;
-		public static final int ERROR_BROKEN =     0xFFFF;
+		public static final int ERROR_NONE =        0x0000;
+		public static final int ERROR_BUSY =        0x0001;
+		public static final int ERROR_BAD_ADDRESS = 0x0002;
+		public static final int ERROR_PROTECTED =   0x0003;
+		public static final int ERROR_PARKED =      0x0004;
+		public static final int ERROR_BAD_SECTOR =  0x0005;
+		public static final int ERROR_BROKEN =      0xFFFF;
 	}
 }

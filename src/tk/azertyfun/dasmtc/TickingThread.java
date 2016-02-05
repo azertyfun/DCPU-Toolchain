@@ -2,12 +2,14 @@ package tk.azertyfun.dasmtc;
 
 import tk.azertyfun.dasmtc.emulator.DCPUHardware;
 
+import java.util.LinkedList;
+
 public class TickingThread extends Thread {
 	private boolean stop = false;
 
-	private DCPUHardware[] hardware;
+	private LinkedList<DCPUHardware> hardware;
 
-	public TickingThread(DCPUHardware[] hardware) {
+	public TickingThread(LinkedList<DCPUHardware> hardware) {
 		this.hardware = hardware;
 	}
 

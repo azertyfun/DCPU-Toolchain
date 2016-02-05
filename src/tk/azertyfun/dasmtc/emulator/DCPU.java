@@ -6,6 +6,10 @@
 
 package tk.azertyfun.dasmtc.emulator;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,7 +43,14 @@ public class DCPU extends Thread implements Identifiable {
 		stopped = true;
 	}
 
-	public void setRam(char[] ram) {
+	public void setRam(String path) throws NoSuchFileException, IOException {
+		byte[] ram_b = Files.readAllBytes(Paths.get(path));
+		char[] ram = new char[0x10000];
+		for(int i = 0; i < 0x10000; ++i) {
+			ram[i] = (char) (ram_b[i * 2] << 8);
+			ram[i] |= (char) (ram_b[i * 2 + 1] & 0xFF);
+		}
+
 		if(ram.length < RAM_SIZE) {
 			for(int i = 0; i < RAM_SIZE; ++i)
 				this.ram[i] = 0;
