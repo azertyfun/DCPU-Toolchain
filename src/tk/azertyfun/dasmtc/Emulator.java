@@ -11,16 +11,26 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.Scanner;
 
-public class Emulator {
+public class Emulator implements CallbackStop {
+	private DCPU dcpu;
+
+	private LinkedList<DCPUHardware> hardware = new LinkedList<>();
+	private LinkedList<LemDisplay> lemDisplays = new LinkedList<>();
+	private LinkedList<LemKeyboard> lemKeyboards = new LinkedList<>();
+
+	private TickingThread ticking;
+
 	public Emulator(String[] args) {
 		String binary_path = args[1];
 
 		HardwareTracker hardwareTracker = new HardwareTracker();
-		LinkedList<DCPUHardware> hardware = new LinkedList<>();
-		final DCPU dcpu = hardwareTracker.requestDCPU();
+		dcpu = hardwareTracker.requestDCPU();
 
-		LinkedList<LemDisplay> lemDisplays = new LinkedList<>();
-		LinkedList<LemKeyboard> lemKeyboards = new LinkedList<>();
+		ticking = new TickingThread(hardware);
+
+		hardware.add(hardwareTracker.requestCPUControl(this));
+		hardware.getLast().connectTo(dcpu);
+		hardware.getLast().powerOn();
 
 		if(args.length > 2) {
 			for(int i = 2; i < args.length; ++i) {
@@ -130,7 +140,6 @@ public class Emulator {
 		try {
 			dcpu.setRam(binary_path);
 			dcpu.start();
-			TickingThread ticking = new TickingThread(hardware);
 			ticking.start();
 
 			System.out.println("Emulator started. Stop it with command \"stop\" in this console (this is the only way modifications on a disk will be saved).");
@@ -143,17 +152,7 @@ public class Emulator {
 						s = sc.nextLine();
 					} while(!s.equalsIgnoreCase("stop"));
 
-					for(DCPUHardware dcpuHardware : hardware) {
-						dcpuHardware.powerOff();
-						dcpuHardware.onDestroy();
-					}
-
-					dcpu.setStopped();
-					for(LemDisplay lemDisplay : lemDisplays)
-						lemDisplay.close();
-					for(LemKeyboard lemKeyboard : lemKeyboards)
-						lemKeyboard.close();
-					ticking.setStopped();
+					this.stop();
 				}
 			}.start();
 		} catch (NoSuchFileException e) {
@@ -161,6 +160,28 @@ public class Emulator {
 
 			DasmTC.usage();
 		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void stopCallback() {
+		for(DCPUHardware dcpuHardware : hardware) {
+			dcpuHardware.powerOff();
+			dcpuHardware.onDestroy();
+		}
+
+		dcpu.setStopped();
+		for(LemDisplay lemDisplay : lemDisplays)
+			lemDisplay.close();
+		for(LemKeyboard lemKeyboard : lemKeyboards)
+			lemKeyboard.close();
+		ticking.setStopped();
+
+		try {
+			Thread.sleep(1000);
+			System.exit(0);
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}

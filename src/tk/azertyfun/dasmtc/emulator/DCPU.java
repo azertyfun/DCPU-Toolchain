@@ -19,8 +19,9 @@ public class DCPU extends Thread implements Identifiable {
 	public static final int MAX_QUEUE_SIZE = 256;
 	public static final int RAM_SIZE = 0x10000;
 	public static final int TOTAL_REGS = 8;
-	public static final int SPEED_HZ = 100000; //100 KHz
-	public static final int BATCH_SIZE = 5000;
+
+	public int speed_hz = 100000; //100 KHz
+	public int batchSize = 100000/30;
 
 	private String id;
 
@@ -31,9 +32,10 @@ public class DCPU extends Thread implements Identifiable {
 	protected ArrayList<DCPUHardware> hardware = new ArrayList<>();
 
 	protected boolean stopped = false, pausing = false, paused = false;
-	protected boolean isSkiping = false, isOnFire = false, isQueueingEnabled = false;
+	protected boolean isSkiping = false, isOnFire = false, isQueueingEnabled = false, sleeping = false;
 
 	protected LinkedList<Character> interrupts = new LinkedList<>();
+	private LinkedList<InterruptListener> interruptListeners = new LinkedList<>();
 
 	public DCPU(String id) {
 		this.id = id;
@@ -78,14 +80,14 @@ public class DCPU extends Thread implements Identifiable {
 		cycles = 0;
 		cycles = 0;
 
-		long expectedTime_ns = (long) ((BATCH_SIZE * (1f / (float) SPEED_HZ)) * 1000000000L);
-
 		while(!stopped) {
 			long start_ns = System.nanoTime();
-			for(int i = 0; i < BATCH_SIZE; ++i)
-				tick();
+			for(int i = 0; i < batchSize; ++i) {
+				if(!sleeping)
+					tick();
+			}
 			long end_ns = System.nanoTime();
-			long waitTime_ns = (expectedTime_ns - (end_ns - start_ns));
+			long waitTime_ns = ((long) ((batchSize * (1f / (float) speed_hz)) * 1000000000L) - (end_ns - start_ns));
 			if(waitTime_ns > 0) {
 				try {
 					Thread.sleep(waitTime_ns / 1000000L, (int) (waitTime_ns % 1000000L));
@@ -362,6 +364,9 @@ public class DCPU extends Thread implements Identifiable {
 			interrupts.removeLast();
 			isOnFire = true;
 		}
+
+		for(InterruptListener i : interruptListeners)
+			i.interrupted();
 	}
 
 	public void skip() {
@@ -620,5 +625,9 @@ public class DCPU extends Thread implements Identifiable {
 			h.powerOn();
 		}
 		pausing = false;
+	}
+
+	public void addInterruptListener(InterruptListener interruptListener) {
+		interruptListeners.add(interruptListener);
 	}
 }

@@ -1,5 +1,7 @@
 package tk.azertyfun.dasmtc.emulator;
 
+import tk.azertyfun.dasmtc.Emulator;
+
 import java.io.IOException;
 import java.util.LinkedList;
 
@@ -10,6 +12,7 @@ public class HardwareTracker {
 	private LinkedList<GenericClock> clocks = new LinkedList<>();
 	private LinkedList<M35FD> m35fds = new LinkedList<>();
 	private LinkedList<M525HD> m525hds = new LinkedList<>();
+	private LinkedList<CPUControl> cpuControls = new LinkedList<>();
 
 	public HardwareTracker() {
 
@@ -48,6 +51,11 @@ public class HardwareTracker {
 	public M525HD requestM525HD(String path) throws IOException {
 		m525hds.add(new M525HD("m525hd_" + m525hds.size(), path));
 		return m525hds.getLast();
+	}
+
+	public CPUControl requestCPUControl(CallbackStop callback) {
+		cpuControls.add(new CPUControl("cpuControl_" + cpuControls.size(), callback));
+		return cpuControls.getLast();
 	}
 
 	public DCPU getDCPU(String id) {

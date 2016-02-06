@@ -7,6 +7,7 @@ Supported hardware
 ------------------
 
 * DCPU;
+* CPU-Control (IACM);
 * Clock;
 * Keyboard;
 * LEM1802;

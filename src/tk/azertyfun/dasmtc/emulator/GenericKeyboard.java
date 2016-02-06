@@ -7,6 +7,8 @@ public class GenericKeyboard extends DCPUHardware {
 	protected char[] buffer = new char[64];
 	protected int buffer_pointer = -1, interruptMessage = 0;
 
+	private CallbackIsKeyDown callbackIsKeyDown;
+
 	protected GenericKeyboard(String id) {
 		super(TYPE, REVISION, MANUFACTURER);
 		this.id = id;
@@ -30,7 +32,12 @@ public class GenericKeyboard extends DCPUHardware {
 				}
 				break;
 			case 2:
-				dcpu.registers[2] = 0; //TODO
+				if(callbackIsKeyDown != null) {
+					char b = dcpu.registers[1];
+					dcpu.registers[2] = callbackIsKeyDown.isKeyDown(b) ? (char) 1 : 0;
+				} else {
+					dcpu.registers[2] = 0;
+				}
 				break;
 			case 3:
 				interruptMessage = dcpu.registers[1];
@@ -40,9 +47,17 @@ public class GenericKeyboard extends DCPUHardware {
 
 	public void pressedKey(char keyChar) {
 		buffer[++buffer_pointer] = keyChar;
+		if(interruptMessage != 0)
+			dcpu.interrupt((char) interruptMessage);
 	}
 
 	public void pressedKeyCode(int keyCode) {
 		buffer[++buffer_pointer] = (char) keyCode;
+		if(interruptMessage != 0)
+ 			dcpu.interrupt((char) interruptMessage);
+	}
+
+	public void setCallbackIsKeyDown(CallbackIsKeyDown callbackIsKeyDown) {
+		this.callbackIsKeyDown = callbackIsKeyDown;
 	}
 }
