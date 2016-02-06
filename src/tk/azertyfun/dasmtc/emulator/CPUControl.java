@@ -65,11 +65,11 @@ public class CPUControl extends DCPUHardware implements InterruptListener {
 			case 0x0002: //SET_SLEEPTIME
 				sleepTime = (char) b;
 				break;
-			case 0x0003: //SET_INTERRUPTMESSAGE
-				if(b == 0)
-					power_message = (char) c;
-				else if(b == 1)
-					mode_message = (char) c;
+			case 0x0003: //SET_INTERRUPT_MESSAGE
+				if(c == 0)
+					power_message = (char) b;
+				else if(c == 1)
+					mode_message = (char) b;
 				break;
 			case 0x0004: //GET_CLOCK_RATE
 				dcpu.registers[1] = (char) (CLOCK_RATE & 0xFFFF);
@@ -113,6 +113,16 @@ public class CPUControl extends DCPUHardware implements InterruptListener {
 		this.dcpu.speed_hz = 10000;
 		dcpu.batchSize = 500;
 		return h;
+	}
+
+	public void powerButton() {
+		if(power_message != 0)
+			dcpu.interrupt(power_message);
+	}
+
+	public void modeButton() {
+		if(mode_message != 0)
+			dcpu.interrupt(mode_message);
 	}
 
 	public static class Modes {

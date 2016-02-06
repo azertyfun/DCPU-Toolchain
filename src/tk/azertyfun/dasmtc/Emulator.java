@@ -28,9 +28,10 @@ public class Emulator implements CallbackStop {
 
 		ticking = new TickingThread(hardware);
 
-		hardware.add(hardwareTracker.requestCPUControl(this));
-		hardware.getLast().connectTo(dcpu);
-		hardware.getLast().powerOn();
+		CPUControl cpuControl = hardwareTracker.requestCPUControl(this);
+		hardware.add(cpuControl);
+		cpuControl.connectTo(dcpu);
+		cpuControl.powerOn();
 
 		if(args.length > 2) {
 			for(int i = 2; i < args.length; ++i) {
@@ -51,7 +52,7 @@ public class Emulator implements CallbackStop {
 					hardware.getLast().connectTo(dcpu);
 					hardware.getLast().powerOn();
 
-					LemKeyboard lemKeyboard = new LemKeyboard((GenericKeyboard) hardware.getLast());
+					LemKeyboard lemKeyboard = new LemKeyboard((GenericKeyboard) hardware.getLast(), cpuControl);
 					lemKeyboards.add(lemKeyboard);
 				} else {
 					String[] splitted = args[i].split("=");

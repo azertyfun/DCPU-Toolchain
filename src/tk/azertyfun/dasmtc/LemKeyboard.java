@@ -1,30 +1,58 @@
 package tk.azertyfun.dasmtc;
 
+import tk.azertyfun.dasmtc.emulator.CPUControl;
 import tk.azertyfun.dasmtc.emulator.CallbackIsKeyDown;
 import tk.azertyfun.dasmtc.emulator.GenericKeyboard;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.StringContent;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.StyleSheet;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 
-public class LemKeyboard extends JFrame implements KeyListener, CallbackIsKeyDown {
+public class LemKeyboard extends JFrame implements KeyListener, CallbackIsKeyDown, ActionListener {
 
-	LinkedList<Integer> keys = new LinkedList<>();
+	private JButton powerButton = new JButton("PWR");
+	private JButton modeButton = new JButton("MDE");
+	private CustomPanel kbPanel;
+
+	private LinkedList<Integer> keys = new LinkedList<>();
 
 	private GenericKeyboard keyboard;
+	private CPUControl cpuControl;
 
-	public LemKeyboard(GenericKeyboard keyboard) {
+	public LemKeyboard(GenericKeyboard keyboard, CPUControl cpuControl) {
 		this.keyboard = keyboard;
+		this.cpuControl = cpuControl;
 
 		keyboard.setCallbackIsKeyDown(this);
 
 		this.setTitle("DCPU Emulator Keyboard for techcompliant");
-		this.setSize(new Dimension(178, 100));
+		this.setSize(new Dimension(356, 250));
 		this.setResizable(false);
 
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+
+		JPanel panel = new JPanel();
+
+		panel.add(powerButton);
+		powerButton.setBounds(0, 0, 356/2, 50);
+		powerButton.addActionListener(this);
+
+		panel.add(modeButton);
+		modeButton.setBounds(356/2, 0, 356, 50);
+		modeButton.addActionListener(this);
+
+		kbPanel = new CustomPanel();
+		kbPanel.setBounds(0, 50, 356, 250);
+		panel.add(kbPanel);
+		getContentPane().add(panel);
 
 		addKeyListener(this);
 
@@ -91,5 +119,58 @@ public class LemKeyboard extends JFrame implements KeyListener, CallbackIsKeyDow
 	@Override
 	public boolean isKeyDown(int key) {
 		return keys.contains(key);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent actionEvent) {
+		if(actionEvent.getSource() instanceof JButton && ((JButton) actionEvent.getSource()).getText().equals("PWR")) {
+			cpuControl.powerButton();
+		} else if(actionEvent.getSource() instanceof JButton && ((JButton) actionEvent.getSource()).getText().equals("MDE")) {
+			cpuControl.modeButton();
+		}
+	}
+
+	private class CustomPanel extends JPanel implements FocusListener {
+		private Image img;
+		private Image img_nofocus;
+
+		public CustomPanel() {
+			super();
+			try {
+				img = ImageIO.read(new File("res/keyboard.png"));
+				img_nofocus = ImageIO.read(new File("res/keyboard_nofocus.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			setFocusable(true);
+			addKeyListener(LemKeyboard.this);
+			addFocusListener(this);
+		}
+
+		@Override
+		public Dimension getPreferredSize() {
+			return new Dimension(356, 200);
+		}
+
+		@Override
+		protected void paintComponent(Graphics graphics) {
+			if(hasFocus())
+				graphics.drawImage(img, 0, 0, null);
+			else {
+				graphics.drawImage(img_nofocus, 0, 0, null);
+				requestFocusInWindow();
+			}
+		}
+
+		@Override
+		public void focusGained(FocusEvent focusEvent) {
+			this.repaint();
+		}
+
+		@Override
+		public void focusLost(FocusEvent focusEvent) {
+			this.repaint();
+		}
 	}
 }
