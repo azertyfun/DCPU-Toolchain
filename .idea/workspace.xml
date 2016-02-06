@@ -2,14 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0dbc213d-e695-463a-9756-41261c1efa9e" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/emulator/CPUControl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/emulator/CallbackStop.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/res/FrOSt-nofs.bin" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/FrOSt-BOLD.floppy" afterPath="$PROJECT_DIR$/res/FrOSt-BOLD.floppy" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/FrOSt-formatted.floppy" afterPath="$PROJECT_DIR$/res/FrOSt-formatted.floppy" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/FrOSt.bin" afterPath="$PROJECT_DIR$/res/FrOSt.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/Emulator.java" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/Emulator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/LemKeyboard.java" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/LemKeyboard.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/emulator/DCPU.java" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/emulator/DCPU.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/emulator/GenericKeyboard.java" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/emulator/GenericKeyboard.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/emulator/HardwareTracker.java" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/emulator/HardwareTracker.java" />
     </list>
     <ignored path="DASM-techcompliant.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -46,8 +43,8 @@
       <file leaf-file-name="Emulator.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dasmtc/Emulator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.3425775">
-              <caret line="54" column="43" selection-start-line="54" selection-start-column="43" selection-end-line="54" selection-end-column="43" />
+            <state vertical-scroll-proportion="0.3670473">
+              <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -97,7 +94,6 @@
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/TickingThread.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/emulator/M35FD.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/emulator/M525HD.java" />
-        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/emulator/InterruptListener.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/DasmTC.java" />
         <option value="/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar!/sun/awt/X11/XToolkit.class" />
@@ -111,6 +107,7 @@
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/Emulator.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/LemKeyboard.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/emulator/GenericKeyboard.java" />
+        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
@@ -284,7 +281,7 @@
       </extension>
       <option name="MAIN_CLASS_NAME" value="tk.azertyfun.dasmtc.DasmTC" />
       <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="run res/BOLD.bin --clock --keyboard --lem1802 --m35fd=res/FrOSt-formatted.floppy" />
+      <option name="PROGRAM_PARAMETERS" value="run res/BOLD.bin --clock --keyboard --lem1802 --m35fd=res/FrOSt-BOLD.floppy" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
@@ -796,17 +793,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider editor-type-id="MarkdownPreviewEditor">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7705479">
-          <caret line="30" column="137" selection-start-line="30" selection-start-column="43" selection-end-line="30" selection-end-column="137" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dasmtc/emulator/M35FD.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -830,16 +816,6 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="3" column="4" selection-start-line="3" selection-start-column="4" selection-end-line="3" selection-end-column="4" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dasmtc/DasmTC.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="43" column="5" selection-start-line="43" selection-start-column="5" selection-end-line="43" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -963,10 +939,31 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dasmtc/DasmTC.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="43" column="5" selection-start-line="43" selection-start-column="5" selection-end-line="43" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider editor-type-id="MarkdownPreviewEditor">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-4.6551723">
+          <caret line="9" column="21" selection-start-line="9" selection-start-column="21" selection-end-line="9" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dasmtc/Emulator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3425775">
-          <caret line="54" column="43" selection-start-line="54" selection-start-column="43" selection-end-line="54" selection-end-column="43" />
+        <state vertical-scroll-proportion="0.3670473">
+          <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
