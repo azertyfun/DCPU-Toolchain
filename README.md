@@ -11,6 +11,7 @@ Supported hardware
 * Clock;
 * Keyboard;
 * LEM1802;
+* EDC;
 * M35FD.
 
 Planned hardware

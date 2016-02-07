@@ -6,17 +6,13 @@ import tk.azertyfun.dasmtc.emulator.GenericKeyboard;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.StringContent;
-import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 
-public class LemKeyboard extends JFrame implements KeyListener, CallbackIsKeyDown, ActionListener {
+public class KeyboardDisplay extends JFrame implements KeyListener, CallbackIsKeyDown, ActionListener {
 
 	private JButton powerButton = new JButton("PWR");
 	private JButton modeButton = new JButton("MDE");
@@ -27,7 +23,7 @@ public class LemKeyboard extends JFrame implements KeyListener, CallbackIsKeyDow
 	private GenericKeyboard keyboard;
 	private CPUControl cpuControl;
 
-	public LemKeyboard(GenericKeyboard keyboard, CPUControl cpuControl) {
+	public KeyboardDisplay(GenericKeyboard keyboard, CPUControl cpuControl) {
 		this.keyboard = keyboard;
 		this.cpuControl = cpuControl;
 
@@ -144,7 +140,7 @@ public class LemKeyboard extends JFrame implements KeyListener, CallbackIsKeyDow
 			}
 
 			setFocusable(true);
-			addKeyListener(LemKeyboard.this);
+			addKeyListener(KeyboardDisplay.this);
 			addFocusListener(this);
 		}
 

@@ -3,7 +3,6 @@ package tk.azertyfun.dasmtc;
 import tk.azertyfun.dasmtc.emulator.*;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -16,7 +15,8 @@ public class Emulator implements CallbackStop {
 
 	private LinkedList<DCPUHardware> hardware = new LinkedList<>();
 	private LinkedList<LemDisplay> lemDisplays = new LinkedList<>();
-	private LinkedList<LemKeyboard> lemKeyboards = new LinkedList<>();
+	private LinkedList<KeyboardDisplay> keyboardDisplays = new LinkedList<>();
+	private LinkedList<EdcDisplay> edcDisplays = new LinkedList<>();
 
 	private TickingThread ticking;
 
@@ -52,8 +52,15 @@ public class Emulator implements CallbackStop {
 					hardware.getLast().connectTo(dcpu);
 					hardware.getLast().powerOn();
 
-					LemKeyboard lemKeyboard = new LemKeyboard((GenericKeyboard) hardware.getLast(), cpuControl);
-					lemKeyboards.add(lemKeyboard);
+					KeyboardDisplay keyboardDisplay = new KeyboardDisplay((GenericKeyboard) hardware.getLast(), cpuControl);
+					keyboardDisplays.add(keyboardDisplay);
+				} else if(args[i].equalsIgnoreCase("--EDC")) {
+					hardware.add(hardwareTracker.requestEDC());
+					hardware.getLast().connectTo(dcpu);
+					hardware.getLast().powerOn();
+
+					EdcDisplay edcDisplay = new EdcDisplay((EDC) hardware.getLast());
+					edcDisplays.add(edcDisplay);
 				} else {
 					String[] splitted = args[i].split("=");
 					if (splitted.length != 2) {
@@ -175,8 +182,10 @@ public class Emulator implements CallbackStop {
 		dcpu.setStopped();
 		for(LemDisplay lemDisplay : lemDisplays)
 			lemDisplay.close();
-		for(LemKeyboard lemKeyboard : lemKeyboards)
-			lemKeyboard.close();
+		for(KeyboardDisplay keyboardDisplay : keyboardDisplays)
+			keyboardDisplay.close();
+		for(EdcDisplay edcDisplay : edcDisplays)
+			edcDisplay.close();
 		ticking.setStopped();
 
 		try {

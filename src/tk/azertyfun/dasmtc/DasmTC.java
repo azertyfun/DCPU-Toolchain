@@ -1,16 +1,8 @@
 package tk.azertyfun.dasmtc;
 
-import tk.azertyfun.dasmtc.emulator.*;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Paths;
-import java.util.Scanner;
-
 public class DasmTC {
+
+	public static boolean isGlfwInitialized = false;
 
 	public static void main(String[] args) {
 		if(args.length == 0 || args[0].equals("-h")) {

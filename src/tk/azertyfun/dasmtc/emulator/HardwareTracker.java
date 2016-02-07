@@ -13,6 +13,7 @@ public class HardwareTracker {
 	private LinkedList<M35FD> m35fds = new LinkedList<>();
 	private LinkedList<M525HD> m525hds = new LinkedList<>();
 	private LinkedList<CPUControl> cpuControls = new LinkedList<>();
+	private LinkedList<EDC> edcs = new LinkedList<>();
 
 	public HardwareTracker() {
 
@@ -56,6 +57,11 @@ public class HardwareTracker {
 	public CPUControl requestCPUControl(CallbackStop callback) {
 		cpuControls.add(new CPUControl("cpuControl_" + cpuControls.size(), callback));
 		return cpuControls.getLast();
+	}
+
+	public DCPUHardware requestEDC() {
+		edcs.add(new EDC("edc_" + edcs.size()));
+		return edcs.getLast();
 	}
 
 	public DCPU getDCPU(String id) {

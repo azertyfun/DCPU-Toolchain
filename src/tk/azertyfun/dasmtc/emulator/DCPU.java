@@ -472,7 +472,7 @@ public class DCPU extends Thread implements Identifiable {
 		throw new IllegalStateException("Illegal A value type " + Integer.toHexString(type) + " ! That definitely should not happen.");
 	}
 
-	public int getAddrB(int type) { //TODO : Merge getAddrA and getAddrB to getAddr(boolean a
+	public int getAddrB(int type) {
 		switch(type & 0xF8) {
 			case 0x00:
 				return 0x10000 + (type & 0x7);
@@ -507,7 +507,7 @@ public class DCPU extends Thread implements Identifiable {
 		throw new IllegalStateException("Illegal B value type " + Integer.toHexString(type) + " ! That definitely should not happen.");
 	}
 
-	public char getValA(int type) { //TODO : check if get(getAddrA) works... That seems quite complicated for nothing.
+	public char getValA(int type) {
 		if(type >= 0x20) {
 			return (char) ((type & 0x1F) + 0xFFFF);
 		}
