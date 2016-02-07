@@ -30,7 +30,7 @@ public class DasmTC {
 				"java -jar DasmTC.jar <Action> [Options]\n" +
 				"\tACTIONS:\n" +
 				"\t\t- compile <file>: Compiles <file> to <file>.o\n" +
-				"\t\t- run <file> [--clock] [--keyboard] [--lem1802] [--M35FD=/path/to/file] [--M525HD=/path/to/file]: Runs emulator for <file> (binary format) with specified hardware. If no hardware is specified, runs with clock, keyboard and LEM1802.");
+				"\t\t- run <file> [--little-endian] [--clock] [--keyboard] [--lem1802] [--edc] [--M35FD=/path/to/file] [--M525HD=/path/to/file]: Runs emulator for <file> (binary format) with specified hardware. Big-endian by default, unless the --little-endian switch is present. If no hardware is specified, runs with clock, keyboard and LEM1802.");
 
 		System.exit(-1);
 	}

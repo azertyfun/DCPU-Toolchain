@@ -23,6 +23,8 @@ public class Emulator implements CallbackStop {
 	public Emulator(String[] args) {
 		String binary_path = args[1];
 
+		boolean big_endian = true;
+
 		HardwareTracker hardwareTracker = new HardwareTracker();
 		dcpu = hardwareTracker.requestDCPU();
 
@@ -35,7 +37,9 @@ public class Emulator implements CallbackStop {
 
 		if(args.length > 2) {
 			for(int i = 2; i < args.length; ++i) {
-				if(args[i].equalsIgnoreCase("--LEM1802")) {
+				if(args[i].equalsIgnoreCase("--little-endian")) {
+					big_endian = false;
+				} else if(args[i].equalsIgnoreCase("--LEM1802")) {
 					hardware.add(hardwareTracker.requestLem());
 					hardware.getLast().connectTo(dcpu);
 					hardware.getLast().powerOn();
@@ -146,7 +150,7 @@ public class Emulator implements CallbackStop {
 		}
 
 		try {
-			dcpu.setRam(binary_path);
+			dcpu.setRam(binary_path, big_endian);
 			dcpu.start();
 			ticking.start();
 
