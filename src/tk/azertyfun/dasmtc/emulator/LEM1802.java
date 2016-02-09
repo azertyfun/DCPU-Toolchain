@@ -316,7 +316,6 @@ public class LEM1802 extends DCPUHardware {
 
 	public void setVideoRam(char[] videoRam) {
 		this.videoRam = videoRam;
-		System.out.println("[DEBUG] Video RAM set!");
 	}
 
 	public void setFontRam(char[] fontRam) {

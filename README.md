@@ -1,7 +1,7 @@
-DCPU Emulator
-=============
+DCPU Emulator & Assembler
+=========================
 
-This is an emulator for the techcompliant DCPU (formerly notch's in 0x10^c).
+This is an emulator and a (buggy) assembler for the techcompliant DCPU (formerly notch's in 0x10^c).
 
 Supported hardware
 ------------------
@@ -30,6 +30,5 @@ How to build
 Usage
 -----
 
-Run the program with command line options `run <file> [--clock] [--keyboard] [--lem1802] [--M35FD=/path/to/file] [--M525HD=/path/to/file]`.
-
-To stop the program, type `stop` in the console.
+* To run a program: `run <file> [--little-endian] [--clock] [--keyboard] [--lem1802] [--edc] [--M35FD=/path/to/file] [--M525HD=/path/to/file]`: Runs emulator for <file> (binary format) with specified hardware. Big-endian by default, unless the --little-endian switch is present. If no hardware is specified, runs with clock, keyboard and LEM1802. To stop the program, type `stop` in the console.
+* To assemble a program: `assemble <input file> <output file> [--little-endian]`: Assembles <input file> to <output file>. Big-endian by default, unless the --little-endian switch is present.
