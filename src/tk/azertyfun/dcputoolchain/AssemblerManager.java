@@ -60,6 +60,7 @@ public class AssemblerManager {
 			labelAggregator.aggregateLabels();
 
 			System.out.println("Done in " + (System.currentTimeMillis() - start) + " ms.");
+			System.out.println(sourceManager);
 
 
 			System.out.print("Tokenizing... ");

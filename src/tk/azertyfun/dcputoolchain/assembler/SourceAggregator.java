@@ -80,7 +80,7 @@ public class SourceAggregator {
 				sourceManager.addSource(sourceAggregator.getSourceManager());
 			} else {
 				//Change :label to LBL label. We treat labels as an opcode because it's easier.
-				Pattern p = Pattern.compile(":([A-Za-z0-9_]+)( |\\n|$)");
+				Pattern p = Pattern.compile(":([A-Za-z0-9_]+)( |\\n|$|\\t)");
 				Matcher m = p.matcher(line);
 				while(m.find()) {
 					sourceManager.addLine(".LBL " + m.group(1), file_path, line_number);

@@ -12,25 +12,34 @@ public class ArgumentAddressOfRegisterPlusNextWord extends Argument {
 	public ArgumentAddressOfRegisterPlusNextWord(String argument, Line line, LinkedList<String> labels) throws ParsingException {
 		String[] splitted = argument.substring(1, argument.length() - 1).split("\\+");
 
-		if(Parser.isNumber(splitted[0])) {
+		/*
+		 * What this does:
+		 * - If splitted[0] is a label => [next word + register]
+		 * - If splitted[0] is a number => [next word + register]
+		 * - Else => [register + next word]
+		 */
+
+
+		boolean isLabel = false;
+		for (String label : labels) {
+			if (label.equalsIgnoreCase(splitted[0])) {
+				isLabel = true;
+				break;
+			}
+		}
+
+		if(isLabel) {
 			register = Parser.parseRegister(splitted[1], line);
 
-			boolean isLabel = false;
-			for (String label : labels) {
-				if (label.equalsIgnoreCase(splitted[0])) {
-					isLabel = true;
-					break;
-				}
-			}
+			value = new Value(splitted[0]);
+		} else if(Parser.isNumber(splitted[0])) {
+			register = Parser.parseRegister(splitted[1], line);
 
-			if (isLabel)
-				value = new Value(splitted[0]);
-			else
-				value = new Value(Parser.parseNumber(splitted[0], line));
+			value = new Value(Parser.parseNumber(splitted[0], line));
 		} else {
 			register = Parser.parseRegister(splitted[0], line);
 
-			boolean isLabel = false;
+			isLabel = false;
 			for (String label : labels) {
 				if (label.equalsIgnoreCase(splitted[1])) {
 					isLabel = true;
@@ -39,7 +48,7 @@ public class ArgumentAddressOfRegisterPlusNextWord extends Argument {
 			}
 
 			if (isLabel)
-				value = new Value(splitted[1]);
+				value = new Value(splitted[0]);
 			else
 				value = new Value(Parser.parseNumber(splitted[1], line));
 		}
