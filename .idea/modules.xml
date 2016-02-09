@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/DASM-techcompliant.iml" filepath="$PROJECT_DIR$/DASM-techcompliant.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DCPU-Toolchain.iml" filepath="$PROJECT_DIR$/DCPU-Toolchain.iml" />
     </modules>
   </component>
 </project>
