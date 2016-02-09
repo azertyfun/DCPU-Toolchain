@@ -95,4 +95,59 @@ public class Parser {
 		}
 	}
 
+	public static boolean isNumber(String s) {
+		if(s.length() == 1 && s.charAt(0) >= '0' && s.charAt(0) <= '9')
+			return true;
+		else if(s.length() == 1)
+			return false;
+
+		char c2 = s.charAt(1);
+		String s_;
+		switch (c2) {
+			case 'x': //Hex
+				s_ = s.substring(2, s.length());
+				try {
+					Integer.parseInt(s_, 16);
+					break;
+				} catch(NumberFormatException e) {
+					return false;
+				}
+			case 'b': //Binary
+				s = s.substring(2, s.length());
+				try {
+					Integer.parseInt(s, 2);
+					break;
+				} catch(NumberFormatException e) {
+					return false;
+				}
+			case 'o': //Octal
+				s = s.substring(2, s.length());
+				try {
+					Integer.parseInt(s, 8);
+					break;
+				} catch(NumberFormatException e) {
+					return false;
+				}
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9': //Decimal
+				try {
+					Integer.parseInt(s, 10);
+					break;
+				} catch(NumberFormatException e) {
+					return false;
+				}
+			default:
+				return false;
+		}
+
+		return true;
+	}
 }

@@ -2,42 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0dbc213d-e695-463a-9756-41261c1efa9e" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/AssemblerManager.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/Assembler.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/FinalOptimizer.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/Label.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/LabelAggregator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/Preprocessor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/SourceAggregator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/SourceSanitizer.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/Token.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/Tokenizer.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/Argument.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentAddressOfNextWord.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentAddressOfRegister.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentAddressOfRegisterPlusNextWord.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentEX.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentLiteral.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentNextWordLiteral.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentNot.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentOptimizable.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentPC.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentPeek.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentPick.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentPop.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentPush.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentRegister.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentSP.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/Parser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/Value.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/exceptions/ParsingException.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/sourceManagement/Line.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/sourceManagement/SourceManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/FrOSt.bin" afterPath="$PROJECT_DIR$/res/FrOSt.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/DasmTC.java" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/DasmTC.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/emulator/LEM1802.java" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/emulator/LEM1802.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/Tokenizer.java" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/Tokenizer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentAddressOfRegisterPlusNextWord.java" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentAddressOfRegisterPlusNextWord.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/Parser.java" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/Parser.java" />
     </list>
     <ignored path="DASM-techcompliant.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -69,16 +37,33 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/README.md">
+      <file leaf-file-name="Tokenizer.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/Tokenizer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.8319328">
-              <caret line="33" column="191" selection-start-line="33" selection-start-column="191" selection-end-line="33" selection-end-column="191" />
-              <folding />
+            <state vertical-scroll-proportion="0.38683787">
+              <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
-          <provider editor-type-id="MarkdownPreviewEditor">
-            <state />
+        </entry>
+      </file>
+      <file leaf-file-name="ArgumentAddressOfRegisterPlusNextWord.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentAddressOfRegisterPlusNextWord.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="14" column="8" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="8" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#1265#1266#0" expanded="true" />
+                <element signature="e#1303#1304#0" expanded="true" />
+                <element signature="e#1352#1353#0" expanded="true" />
+                <element signature="e#1370#1371#0" expanded="true" />
+                <element signature="e#1416#1417#0" expanded="true" />
+                <element signature="e#1443#1444#0" expanded="true" />
+              </folding>
+            </state>
           </provider>
         </entry>
       </file>
@@ -124,7 +109,6 @@
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/Preprocessor.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentAddressOfSP.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentPeek.java" />
-        <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/Parser.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/ArgumentSP.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentSP.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentPC.java" />
@@ -144,7 +128,6 @@
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentAddressOfNextWord.java" />
         <option value="$PROJECT_DIR$/res/test.dasm" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentLiteral.java" />
-        <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/Tokenizer.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentRegister.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/Argument.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/Token.java" />
@@ -156,9 +139,11 @@
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentPick.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/AssemblerManager.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/Assembler.java" />
-        <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentAddressOfRegisterPlusNextWord.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/emulator/LEM1802.java" />
         <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/Parser.java" />
+        <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentAddressOfRegisterPlusNextWord.java" />
+        <option value="$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/Tokenizer.java" />
       </list>
     </option>
   </component>
@@ -301,20 +286,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="DCPU-Emulator" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="DASM-techcompliant" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
       <pane id="PackagesPane" />
@@ -350,7 +321,7 @@
       <recent name="tk.azertyfun.dasmtc.dasm" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.DasmTC assemble">
+  <component name="RunManager" selected="Application.DasmTC">
     <configuration default="false" name="DasmTC" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
@@ -360,7 +331,7 @@
       </extension>
       <option name="MAIN_CLASS_NAME" value="tk.azertyfun.dasmtc.DasmTC" />
       <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="run res/FrOSt_out.bin --clock --keyboard --lem1802 --edc --m35fd=res/FrOSt-formatted.floppy" />
+      <option name="PROGRAM_PARAMETERS" value="run res/helloworld_be.bin --clock --keyboard --lem1802 --edc --m35fd=res/FrOSt-formatted.floppy" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
@@ -636,7 +607,7 @@
       </extension>
       <option name="MAIN_CLASS_NAME" value="tk.azertyfun.dasmtc.DasmTC" />
       <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="assemble $PROJECT_DIR$/../../DASM/FrOSt/FrOSt/FrOSt.dasm res/FrOSt.bin" />
+      <option name="PROGRAM_PARAMETERS" value="assemble $USER_HOME$/build/DCPUB/Binaries/helloworld.dasm res/helloworld_be.bin" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
@@ -712,6 +683,14 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/Tokenizer.java</url>
+          <line>41</line>
+          <properties />
+          <option name="timeStamp" value="244" />
+        </line-breakpoint>
+      </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
@@ -721,7 +700,7 @@
           <properties />
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="242" />
+      <option name="time" value="245" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -946,16 +925,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="35" column="5" selection-start-line="35" selection-start-column="5" selection-end-line="35" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/Parser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="24" column="96" selection-start-line="24" selection-start-column="96" selection-end-line="24" selection-end-column="96" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1204,16 +1173,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentAddressOfRegisterPlusNextWord.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="29" column="69" selection-start-line="29" selection-start-column="69" selection-end-line="29" selection-end-column="69" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dasmtc/emulator/LEM1802.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.59003216">
@@ -1225,14 +1184,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/Tokenizer.java">
+    <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4340836">
-          <caret line="98" column="27" selection-start-line="98" selection-start-column="27" selection-end-line="98" selection-end-column="27" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.25210086">
+          <caret line="10" column="8" selection-start-line="10" selection-start-column="8" selection-end-line="10" selection-end-column="8" />
+          <folding />
         </state>
+      </provider>
+      <provider editor-type-id="MarkdownPreviewEditor">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dasmtc/DasmTC.java">
@@ -1243,15 +1203,40 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
+    <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/Parser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8319328">
-          <caret line="33" column="191" selection-start-line="33" selection-start-column="191" selection-end-line="33" selection-end-column="191" />
-          <folding />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="147" column="29" selection-start-line="147" selection-start-column="29" selection-end-line="147" selection-end-column="29" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
-      <provider editor-type-id="MarkdownPreviewEditor">
-        <state />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/arguments/ArgumentAddressOfRegisterPlusNextWord.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="14" column="8" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="8" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1265#1266#0" expanded="true" />
+            <element signature="e#1303#1304#0" expanded="true" />
+            <element signature="e#1352#1353#0" expanded="true" />
+            <element signature="e#1370#1371#0" expanded="true" />
+            <element signature="e#1416#1417#0" expanded="true" />
+            <element signature="e#1443#1444#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dasmtc/assembler/Tokenizer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.38683787">
+          <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
       </provider>
     </entry>
   </component>

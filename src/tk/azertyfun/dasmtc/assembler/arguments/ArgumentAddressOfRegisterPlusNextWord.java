@@ -11,23 +11,38 @@ public class ArgumentAddressOfRegisterPlusNextWord extends Argument {
 
 	public ArgumentAddressOfRegisterPlusNextWord(String argument, Line line, LinkedList<String> labels) throws ParsingException {
 		String[] splitted = argument.substring(1, argument.length() - 1).split("\\+");
-		if(splitted[0].length() != 1)
-			throw new ParsingException("Error: Can't parse register ([register + next word]): '" + line.getOriginal_line() + "\" in " + line.getFile() + ":" + line.getLineNumber());
 
-		register = Parser.parseRegister(splitted[0], line);
+		if(Parser.isNumber(splitted[0])) {
+			register = Parser.parseRegister(splitted[1], line);
 
-		boolean isLabel = false;
-		for(String label : labels) {
-			if(label.equalsIgnoreCase(splitted[1])) {
-				isLabel = true;
-				break;
+			boolean isLabel = false;
+			for (String label : labels) {
+				if (label.equalsIgnoreCase(splitted[0])) {
+					isLabel = true;
+					break;
+				}
 			}
-		}
 
-		if(isLabel)
-			value = new Value(splitted[1]);
-		else
-			value = new Value(Parser.parseNumber(splitted[1], line));
+			if (isLabel)
+				value = new Value(splitted[0]);
+			else
+				value = new Value(Parser.parseNumber(splitted[0], line));
+		} else {
+			register = Parser.parseRegister(splitted[0], line);
+
+			boolean isLabel = false;
+			for (String label : labels) {
+				if (label.equalsIgnoreCase(splitted[1])) {
+					isLabel = true;
+					break;
+				}
+			}
+
+			if (isLabel)
+				value = new Value(splitted[1]);
+			else
+				value = new Value(Parser.parseNumber(splitted[1], line));
+		}
 	}
 
 	@Override

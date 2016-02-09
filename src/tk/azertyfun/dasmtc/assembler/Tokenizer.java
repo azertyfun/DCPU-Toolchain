@@ -36,28 +36,47 @@ public class Tokenizer {
 
 				tokens.add(new Token(Token.SpecialOpcodes.strings.get(token), true, new ArgumentNot(), getArgumentA(splitted[1], line)));
 			} else if(token.equals("DAT") || token.equals(".DAT") || token.equals("#DAT")) {
-				if(splitted.length != 2)
-					throw new ParsingException("Error: " + (splitted.length < 2 ? "Not enough" : "Too many") + " arguments: \"" + line.getOriginal_line() + "\" in " + line.getFile() + ":" + line.getLineNumber());
-
 				LinkedList<Value> values = new LinkedList<>();
 
-				String[] arguments = splitted[1].split(",");
-				for(String argument : arguments) {
-					if(argument.matches("'.'")) {
-						values.add(new Value(argument.charAt(1)));
-					} else {
-						boolean isLabel = false;
-						for(String label : sourceManager.getS_labels()) {
-							if(label.equalsIgnoreCase(argument)) {
-								isLabel = true;
-								break;
+				if(splitted.length != 2) { //DAT 0 1 2 3 syntax instead of DAT 0, 1, 2, 3
+					for(int k = 1; k < splitted.length; ++k) {
+						String argument = splitted[k];
+						if(argument.matches("'.'")) {
+							values.add(new Value(argument.charAt(1)));
+						} else {
+							boolean isLabel = false;
+							for(String label : sourceManager.getS_labels()) {
+								if(label.equalsIgnoreCase(argument)) {
+									isLabel = true;
+									break;
+								}
 							}
-						}
 
-						if(isLabel)
-							values.add(new Value(argument));
-						else
-							values.add(new Value(Parser.parseNumber(argument, line)));
+							if(isLabel)
+								values.add(new Value(argument));
+							else
+								values.add(new Value(Parser.parseNumber(argument, line)));
+						}
+					}
+				} else {
+					String[] arguments = splitted[1].split(",");
+					for(String argument : arguments) {
+						if(argument.matches("'.'")) {
+							values.add(new Value(argument.charAt(1)));
+						} else {
+							boolean isLabel = false;
+							for(String label : sourceManager.getS_labels()) {
+								if(label.equalsIgnoreCase(argument)) {
+									isLabel = true;
+									break;
+								}
+							}
+
+							if(isLabel)
+								values.add(new Value(argument));
+							else
+								values.add(new Value(Parser.parseNumber(argument, line)));
+						}
 					}
 				}
 
