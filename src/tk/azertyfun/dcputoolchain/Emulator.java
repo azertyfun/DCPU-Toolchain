@@ -21,7 +21,7 @@ public class Emulator implements CallbackStop {
 	private TickingThread ticking;
 
 	public Emulator(String[] args) {
-		String binary_path = args[1];
+		String input_file = args[1];
 
 		boolean big_endian = true;
 
@@ -35,9 +35,13 @@ public class Emulator implements CallbackStop {
 		cpuControl.connectTo(dcpu);
 		cpuControl.powerOn();
 
+		boolean assemble = false;
+
 		if(args.length > 2) {
 			for(int i = 2; i < args.length; ++i) {
-				if(args[i].equalsIgnoreCase("--little-endian")) {
+				if(args[i].equalsIgnoreCase("--assemble")) {
+					assemble = true;
+				} else if(args[i].equalsIgnoreCase("--little-endian")) {
 					big_endian = false;
 				} else if(args[i].equalsIgnoreCase("--LEM1802")) {
 					hardware.add(hardwareTracker.requestLem());
@@ -150,7 +154,16 @@ public class Emulator implements CallbackStop {
 		}
 
 		try {
-			dcpu.setRam(binary_path, big_endian);
+			if(assemble) {
+				File tmpFile = File.createTempFile("DCPUToolchain", Long.toString(System.currentTimeMillis()));
+				AssemblerManager assemblerManager = new AssemblerManager(new String[] {"assemble", input_file, tmpFile.getAbsolutePath()});
+				boolean success = assemblerManager.assemble();
+				if(!success)
+					System.exit(-1);
+				dcpu.setRam(tmpFile.getAbsolutePath(), true);
+			} else {
+				dcpu.setRam(input_file, big_endian);
+			}
 			dcpu.start();
 			ticking.start();
 

@@ -10,11 +10,13 @@ import java.util.LinkedList;
 
 public class AssemblerManager {
 
-	public AssemblerManager(String[] args) {
-		String inputFile_path = args[1];
-		String outputFile_path = args[2];
+	private boolean big_endian = true;
+	private String inputFile_path;
+	private String outputFile_path;
 
-		boolean big_endian = true;
+	public AssemblerManager(String[] args) {
+		inputFile_path = args[1];
+		outputFile_path = args[2];
 
 		if(args.length > 3) {
 			for(int i = 3; i < args.length; ++i) {
@@ -23,7 +25,9 @@ public class AssemblerManager {
 				}
 			}
 		}
+	}
 
+	public boolean assemble() {
 		SourceAggregator sourceAggregator = new SourceAggregator(inputFile_path);
 		try {
 			System.out.print("Aggregating source... ");
@@ -102,8 +106,12 @@ public class AssemblerManager {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+			return false;
 		} catch (ParsingException e) {
 			System.err.println("Parsing error.\n\t" + e.getMessage());
+			return false;
 		}
+
+		return true;
 	}
 }
