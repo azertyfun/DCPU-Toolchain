@@ -1,8 +1,12 @@
 package tk.azertyfun.dcputoolchain;
 
+import java.io.File;
+
 public class DCPUToolChain {
 
 	public static void main(String[] args) {
+		System.setProperty("org.lwjgl.librarypath", new File("native").getAbsolutePath());
+
 		if(args.length == 0 || args[0].equals("-h")) {
 			usage();
 		} else if(args.length >= 3 && args[0].equals("assemble")) {

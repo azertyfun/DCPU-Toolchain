@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="DCPU-Toolchain:jar">
+    <output-path>$PROJECT_DIR$/out</output-path>
+    <root id="archive" name="DCPU-Toolchain.jar">
+      <element id="module-output" name="DCPU-Toolchain" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/lwjgl/lwjgl/3.0.0b/lwjgl-3.0.0b.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
