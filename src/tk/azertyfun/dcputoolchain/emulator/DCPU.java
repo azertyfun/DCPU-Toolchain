@@ -37,6 +37,8 @@ public class DCPU extends Thread implements Identifiable {
 	protected LinkedList<Character> interrupts = new LinkedList<>();
 	private LinkedList<InterruptListener> interruptListeners = new LinkedList<>();
 
+	private boolean tickRequested = false;
+
 	public DCPU(String id) {
 		this.id = id;
 	}
@@ -113,6 +115,11 @@ public class DCPU extends Thread implements Identifiable {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
+					}
+					if(tickRequested) {
+						if(!sleeping)
+							tick();
+						tickRequested = false;
 					}
 				}
 				paused = false;
@@ -419,6 +426,8 @@ public class DCPU extends Thread implements Identifiable {
 			return pc;
 		if(address == 0x1000a)
 			return ex;
+		if(address == 0x1000b)
+			return ia;
 		throw new IllegalStateException("Illegal address " + Integer.toHexString(address) + " ! That definitely should not happen.");
 	}
 
@@ -640,5 +649,19 @@ public class DCPU extends Thread implements Identifiable {
 
 	public void addInterruptListener(InterruptListener interruptListener) {
 		interruptListeners.add(interruptListener);
+	}
+
+	public void runpause() {
+		pausing = !pausing;
+	}
+
+	public void step() {
+		if(pausing) {
+			tickRequested = true;
+		}
+	}
+
+	public boolean isPausing() {
+		return pausing;
 	}
 }

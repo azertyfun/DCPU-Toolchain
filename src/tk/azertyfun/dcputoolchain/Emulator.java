@@ -20,6 +20,8 @@ public class Emulator implements CallbackStop {
 
 	private TickingThread ticking;
 
+	private DebuggerInterface debuggerInterface;
+
 	public Emulator(String[] args) {
 		String input_file = args[1];
 
@@ -41,6 +43,8 @@ public class Emulator implements CallbackStop {
 			for(int i = 2; i < args.length; ++i) {
 				if(args[i].equalsIgnoreCase("--assemble")) {
 					assemble = true;
+				} else if(args[i].equalsIgnoreCase("--debugger")) {
+					debuggerInterface = new DebuggerInterface(dcpu, this);
 				} else if(args[i].equalsIgnoreCase("--little-endian")) {
 					big_endian = false;
 				} else if(args[i].equalsIgnoreCase("--LEM1802")) {
@@ -167,7 +171,7 @@ public class Emulator implements CallbackStop {
 			dcpu.start();
 			ticking.start();
 
-			System.out.println("Emulator started. Stop it with command \"stop\" in this console (this is the only way modifications on a disk will be saved).");
+			System.out.println("Emulator started. Stop it with command \"stop\" in this console (this is the only way modifications on a disk will be saved, unless an EDC shutdown is sent, or the debugger is closed).");
 
 			new Thread() {
 				public void run() {
@@ -191,6 +195,8 @@ public class Emulator implements CallbackStop {
 
 	@Override
 	public void stopCallback() {
+		System.out.println("Stopping emulator...");
+
 		for(DCPUHardware dcpuHardware : hardware) {
 			dcpuHardware.powerOff();
 			dcpuHardware.onDestroy();
@@ -204,6 +210,9 @@ public class Emulator implements CallbackStop {
 		for(EdcDisplay edcDisplay : edcDisplays)
 			edcDisplay.close();
 		ticking.setStopped();
+
+		if(debuggerInterface != null)
+			debuggerInterface.close();
 
 		try {
 			Thread.sleep(1000);

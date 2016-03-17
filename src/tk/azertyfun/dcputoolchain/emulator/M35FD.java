@@ -151,7 +151,8 @@ public class M35FD extends DCPUHardware {
 			reading = false;
 		} else if(writing) {
 			for(int i = 0; i < WORDS_PER_SECTOR; ++i) {
-				disk[writeTo * WORDS_PER_SECTOR + i] = dcpu.ram[writeFrom + i];
+				if(writeTo * WORDS_PER_SECTOR + i < disk.length) //If we write outside the disk, silent fail.
+					disk[writeTo * WORDS_PER_SECTOR + i] = dcpu.ram[(writeFrom + i) & 0xFFFF];
 			}
 
 			state = States.STATE_READY;
