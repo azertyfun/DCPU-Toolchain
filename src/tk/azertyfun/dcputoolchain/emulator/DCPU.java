@@ -99,6 +99,12 @@ public class DCPU extends Thread implements Identifiable {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+			} else {
+				(new Thread() {
+					public void run() {
+						System.err.println("Error: DCPU is lagging behind schedule, currently " + (-waitTime_ns) + " ns late on a " + batchSize + " cycles batch.");
+					}
+				}).start();
 			}
 			if(pausing) {
 				paused = true;
