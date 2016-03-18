@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 
 public class M525HD extends DCPUHardware {
 	public static final int TYPE = 0x525d4ac5, REVISION = 0x0001, MANUFACTURER = 0x1eb37e91;
@@ -27,6 +28,8 @@ public class M525HD extends DCPUHardware {
 	protected long spinUpStart = 0;
 
 	private String disk_path;
+
+	private LinkedList<M525HDCallback> m525HDCallbacks = new LinkedList<>();
 
 	protected M525HD(String id, String path) throws IOException {
 		super(TYPE, REVISION, MANUFACTURER);
@@ -100,6 +103,8 @@ public class M525HD extends DCPUHardware {
 
 				dcpu.registers[1] = 1;
 				state = States.STATE_BUSY;
+				for(M525HDCallback m525HDCallback : m525HDCallbacks)
+					m525HDCallback.statusChanged("STATE_BUSY");
 				reading = true;
 				ticksSkip = 5; //Skipping 5 ticks because of the specified 80ms seek time. Ideal behaviour would be checking distance between tracks, but it doesn't affect the emulation enough that I will worry about it any time soon.
 
@@ -133,6 +138,8 @@ public class M525HD extends DCPUHardware {
 
 				dcpu.registers[1] = 1;
 				state = States.STATE_BUSY;
+				for(M525HDCallback m525HDCallback : m525HDCallbacks)
+					m525HDCallback.statusChanged("STATE_BUSY");
 				writing = true;
 				ticksSkip = 5; //Skipping 5 ticks because of the specified 80ms seek time. Ideal behaviour would be checking distance between tracks, but it doesn't affect the emulation enough that I will worry about it any time soon.
 
@@ -140,12 +147,16 @@ public class M525HD extends DCPUHardware {
 			case 4: //SPIN_DOWN
 				spinning = false;
 				state = States.STATE_PARKED;
+				for(M525HDCallback m525HDCallback : m525HDCallbacks)
+					m525HDCallback.statusChanged("STATE_PARKED");
 				break;
 			case 5:
 				if(!spinning) {
 					spinUpStart = System.currentTimeMillis();
 					spinningUp = true;
 					state = States.STATE_INIT;
+					for(M525HDCallback m525HDCallback : m525HDCallbacks)
+						m525HDCallback.statusChanged("STATE_INIT");
 				}
 		}
 	}
@@ -162,6 +173,8 @@ public class M525HD extends DCPUHardware {
 				spinningUp = false;
 				spinning = true;
 				state = States.STATE_READY;
+				for(M525HDCallback m525HDCallback : m525HDCallbacks)
+					m525HDCallback.statusChanged("STATE_READY");
 			}
 		}
 
@@ -171,6 +184,8 @@ public class M525HD extends DCPUHardware {
 			}
 
 			state = States.STATE_READY;
+			for(M525HDCallback m525HDCallback : m525HDCallbacks)
+				m525HDCallback.statusChanged("STATE_READY");
 			reading = false;
 		} else if(writing && (--ticksSkip == 0)) {
 			for(int i = 0; i < WORDS_PER_SECTOR; ++i) {
@@ -178,6 +193,8 @@ public class M525HD extends DCPUHardware {
 			}
 
 			state = States.STATE_READY;
+			for(M525HDCallback m525HDCallback : m525HDCallbacks)
+				m525HDCallback.statusChanged("STATE_READY");
 			writing = false;
 		}
 	}
@@ -210,6 +227,10 @@ public class M525HD extends DCPUHardware {
 		return disk;
 	}
 
+	public void addCallback(M525HDCallback m525HDCallback) {
+		m525HDCallbacks.add(m525HDCallback);
+	}
+
 	public static class States {
 		public static final int STATE_READY =       0x0001;
 		public static final int STATE_READY_WP =    0x0002;
@@ -228,5 +249,9 @@ public class M525HD extends DCPUHardware {
 		public static final int ERROR_PARKED =      0x0004;
 		public static final int ERROR_BAD_SECTOR =  0x0005;
 		public static final int ERROR_BROKEN =      0xFFFF;
+	}
+
+	public interface M525HDCallback {
+		public void statusChanged(String status);
 	}
 }

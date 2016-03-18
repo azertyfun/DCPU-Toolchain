@@ -1,5 +1,6 @@
 package tk.azertyfun.dcputoolchain.emulator;
 
+import java.util.LinkedList;
 import java.util.Random;
 
 public class CPUControl extends DCPUHardware implements InterruptListener {
@@ -14,6 +15,7 @@ public class CPUControl extends DCPUHardware implements InterruptListener {
 	private char power_message = 0, mode_message = 0;
 
 	private CallbackStop callback;
+	private LinkedList<CPUControlCallback> cpuControlCallbacks = new LinkedList<>();
 
 	protected CPUControl(String id, CallbackStop callback) {
 		super(TYPE, REVISION, MANUFACTURER);
@@ -118,11 +120,15 @@ public class CPUControl extends DCPUHardware implements InterruptListener {
 	public void powerButton() {
 		if(power_message != 0)
 			dcpu.interrupt(power_message);
+		for(CPUControlCallback cpuControlCallback : cpuControlCallbacks)
+			cpuControlCallback.modeChanged(mode);
 	}
 
 	public void modeButton() {
 		if(mode_message != 0)
 			dcpu.interrupt(mode_message);
+		for(CPUControlCallback cpuControlCallback : cpuControlCallbacks)
+			cpuControlCallback.modeChanged(mode);
 	}
 
 	public static class Modes {
@@ -131,5 +137,13 @@ public class CPUControl extends DCPUHardware implements InterruptListener {
 		public static final int REDUCED_RATE_SLEEP = 2;
 		public static final int SLEEP = 3;
 		public static final int POWER_OFF = 4;
+	}
+
+	public void addCallback(CPUControlCallback cpuControlCallback) {
+		cpuControlCallbacks.add(cpuControlCallback);
+	}
+
+	public interface CPUControlCallback {
+		public void modeChanged(int mode);
 	}
 }

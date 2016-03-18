@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 
 public class M35FD extends DCPUHardware {
 	public static final int TYPE = 0x4fd524c5, REVISION = 0x000b, MANUFACTURER = 0x1eb37e91;
@@ -23,6 +24,8 @@ public class M35FD extends DCPUHardware {
 	protected char readFrom, readTo, writeFrom, writeTo;
 
 	private String disk_path;
+
+	private LinkedList<M35FDCallback> m35FDCallbacks = new LinkedList<>();
 
 	protected M35FD(String id, String path) throws IOException {
 		super(TYPE, REVISION, MANUFACTURER);
@@ -184,6 +187,10 @@ public class M35FD extends DCPUHardware {
 		}
 	}
 
+	public void addCallback(M35FDCallback m35FDCallback) {
+		m35FDCallbacks.add(m35FDCallback);
+	}
+
 	public static class States {
 		public static final int STATE_NO_MEDIA =   0x0000;
 		public static final int STATE_READY =      0x0001;
@@ -199,5 +206,9 @@ public class M35FD extends DCPUHardware {
 		public static final int ERROR_EJECT =      0x0004;
 		public static final int ERROR_BAD_SECTOR = 0x0005;
 		public static final int ERROR_BROKEN =     0xFFFF;
+	}
+
+	public interface M35FDCallback {
+		public void statusChanged(String status);
 	}
 }

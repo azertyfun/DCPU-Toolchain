@@ -9,6 +9,8 @@ public class TickingThread extends Thread {
 
 	private LinkedList<DCPUHardware> hardware;
 
+	private boolean pausing = false;
+
 	public TickingThread(LinkedList<DCPUHardware> hardware) {
 		this.hardware = hardware;
 	}
@@ -26,10 +28,26 @@ public class TickingThread extends Thread {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+
+			while(pausing) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
 	public void setStopped() {
 		stop = true;
+	}
+
+	public void setPausing(boolean pausing) {
+		this.pausing = pausing;
+	}
+
+	public LinkedList<DCPUHardware> getHardware() {
+		return hardware;
 	}
 }

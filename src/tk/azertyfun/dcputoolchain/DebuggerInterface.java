@@ -1,7 +1,6 @@
 package tk.azertyfun.dcputoolchain;
 
-import tk.azertyfun.dcputoolchain.emulator.CallbackStop;
-import tk.azertyfun.dcputoolchain.emulator.DCPU;
+import tk.azertyfun.dcputoolchain.emulator.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,11 +29,13 @@ public class DebuggerInterface extends JFrame {
 			"PC: -, SP: -, EX: -, IA: -" +
 			"</body>" +
 			"</html>");
+
 	private DCPU dcpu;
+	private TickingThread tickingThread;
 
 	private char currentAddress;
 
-	public DebuggerInterface(DCPU dcpu, CallbackStop callbackStop) {
+	public DebuggerInterface(DCPU dcpu, TickingThread tickingThread, CallbackStop callbackStop) {
 		//runpause.addActionListener(actionEvent -> runpause());
 		JButton stop = new JButton("Stop");
 		stop.addActionListener(actionEvent -> callbackStop.stopCallback());
@@ -48,6 +49,7 @@ public class DebuggerInterface extends JFrame {
 		step.addActionListener(actionEvent -> dcpu.step());
 
 		this.dcpu = dcpu;
+		this.tickingThread = tickingThread;
 
 		setTitle("DCPU Emulator Debugger for techcompliant");
 
@@ -78,10 +80,125 @@ public class DebuggerInterface extends JFrame {
 		goToAddress.getActionMap().put("goToAddress", goToAddressAction);
 		goToAddress.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put((KeyStroke) goToAddressAction.getValue(Action.ACCELERATOR_KEY), "goToAddress");
 		buttonsPanel.add(goToAddress);
-
 		getContentPane().add(buttonsPanel, BorderLayout.NORTH);
+
+		Panel regsAndHardware = new Panel();
+
+		regsAndHardware.setLayout(new BorderLayout());
 		regs.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-		getContentPane().add(regs);
+		regsAndHardware.add(regs, BorderLayout.WEST);
+
+		Panel hardwarePanel = new Panel();
+		hardwarePanel.setLayout(new GridLayout(0, 1));
+		for(DCPUHardware dcpuHardware : tickingThread.getHardware()) {
+			Panel panel = new Panel();
+			GridLayout gridLayout = new GridLayout(0, 2);
+			gridLayout.setHgap(20);
+			panel.setLayout(gridLayout);
+			if (dcpuHardware instanceof EDC) {
+				JLabel label = new JLabel("EDC: ");
+				JButton tick = new JButton("Tick");
+				tick.addActionListener(actionEvent -> dcpuHardware.tick60hz());
+				panel.add(label);
+				panel.add(tick);
+				hardwarePanel.add(panel);
+			} else if(dcpuHardware instanceof GenericClock) {
+				JLabel label = new JLabel("Generic clock: ");
+				JButton tick = new JButton("Tick");
+				tick.addActionListener(actionEvent -> dcpuHardware.tick60hz());
+				panel.add(label);
+				panel.add(tick);
+
+				JLabel ticksLabel = new JLabel("Ticks: ");
+				((GenericClock) dcpuHardware).addCallback(new GenericClock.ClockCallback() {
+					@Override
+					public void ticksChanged(int ticks) {
+						ticksLabel.setText("Ticks: " + ticks);
+					}
+				});
+				panel.add(ticksLabel);
+				JButton addTick = new JButton("Add tick to clock");
+				addTick.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent actionEvent) {
+						((GenericClock) dcpuHardware).addTick();
+					}
+				});
+				panel.add(addTick);
+
+				hardwarePanel.add(panel);
+			} else if(dcpuHardware instanceof GenericKeyboard) {
+
+				JLabel label = new JLabel("Generic Keyboard: ");
+				JLabel keyboardInfoKey = new JLabel("Last pressed key: ");
+				JLabel keyboardInfoKeyCode = new JLabel("Last pressed key code:");
+				((GenericKeyboard) dcpuHardware).addCallback(new GenericKeyboard.KeyboardCallback() {
+
+					@Override
+					public void pressedKey(char key) {
+						keyboardInfoKey.setText("Last pressed key: '" + key + "' (" + (int) key + ")");
+					}
+
+					@Override
+					public void pressedKeyCode(int key) {
+						keyboardInfoKeyCode.setText("Last pressed key code: " + key);
+					}
+				});
+				JButton tick = new JButton("Tick");
+				tick.addActionListener(actionEvent -> dcpuHardware.tick60hz());
+				panel.add(label);
+				panel.add(tick);
+				panel.add(keyboardInfoKey);
+				panel.add(keyboardInfoKeyCode);
+				hardwarePanel.add(panel);
+			} else if(dcpuHardware instanceof LEM1802) {
+				JLabel label = new JLabel("LEM1802: ");
+				JButton tick = new JButton("Tick");
+				tick.addActionListener(actionEvent -> dcpuHardware.tick60hz());
+				panel.add(label);
+				panel.add(tick);
+				hardwarePanel.add(panel);
+			} else if(dcpuHardware instanceof M35FD) {
+				JLabel label = new JLabel("M35FD: ");
+				JButton tick = new JButton("Tick");
+				tick.addActionListener(actionEvent -> dcpuHardware.tick60hz());
+				panel.add(label);
+				panel.add(tick);
+
+				JLabel statusLabel = new JLabel("Status: STATE_READY");
+				((M35FD) dcpuHardware).addCallback(status -> statusLabel.setText("Status: " + status));
+				panel.add(statusLabel);
+
+				hardwarePanel.add(panel);
+			} else if(dcpuHardware instanceof M525HD) {
+				JLabel label = new JLabel("M525HD: ");
+				JButton tick = new JButton("Tick");
+				tick.addActionListener(actionEvent -> dcpuHardware.tick60hz());
+				panel.add(label);
+				panel.add(tick);
+
+				JLabel statusLabel = new JLabel("Status: STATE_PARKED");
+				((M525HD) dcpuHardware).addCallback(status -> statusLabel.setText("Status: " + status));
+				panel.add(statusLabel);
+
+				hardwarePanel.add(panel);
+			} else if(dcpuHardware instanceof CPUControl) {
+				JLabel label = new JLabel("CPU Control: ");
+				JButton tick = new JButton("Tick");
+				tick.addActionListener(actionEvent -> dcpuHardware.tick60hz());
+				panel.add(label);
+				panel.add(tick);
+
+				JLabel modeLabel = new JLabel("Mode: 0");
+				((CPUControl) dcpuHardware).addCallback(mode -> modeLabel.setText("Mode: " + mode));
+
+				panel.add(modeLabel);
+
+				hardwarePanel.add(panel);
+			}
+		}
+		regsAndHardware.add(hardwarePanel, BorderLayout.EAST);
+		getContentPane().add(regsAndHardware);
 
 		Panel viewers = new Panel();
 		viewers.setLayout(new BorderLayout());
@@ -109,6 +226,7 @@ public class DebuggerInterface extends JFrame {
 	}
 
 	public void runpause() {
+		tickingThread.setPausing(!dcpu.isPausing());
 		dcpu.runpause();
 		updateDebugInfo();
 	}

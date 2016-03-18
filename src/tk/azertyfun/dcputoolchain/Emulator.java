@@ -38,13 +38,14 @@ public class Emulator implements CallbackStop {
 		cpuControl.powerOn();
 
 		boolean assemble = false;
+		boolean debugger = false;
 
 		if(args.length > 2) {
 			for(int i = 2; i < args.length; ++i) {
 				if(args[i].equalsIgnoreCase("--assemble")) {
 					assemble = true;
 				} else if(args[i].equalsIgnoreCase("--debugger")) {
-					debuggerInterface = new DebuggerInterface(dcpu, this);
+					debugger = true;
 				} else if(args[i].equalsIgnoreCase("--little-endian")) {
 					big_endian = false;
 				} else if(args[i].equalsIgnoreCase("--LEM1802")) {
@@ -156,6 +157,8 @@ public class Emulator implements CallbackStop {
 			hardware.add(clock);
 			hardware.add(genericKeyboard);
 		}
+
+		debuggerInterface = new DebuggerInterface(dcpu, ticking, this);
 
 		try {
 			if(assemble) {

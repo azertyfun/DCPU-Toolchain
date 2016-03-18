@@ -1,5 +1,7 @@
 package tk.azertyfun.dcputoolchain.emulator;
 
+import java.util.LinkedList;
+
 public class GenericKeyboard extends DCPUHardware {
 
 	public static final int TYPE = 0x30cf7406, REVISION = 1, MANUFACTURER = 0;
@@ -8,6 +10,8 @@ public class GenericKeyboard extends DCPUHardware {
 	protected int buffer_pointer = -1, interruptMessage = 0;
 
 	private CallbackIsKeyDown callbackIsKeyDown;
+
+	private LinkedList<KeyboardCallback> keyboardCallbacks = new LinkedList<>();
 
 	protected GenericKeyboard(String id) {
 		super(TYPE, REVISION, MANUFACTURER);
@@ -49,15 +53,32 @@ public class GenericKeyboard extends DCPUHardware {
 		buffer[++buffer_pointer] = keyChar;
 		if(interruptMessage != 0)
 			dcpu.interrupt((char) interruptMessage);
+
+		for(KeyboardCallback keyboardCallback : keyboardCallbacks) {
+			keyboardCallback.pressedKey(keyChar);
+		}
 	}
 
 	public void pressedKeyCode(int keyCode) {
 		buffer[++buffer_pointer] = (char) keyCode;
 		if(interruptMessage != 0)
  			dcpu.interrupt((char) interruptMessage);
+
+		for(KeyboardCallback keyboardCallback : keyboardCallbacks) {
+			keyboardCallback.pressedKeyCode(keyCode);
+		}
 	}
 
 	public void setCallbackIsKeyDown(CallbackIsKeyDown callbackIsKeyDown) {
 		this.callbackIsKeyDown = callbackIsKeyDown;
+	}
+
+	public void addCallback(KeyboardCallback keyboardCallback) {
+		keyboardCallbacks.add(keyboardCallback);
+	}
+
+	public interface KeyboardCallback {
+		public void pressedKey(char key);
+		public void pressedKeyCode(int key);
 	}
 }

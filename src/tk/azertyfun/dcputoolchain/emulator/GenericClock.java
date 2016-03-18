@@ -1,10 +1,14 @@
 package tk.azertyfun.dcputoolchain.emulator;
 
+import java.util.LinkedList;
+
 public class GenericClock extends DCPUHardware {
 	public static final int TYPE = 0x12d0b402, REVISION = 1, MANUFACTURER = 0;
 
 	protected int interval, intCount;
 	protected char ticks, interruptMessage;
+
+	private LinkedList<ClockCallback> clockCallbacks = new LinkedList<>();
 
 	public GenericClock(String id) {
 		super(TYPE, REVISION, MANUFACTURER);
@@ -31,7 +35,7 @@ public class GenericClock extends DCPUHardware {
 				dcpu.interrupt(interruptMessage);
 			}
 			intCount = 0;
-			ticks++;
+			addTick();
 		}
 	}
 
@@ -50,5 +54,19 @@ public class GenericClock extends DCPUHardware {
 		interruptMessage = 0;
 		interval = 0;
 		ticks = 0;
+	}
+
+	public void addCallback(ClockCallback clockCallback) {
+		clockCallbacks.add(clockCallback);
+	}
+
+	public void addTick() {
+		ticks++;
+		for(ClockCallback clockCallback : clockCallbacks)
+			clockCallback.ticksChanged(ticks);
+	}
+
+	public interface ClockCallback {
+		public void ticksChanged(int ticks);
 	}
 }
