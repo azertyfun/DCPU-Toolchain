@@ -33,6 +33,7 @@ public class EdcDisplay extends JFrame {
 		this.pack();
 		setResizable(false);
 
+		this.setLocationByPlatform(true);
 		this.setVisible(true);
 	}
 

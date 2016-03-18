@@ -6,6 +6,7 @@ import tk.azertyfun.dcputoolchain.emulator.DCPU;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
@@ -18,7 +19,7 @@ public class DebuggerInterface extends JFrame {
 	};
 
 	private JButton goToAddress = new JButton(goToAddressAction);
-	private JTextArea ramDump = new JTextArea("Ram viewer not loaded yet.");
+	private JTextArea ramDump = new JTextArea(""), ramChar = new JTextArea("");
 
 	private JLabel regs = new JLabel("<html>" +
 			"<head></head>" +
@@ -82,14 +83,23 @@ public class DebuggerInterface extends JFrame {
 		regs.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
 		getContentPane().add(regs);
 
+		Panel viewers = new Panel();
+		viewers.setLayout(new BorderLayout());
 		ramDump.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-		ramDump.setColumns(66);
-		ramDump.setRows(16);
+		ramDump.setColumns(68);
+		ramDump.setRows(32);
 		ramDump.setEditable(false);
-		getContentPane().add(ramDump, BorderLayout.SOUTH);
+		viewers.add(ramDump, BorderLayout.WEST);
+		ramChar.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+		ramChar.setColumns(15);
+		ramChar.setRows(32);
+		ramChar.setEditable(false);
+		viewers.add(ramChar, BorderLayout.EAST);
+		getContentPane().add(viewers, BorderLayout.SOUTH);
 
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.pack();
+		this.setLocationByPlatform(true);
 		this.setVisible(true);
 	}
 
@@ -109,24 +119,107 @@ public class DebuggerInterface extends JFrame {
 	}
 
 	public void goToAddress() {
-		String message = JOptionPane.showInputDialog("Please input an address in RAM.");
-		//TODO
+		// String message = JOptionPane.showInputDialog("Please input an address in RAM."); //Makes X kill the app on dispose(), for some reason. Google tells me to change the parent, which doesn't help. Oh, well.
+		JLabel label = new JLabel("Please input an address in RAM (or a register).");
+		JTextField textField = new JTextField("");
+		JButton button = new JButton("OK");
+
+		JFrame inputDialog = new JFrame("Go to address");
+		inputDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		inputDialog.getContentPane().setLayout(new BorderLayout());
+		inputDialog.getContentPane().add(label, BorderLayout.NORTH);
+		inputDialog.getContentPane().add(textField, BorderLayout.CENTER);
+		inputDialog.getContentPane().add(button, BorderLayout.SOUTH);
+		inputDialog.setLocationByPlatform(true);
+		inputDialog.pack();
+		inputDialog.setVisible(true);
+
+		ActionListener actionListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				String input = textField.getText();
+				if(input.equalsIgnoreCase("PC")) {
+					currentAddress = dcpu.get(0x10009);
+				} else if(input.equalsIgnoreCase("A")) {
+					currentAddress = dcpu.get(0x10000);
+				} else if(input.equalsIgnoreCase("B")) {
+					currentAddress = dcpu.get(0x10001);
+				} else if(input.equalsIgnoreCase("C")) {
+					currentAddress = dcpu.get(0x10002);
+				} else if(input.equalsIgnoreCase("X")) {
+					currentAddress = dcpu.get(0x10003);
+				} else if(input.equalsIgnoreCase("Y")) {
+					currentAddress = dcpu.get(0x10004);
+				} else if(input.equalsIgnoreCase("Z")) {
+					currentAddress = dcpu.get(0x10005);
+				} else if(input.equalsIgnoreCase("I")) {
+					currentAddress = dcpu.get(0x10006);
+				} else if(input.equalsIgnoreCase("J")) {
+					currentAddress = dcpu.get(0x10007);
+				} else if(input.equalsIgnoreCase("SP")) {
+					currentAddress = dcpu.get(0x10008);
+				} else if(input.equalsIgnoreCase("EX")) {
+					currentAddress = dcpu.get(0x1000a);
+				} else if(input.equalsIgnoreCase("IA")) {
+					currentAddress = dcpu.get(0x1000b);
+				} else {
+					try {
+						if(input.length() > 2 && input.substring(0, 2).equalsIgnoreCase("0x")) {
+							System.out.println(input.substring(2, input.length()));
+							currentAddress = (char) Integer.parseInt(input.substring(2, input.length()), 16);
+							System.out.println(Integer.parseInt(input.substring(2, input.length()), 16));
+						} else {
+							currentAddress = dcpu.get(Integer.parseInt(input));
+						}
+					} catch(NumberFormatException e) {
+						//A JOptionPane should display an error, but since they crash on me I'm too lazy to implement one myself.
+					}
+				}
+
+				while(currentAddress % 8 != 0) {
+					currentAddress--;
+				}
+
+				inputDialog.setVisible(false); //I'd use dispose() if I could, but it makes X kill the JVM. Not cool.
+				updateDebugInfo();
+			}
+		};
+
+		textField.addActionListener(actionListener);
+		button.addActionListener(actionListener);
 	}
 
 	public void updateDebugInfo() {
 		ramDump.setText("");
 		if(dcpu.isPausing()) {
-			String text = "0x0000: ";
-			for(int i = 0; i < 16 * 8; ++i) {
-				if((i + 1) % 8 == 0 && i != 16 * 8 - 1) {
-					text += "0x" + String.format("%04x", (int) dcpu.get(i)) + "\n0x" + String.format("%04x", i + 1) + ": ";
+			String text = "0x" + String.format("%04x", (int) currentAddress) + ": ";
+			String charText = "";
+			for(int i = currentAddress; i < currentAddress + 32 * 8; ++i) {
+				String eventualAsterisk = i == dcpu.get(0x10009) ? "*" : "";
+				if((i + 1) % 8 == 0 && i != currentAddress + 32 * 8 - 1) {
+					text += eventualAsterisk + "0x" + String.format("%04x", (int) dcpu.get(i)) + eventualAsterisk + "\n0x" + String.format("%04x", i + 1) + ": ";
+					if(dcpu.get(i) >= 0x20 && dcpu.get(i) <= 0x7f)
+						charText += dcpu.get(i) + "\n";
+					else
+						charText += ".\n";
 				} else if((i + 1) % 8 == 0) {
-					text += "0x" + String.format("%04x", (int) dcpu.get(i));
+					text += eventualAsterisk + "0x" + String.format("%04x", (int) dcpu.get(i)) + eventualAsterisk;
+					if(dcpu.get(i) >= 0x20 && dcpu.get(i) <= 0x7f)
+						charText += dcpu.get(i);
+					else
+						charText += ".";
 				} else {
-					text += "0x" + String.format("%04x", (int) dcpu.get(i)) + ", ";
+					text += eventualAsterisk + "0x" + String.format("%04x", (int) dcpu.get(i)) + eventualAsterisk + ", ";
+					if(dcpu.get(i) >= 0x20 && dcpu.get(i) <= 0x7f)
+						charText += dcpu.get(i);
+					else
+						charText += ".";
 				}
+
+
 			}
 			ramDump.setText(text);
+			ramChar.setText(charText);
 
 			goToAddress.setEnabled(true);
 

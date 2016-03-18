@@ -52,6 +52,7 @@ public class KeyboardDisplay extends JFrame implements KeyListener, CallbackIsKe
 
 		addKeyListener(this);
 
+		this.setLocationByPlatform(true);
 		this.setVisible(true);
 	}
 
