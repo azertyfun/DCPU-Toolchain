@@ -82,16 +82,29 @@ public class DebuggerInterface extends JFrame {
 		buttonsPanel.add(goToAddress);
 		getContentPane().add(buttonsPanel, BorderLayout.NORTH);
 
-		Panel regsAndHardware = new Panel();
-
-		regsAndHardware.setLayout(new BorderLayout());
 		regs.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-		regsAndHardware.add(regs, BorderLayout.WEST);
+		getContentPane().add(regs);
+
+		Panel viewers = new Panel();
+		BorderLayout layout = new BorderLayout();
+		layout.setHgap(10);
+		viewers.setLayout(layout);
+		ramDump.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+		ramDump.setColumns(68);
+		ramDump.setRows(32);
+		ramDump.setEditable(false);
+		viewers.add(ramDump, BorderLayout.WEST);
+
+		ramChar.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+		ramChar.setColumns(10);
+		ramChar.setRows(32);
+		ramChar.setEditable(false);
+		viewers.add(ramChar, BorderLayout.CENTER);
 
 		Panel hardwarePanel = new Panel();
 		hardwarePanel.setLayout(new GridLayout(0, 1));
 		for(DCPUHardware dcpuHardware : tickingThread.getHardware()) {
-			Panel panel = new Panel();
+			JPanel panel = new JPanel();
 			GridLayout gridLayout = new GridLayout(0, 2);
 			gridLayout.setHgap(20);
 			panel.setLayout(gridLayout);
@@ -101,7 +114,6 @@ public class DebuggerInterface extends JFrame {
 				tick.addActionListener(actionEvent -> dcpuHardware.tick60hz());
 				panel.add(label);
 				panel.add(tick);
-				hardwarePanel.add(panel);
 			} else if(dcpuHardware instanceof GenericClock) {
 				JLabel label = new JLabel("Generic clock: ");
 				JButton tick = new JButton("Tick");
@@ -125,8 +137,6 @@ public class DebuggerInterface extends JFrame {
 					}
 				});
 				panel.add(addTick);
-
-				hardwarePanel.add(panel);
 			} else if(dcpuHardware instanceof GenericKeyboard) {
 
 				JLabel label = new JLabel("Generic Keyboard: ");
@@ -150,14 +160,12 @@ public class DebuggerInterface extends JFrame {
 				panel.add(tick);
 				panel.add(keyboardInfoKey);
 				panel.add(keyboardInfoKeyCode);
-				hardwarePanel.add(panel);
 			} else if(dcpuHardware instanceof LEM1802) {
 				JLabel label = new JLabel("LEM1802: ");
 				JButton tick = new JButton("Tick");
 				tick.addActionListener(actionEvent -> dcpuHardware.tick60hz());
 				panel.add(label);
 				panel.add(tick);
-				hardwarePanel.add(panel);
 			} else if(dcpuHardware instanceof M35FD) {
 				JLabel label = new JLabel("M35FD: ");
 				JButton tick = new JButton("Tick");
@@ -167,9 +175,8 @@ public class DebuggerInterface extends JFrame {
 
 				JLabel statusLabel = new JLabel("Status: STATE_READY");
 				((M35FD) dcpuHardware).addCallback(status -> statusLabel.setText("Status: " + status));
-				panel.add(statusLabel);
 
-				hardwarePanel.add(panel);
+				panel.add(statusLabel);
 			} else if(dcpuHardware instanceof M525HD) {
 				JLabel label = new JLabel("M525HD: ");
 				JButton tick = new JButton("Tick");
@@ -179,9 +186,8 @@ public class DebuggerInterface extends JFrame {
 
 				JLabel statusLabel = new JLabel("Status: STATE_PARKED");
 				((M525HD) dcpuHardware).addCallback(status -> statusLabel.setText("Status: " + status));
-				panel.add(statusLabel);
 
-				hardwarePanel.add(panel);
+				panel.add(statusLabel);
 			} else if(dcpuHardware instanceof CPUControl) {
 				JLabel label = new JLabel("CPU Control: ");
 				JButton tick = new JButton("Tick");
@@ -193,25 +199,11 @@ public class DebuggerInterface extends JFrame {
 				((CPUControl) dcpuHardware).addCallback(mode -> modeLabel.setText("Mode: " + mode));
 
 				panel.add(modeLabel);
-
-				hardwarePanel.add(panel);
 			}
+			panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			hardwarePanel.add(panel);
 		}
-		regsAndHardware.add(hardwarePanel, BorderLayout.EAST);
-		getContentPane().add(regsAndHardware);
-
-		Panel viewers = new Panel();
-		viewers.setLayout(new BorderLayout());
-		ramDump.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-		ramDump.setColumns(68);
-		ramDump.setRows(32);
-		ramDump.setEditable(false);
-		viewers.add(ramDump, BorderLayout.WEST);
-		ramChar.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-		ramChar.setColumns(15);
-		ramChar.setRows(32);
-		ramChar.setEditable(false);
-		viewers.add(ramChar, BorderLayout.EAST);
+		viewers.add(hardwarePanel, BorderLayout.EAST);
 		getContentPane().add(viewers, BorderLayout.SOUTH);
 
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

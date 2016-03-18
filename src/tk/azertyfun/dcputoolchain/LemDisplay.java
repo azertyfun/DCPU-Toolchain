@@ -54,6 +54,14 @@ public class LemDisplay extends Thread {
 			}
 		}); */
 
+		//Center the window on the screen. Not ideal but afaik there is no way to let the display manager handle things.
+		GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		glfwSetWindowPos(
+				window,
+				(vidMode.width() - WIDTH) / 2,
+				(vidMode.height() - HEIGHT) / 2
+		);
+
 		glfwMakeContextCurrent(window);
 		glfwSwapInterval(1);
 		glfwShowWindow(window);
