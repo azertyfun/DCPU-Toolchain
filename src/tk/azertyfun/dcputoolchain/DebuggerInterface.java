@@ -108,38 +108,40 @@ public class DebuggerInterface extends JFrame {
 			GridLayout gridLayout = new GridLayout(0, 2);
 			gridLayout.setHgap(20);
 			panel.setLayout(gridLayout);
+
+			JLabel label = new JLabel();
+			panel.add(label);
+
+			JCheckBox ticking = new JCheckBox("Ticking", true);
+			ticking.setToolTipText("Note: Disabling ticking is not disabling the device. It will mostly disable interruptions from the hardware to the DCPU.");
+			final boolean[] enabledWhenRunning = {true};
+			final boolean[] enabledWhenPausing = {false};
+			ticking.addActionListener(actionEvent -> {
+				if(tickingThread.isPausing())
+					enabledWhenPausing[0] = !enabledWhenPausing[0];
+				else
+					enabledWhenRunning[0] = !enabledWhenRunning[0];
+				dcpuHardware.setTicking(ticking.isSelected());
+			});
+			tickingThread.addCallback(() -> {
+				ticking.setSelected(tickingThread.isPausing() ? enabledWhenPausing[0] : enabledWhenRunning[0]);
+				dcpuHardware.setTicking(ticking.isSelected());
+			});
+			panel.add(ticking);
+
 			if (dcpuHardware instanceof EDC) {
-				JLabel label = new JLabel("EDC: ");
-				JButton tick = new JButton("Tick");
-				tick.addActionListener(actionEvent -> dcpuHardware.tick60hz());
-				panel.add(label);
-				panel.add(tick);
+				label.setText("EDC: ");
 			} else if(dcpuHardware instanceof GenericClock) {
-				JLabel label = new JLabel("Generic clock: ");
-				JButton tick = new JButton("Tick");
-				tick.addActionListener(actionEvent -> dcpuHardware.tick60hz());
-				panel.add(label);
-				panel.add(tick);
+				label.setText("Generic clock: ");
 
 				JLabel ticksLabel = new JLabel("Ticks: ");
-				((GenericClock) dcpuHardware).addCallback(new GenericClock.ClockCallback() {
-					@Override
-					public void ticksChanged(int ticks) {
-						ticksLabel.setText("Ticks: " + ticks);
-					}
-				});
+				((GenericClock) dcpuHardware).addCallback(ticks -> ticksLabel.setText("Ticks: " + ticks));
 				panel.add(ticksLabel);
 				JButton addTick = new JButton("Add tick to clock");
-				addTick.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent actionEvent) {
-						((GenericClock) dcpuHardware).addTick();
-					}
-				});
+				addTick.addActionListener(actionEvent -> ((GenericClock) dcpuHardware).addTick());
 				panel.add(addTick);
 			} else if(dcpuHardware instanceof GenericKeyboard) {
-
-				JLabel label = new JLabel("Generic Keyboard: ");
+				label.setText("Generic Keyboard: ");
 				JLabel keyboardInfoKey = new JLabel("Last pressed key: ");
 				JLabel keyboardInfoKeyCode = new JLabel("Last pressed key code:");
 				((GenericKeyboard) dcpuHardware).addCallback(new GenericKeyboard.KeyboardCallback() {
@@ -154,46 +156,27 @@ public class DebuggerInterface extends JFrame {
 						keyboardInfoKeyCode.setText("Last pressed key code: " + key);
 					}
 				});
-				JButton tick = new JButton("Tick");
-				tick.addActionListener(actionEvent -> dcpuHardware.tick60hz());
-				panel.add(label);
-				panel.add(tick);
+
 				panel.add(keyboardInfoKey);
 				panel.add(keyboardInfoKeyCode);
 			} else if(dcpuHardware instanceof LEM1802) {
-				JLabel label = new JLabel("LEM1802: ");
-				JButton tick = new JButton("Tick");
-				tick.addActionListener(actionEvent -> dcpuHardware.tick60hz());
-				panel.add(label);
-				panel.add(tick);
+				label.setText("LEM1802: ");
 			} else if(dcpuHardware instanceof M35FD) {
-				JLabel label = new JLabel("M35FD: ");
-				JButton tick = new JButton("Tick");
-				tick.addActionListener(actionEvent -> dcpuHardware.tick60hz());
-				panel.add(label);
-				panel.add(tick);
+				label.setText("M35FD: ");
 
 				JLabel statusLabel = new JLabel("Status: STATE_READY");
 				((M35FD) dcpuHardware).addCallback(status -> statusLabel.setText("Status: " + status));
 
 				panel.add(statusLabel);
 			} else if(dcpuHardware instanceof M525HD) {
-				JLabel label = new JLabel("M525HD: ");
-				JButton tick = new JButton("Tick");
-				tick.addActionListener(actionEvent -> dcpuHardware.tick60hz());
-				panel.add(label);
-				panel.add(tick);
+				label.setText("M525HD: ");
 
 				JLabel statusLabel = new JLabel("Status: STATE_PARKED");
 				((M525HD) dcpuHardware).addCallback(status -> statusLabel.setText("Status: " + status));
 
 				panel.add(statusLabel);
 			} else if(dcpuHardware instanceof CPUControl) {
-				JLabel label = new JLabel("CPU Control: ");
-				JButton tick = new JButton("Tick");
-				tick.addActionListener(actionEvent -> dcpuHardware.tick60hz());
-				panel.add(label);
-				panel.add(tick);
+				label.setText("CPU Control: ");
 
 				JLabel modeLabel = new JLabel("Mode: 0");
 				((CPUControl) dcpuHardware).addCallback(mode -> modeLabel.setText("Mode: " + mode));
@@ -244,55 +227,52 @@ public class DebuggerInterface extends JFrame {
 		inputDialog.pack();
 		inputDialog.setVisible(true);
 
-		ActionListener actionListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				String input = textField.getText();
-				if(input.equalsIgnoreCase("PC")) {
-					currentAddress = dcpu.get(0x10009);
-				} else if(input.equalsIgnoreCase("A")) {
-					currentAddress = dcpu.get(0x10000);
-				} else if(input.equalsIgnoreCase("B")) {
-					currentAddress = dcpu.get(0x10001);
-				} else if(input.equalsIgnoreCase("C")) {
-					currentAddress = dcpu.get(0x10002);
-				} else if(input.equalsIgnoreCase("X")) {
-					currentAddress = dcpu.get(0x10003);
-				} else if(input.equalsIgnoreCase("Y")) {
-					currentAddress = dcpu.get(0x10004);
-				} else if(input.equalsIgnoreCase("Z")) {
-					currentAddress = dcpu.get(0x10005);
-				} else if(input.equalsIgnoreCase("I")) {
-					currentAddress = dcpu.get(0x10006);
-				} else if(input.equalsIgnoreCase("J")) {
-					currentAddress = dcpu.get(0x10007);
-				} else if(input.equalsIgnoreCase("SP")) {
-					currentAddress = dcpu.get(0x10008);
-				} else if(input.equalsIgnoreCase("EX")) {
-					currentAddress = dcpu.get(0x1000a);
-				} else if(input.equalsIgnoreCase("IA")) {
-					currentAddress = dcpu.get(0x1000b);
-				} else {
-					try {
-						if(input.length() > 2 && input.substring(0, 2).equalsIgnoreCase("0x")) {
-							System.out.println(input.substring(2, input.length()));
-							currentAddress = (char) Integer.parseInt(input.substring(2, input.length()), 16);
-							System.out.println(Integer.parseInt(input.substring(2, input.length()), 16));
-						} else {
-							currentAddress = dcpu.get(Integer.parseInt(input));
-						}
-					} catch(NumberFormatException e) {
-						//A JOptionPane should display an error, but since they crash on me I'm too lazy to implement one myself.
+		ActionListener actionListener = actionEvent -> {
+			String input = textField.getText();
+			if(input.equalsIgnoreCase("PC")) {
+				currentAddress = dcpu.get(0x10009);
+			} else if(input.equalsIgnoreCase("A")) {
+				currentAddress = dcpu.get(0x10000);
+			} else if(input.equalsIgnoreCase("B")) {
+				currentAddress = dcpu.get(0x10001);
+			} else if(input.equalsIgnoreCase("C")) {
+				currentAddress = dcpu.get(0x10002);
+			} else if(input.equalsIgnoreCase("X")) {
+				currentAddress = dcpu.get(0x10003);
+			} else if(input.equalsIgnoreCase("Y")) {
+				currentAddress = dcpu.get(0x10004);
+			} else if(input.equalsIgnoreCase("Z")) {
+				currentAddress = dcpu.get(0x10005);
+			} else if(input.equalsIgnoreCase("I")) {
+				currentAddress = dcpu.get(0x10006);
+			} else if(input.equalsIgnoreCase("J")) {
+				currentAddress = dcpu.get(0x10007);
+			} else if(input.equalsIgnoreCase("SP")) {
+				currentAddress = dcpu.get(0x10008);
+			} else if(input.equalsIgnoreCase("EX")) {
+				currentAddress = dcpu.get(0x1000a);
+			} else if(input.equalsIgnoreCase("IA")) {
+				currentAddress = dcpu.get(0x1000b);
+			} else {
+				try {
+					if(input.length() > 2 && input.substring(0, 2).equalsIgnoreCase("0x")) {
+						System.out.println(input.substring(2, input.length()));
+						currentAddress = (char) Integer.parseInt(input.substring(2, input.length()), 16);
+						System.out.println(Integer.parseInt(input.substring(2, input.length()), 16));
+					} else {
+						currentAddress = dcpu.get(Integer.parseInt(input));
 					}
+				} catch(NumberFormatException e) {
+					//A JOptionPane should display an error, but since they crash on me I'm too lazy to implement one myself.
 				}
-
-				while(currentAddress % 8 != 0) {
-					currentAddress--;
-				}
-
-				inputDialog.setVisible(false); //I'd use dispose() if I could, but it makes X kill the JVM. Not cool.
-				updateDebugInfo();
 			}
+
+			while(currentAddress % 8 != 0) {
+				currentAddress--;
+			}
+
+			inputDialog.setVisible(false); //I'd use dispose() if I could, but it makes X kill the JVM. Not cool.
+			updateDebugInfo();
 		};
 
 		textField.addActionListener(actionListener);
@@ -301,6 +281,7 @@ public class DebuggerInterface extends JFrame {
 
 	public void updateDebugInfo() {
 		ramDump.setText("");
+		ramChar.setText("");
 		if(dcpu.isPausing()) {
 			String text = "0x" + String.format("%04x", (int) currentAddress) + ": ";
 			String charText = "";

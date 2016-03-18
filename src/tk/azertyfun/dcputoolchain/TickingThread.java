@@ -10,6 +10,7 @@ public class TickingThread extends Thread {
 	private LinkedList<DCPUHardware> hardware;
 
 	private boolean pausing = false;
+	private LinkedList<TickingThreadCallback> tickingThreadCallbacks = new LinkedList<>();
 
 	public TickingThread(LinkedList<DCPUHardware> hardware) {
 		this.hardware = hardware;
@@ -19,22 +20,16 @@ public class TickingThread extends Thread {
 	public void run() {
 		while(!stop) {
 			long startTime = System.currentTimeMillis();
-			for(DCPUHardware h : hardware)
-				h.tick60hz();
+			for(DCPUHardware h : hardware) {
+				if(h.isTicking())
+					h.tick60hz();
+			}
 			long endTime = System.currentTimeMillis();
 			try {
 				if((int) (1000f / 60f - (endTime - startTime)) > 0)
 					Thread.sleep((int) (1000f / 60f - (endTime - startTime)));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}
-
-			while(pausing) {
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 			}
 		}
 	}
@@ -45,9 +40,22 @@ public class TickingThread extends Thread {
 
 	public void setPausing(boolean pausing) {
 		this.pausing = pausing;
+		tickingThreadCallbacks.forEach(TickingThreadCallback::tickingToggled);
 	}
 
 	public LinkedList<DCPUHardware> getHardware() {
 		return hardware;
+	}
+
+	public boolean isPausing() {
+		return pausing;
+	}
+
+	public void addCallback(TickingThreadCallback tickingThreadCallback) {
+		tickingThreadCallbacks.add(tickingThreadCallback);
+	}
+
+	public interface TickingThreadCallback {
+		void tickingToggled();
 	}
 }

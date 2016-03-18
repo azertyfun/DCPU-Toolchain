@@ -5,6 +5,7 @@ public abstract class DCPUHardware implements Identifiable {
 	private final int type, revision, manufacturer;
 	public DCPU dcpu;
 	protected String id;
+	private boolean ticking = true;
 
 	protected DCPUHardware(int type, int revision, int manufacturer) {
 		this.type = type;
@@ -50,5 +51,13 @@ public abstract class DCPUHardware implements Identifiable {
 	@Override
 	public void setID(String id) {
 		this.id = id;
+	}
+
+	public boolean isTicking() {
+		return ticking;
+	}
+
+	public void setTicking(boolean ticking) {
+		this.ticking = ticking;
 	}
 }
