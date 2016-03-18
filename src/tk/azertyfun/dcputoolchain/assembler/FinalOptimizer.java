@@ -12,8 +12,11 @@ public class FinalOptimizer {
 
 	private HashMap<String, Character> labelToValue = new HashMap<>();
 
-	public FinalOptimizer(LinkedList<Token> tokens) {
+	private boolean optimizeShortLiterals;
+
+	public FinalOptimizer(LinkedList<Token> tokens, boolean optimizeShortLiterals) {
 		this.tokens = tokens;
+		this.optimizeShortLiterals = optimizeShortLiterals;
 	}
 
 	public void optimize() throws ParsingException {
@@ -41,11 +44,13 @@ public class FinalOptimizer {
 					token.makeDatValueLiteral(labelToValue);
 				}
 			}
-			for(int j = 0; j < i && j < tokens.size(); ++j) {
-				Token token = tokens.get(j);
+			if(optimizeShortLiterals) {
+				for (int j = 0; j < i && j < tokens.size(); ++j) {
+					Token token = tokens.get(j);
 
-				if(token.getA() instanceof ArgumentOptimizable) {
-					((ArgumentOptimizable) token.getA()).optimizeLiteral();
+					if (token.getA() instanceof ArgumentOptimizable) {
+						((ArgumentOptimizable) token.getA()).optimizeLiteral();
+					}
 				}
 			}
 		}

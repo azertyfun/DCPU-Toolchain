@@ -39,15 +39,18 @@ public class Emulator implements CallbackStop {
 
 		boolean assemble = false;
 		boolean debugger = false;
+		boolean optimize_shortLiterals = true;
 
 		if(args.length > 2) {
 			for(int i = 2; i < args.length; ++i) {
-				if(args[i].equalsIgnoreCase("--assemble")) {
+				if (args[i].equalsIgnoreCase("--assemble")) {
 					assemble = true;
-				} else if(args[i].equalsIgnoreCase("--debugger")) {
+				} else if (args[i].equalsIgnoreCase("--debugger")) {
 					debugger = true;
-				} else if(args[i].equalsIgnoreCase("--little-endian")) {
+				} else if (args[i].equalsIgnoreCase("--little-endian")) {
 					big_endian = false;
+				} else if(args[i].equalsIgnoreCase("--disable-shortLiterals")) {
+					optimize_shortLiterals = false;
 				} else if(args[i].equalsIgnoreCase("--LEM1802")) {
 					hardware.add(hardwareTracker.requestLem());
 					hardware.getLast().connectTo(dcpu);
@@ -163,7 +166,11 @@ public class Emulator implements CallbackStop {
 		try {
 			if(assemble) {
 				File tmpFile = File.createTempFile("DCPUToolchain", Long.toString(System.currentTimeMillis()));
-				AssemblerManager assemblerManager = new AssemblerManager(new String[] {"assemble", input_file, tmpFile.getAbsolutePath()});
+				AssemblerManager assemblerManager;
+				if(optimize_shortLiterals)
+					assemblerManager = new AssemblerManager(new String[] {"assemble", input_file, tmpFile.getAbsolutePath()});
+				else
+					assemblerManager = new AssemblerManager(new String[] {"assemble", input_file, tmpFile.getAbsolutePath(), "--disable-shortLiterals"});
 				boolean success = assemblerManager.assemble();
 				if(!success)
 					System.exit(-1);

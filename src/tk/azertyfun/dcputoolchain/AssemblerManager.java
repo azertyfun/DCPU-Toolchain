@@ -10,7 +10,7 @@ import java.util.LinkedList;
 
 public class AssemblerManager {
 
-	private boolean big_endian = true;
+	private boolean big_endian = true, optimize_shortLiterals = true;
 	private String inputFile_path;
 	private String outputFile_path;
 
@@ -22,7 +22,8 @@ public class AssemblerManager {
 			for(int i = 3; i < args.length; ++i) {
 				if(args[i].equalsIgnoreCase("--little-endian")) {
 					big_endian = false;
-				}
+				} else if(args[i].equalsIgnoreCase("--disable-shortLiterals"))
+					optimize_shortLiterals = false;
 			}
 		}
 	}
@@ -78,7 +79,7 @@ public class AssemblerManager {
 			System.out.print("Optimizing... ");
 			start = System.currentTimeMillis();
 
-			FinalOptimizer finalOptimizer = new FinalOptimizer(tokens);
+			FinalOptimizer finalOptimizer = new FinalOptimizer(tokens, optimize_shortLiterals);
 			finalOptimizer.optimize();
 
 			System.out.println("Done in " + (System.currentTimeMillis() - start) + " ms.");
