@@ -18,17 +18,9 @@ public class DebuggerInterface extends JFrame {
 	};
 
 	private JButton goToAddress = new JButton(goToAddressAction);
-	private JTextArea ramDump = new JTextArea(""), ramChar = new JTextArea("");
+	private JEditorPane ramDump = new JEditorPane("text/html", ""), ramChar = new JEditorPane("text/html", "");
 
-	private JLabel regs = new JLabel("<html>" +
-			"<head></head>" +
-			"<body>" +
-			"A: -, B: -, C: -<br />" +
-			"X: -, Y: -, Z: -<br />" +
-			"I: -, J: -<br />" +
-			"PC: -, SP: -, EX: -, IA: -" +
-			"</body>" +
-			"</html>");
+	private JLabel regs = new JLabel(), stack = new JLabel();
 
 	private DCPU dcpu;
 	private TickingThread tickingThread;
@@ -82,24 +74,34 @@ public class DebuggerInterface extends JFrame {
 		buttonsPanel.add(goToAddress);
 		getContentPane().add(buttonsPanel, BorderLayout.NORTH);
 
+		JPanel regsAndStack = new JPanel();
+		regsAndStack.setLayout(new BorderLayout());
+
 		regs.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-		getContentPane().add(regs);
+		regsAndStack.add(regs, BorderLayout.WEST);
+
+		stack.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+		regsAndStack.add(stack, BorderLayout.EAST);
+
+		getContentPane().add(regsAndStack);
 
 		Panel viewers = new Panel();
 		BorderLayout layout = new BorderLayout();
 		layout.setHgap(10);
 		viewers.setLayout(layout);
 		ramDump.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-		ramDump.setColumns(68);
-		ramDump.setRows(32);
+		//ramDump.setColumns(68);
+		//ramDump.setRows(32);
 		ramDump.setEditable(false);
 		viewers.add(ramDump, BorderLayout.WEST);
 
 		ramChar.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-		ramChar.setColumns(10);
-		ramChar.setRows(32);
+		//ramChar.setColumns(10);
+		//ramChar.setRows(32);
 		ramChar.setEditable(false);
 		viewers.add(ramChar, BorderLayout.CENTER);
+
+		clearDebugInfo();
 
 		Panel hardwarePanel = new Panel();
 		hardwarePanel.setLayout(new GridLayout(0, 1));
@@ -280,27 +282,28 @@ public class DebuggerInterface extends JFrame {
 	}
 
 	public void updateDebugInfo() {
-		ramDump.setText("");
-		ramChar.setText("");
 		if(dcpu.isPausing()) {
+			ramDump.setText("<html><head><style>body{font-family:monospace;font-size:10px;}</style></head><body>");
+			ramChar.setText("<html><head><style>body{font-family:monospace;font-size:10px;}</style></head><body>");
 			String text = "0x" + String.format("%04x", (int) currentAddress) + ": ";
 			String charText = "";
 			for(int i = currentAddress; i < currentAddress + 32 * 8; ++i) {
-				String eventualAsterisk = i == dcpu.get(0x10009) ? "*" : "";
+				String pcHighlighterOpen = i == dcpu.get(0x10009) ? "<strong>" : "";
+				String pcHighlighterClose = i == dcpu.get(0x10009) ? "</strong>" : "";
 				if((i + 1) % 8 == 0 && i != currentAddress + 32 * 8 - 1) {
-					text += eventualAsterisk + "0x" + String.format("%04x", (int) dcpu.get(i)) + eventualAsterisk + "\n0x" + String.format("%04x", i + 1) + ": ";
+					text += pcHighlighterOpen + "0x" + String.format("%04x", (int) dcpu.get(i)) + pcHighlighterClose + "<br />0x" + String.format("%04x", i + 1) + ": ";
 					if(dcpu.get(i) >= 0x20 && dcpu.get(i) <= 0x7f)
-						charText += dcpu.get(i) + "\n";
+						charText += dcpu.get(i) + "<br />";
 					else
-						charText += ".\n";
+						charText += ".<br />";
 				} else if((i + 1) % 8 == 0) {
-					text += eventualAsterisk + "0x" + String.format("%04x", (int) dcpu.get(i)) + eventualAsterisk;
+					text += pcHighlighterOpen + "0x" + String.format("%04x", (int) dcpu.get(i)) + pcHighlighterClose;
 					if(dcpu.get(i) >= 0x20 && dcpu.get(i) <= 0x7f)
 						charText += dcpu.get(i);
 					else
 						charText += ".";
 				} else {
-					text += eventualAsterisk + "0x" + String.format("%04x", (int) dcpu.get(i)) + eventualAsterisk + ", ";
+					text += pcHighlighterOpen + "0x" + String.format("%04x", (int) dcpu.get(i)) + pcHighlighterClose + ", ";
 					if(dcpu.get(i) >= 0x20 && dcpu.get(i) <= 0x7f)
 						charText += dcpu.get(i);
 					else
@@ -309,6 +312,8 @@ public class DebuggerInterface extends JFrame {
 
 
 			}
+			text += "</body></html>";
+			charText += "</body></html>";
 			ramDump.setText(text);
 			ramChar.setText(charText);
 
@@ -323,8 +328,65 @@ public class DebuggerInterface extends JFrame {
 					"PC: 0x" + String.format("%04x", (int) dcpu.get(0x10009)) + ", SP: 0x" + String.format("%04x", (int) dcpu.get(0x10008)) + ", EX: 0x" + String.format("%04x", (int) dcpu.get(0x1000a)) + ", IA: 0x" + String.format("%04x", (int) dcpu.get(0x1000b)) +
 					"</body>" +
 					"</html>");
+
+			String stackText = "<html>" +
+					"<head></head>" +
+					"<body>" +
+					"Stack: (0x" + String.format("%04x", (int) dcpu.get(0x10008)) + ") ";
+			for(int i = dcpu.get(0x10008); i < dcpu.get(0x10008) + 10 && i != 0xFFFF; ++i) {
+				stackText += "0x" + String.format("%04x", (int) dcpu.get(i)) + ((i == dcpu.get(0x10008) + 9 || i == 0xFFFE) ? " (0x" + String.format("%04x", i) + ")" : ", ");
+			}
+			stackText += "</body>" +
+					"</html>";
+
+			stack.setText(stackText);
 		} else {
 			goToAddress.setEnabled(false);
+
+			clearDebugInfo();
 		}
+	}
+
+	public void clearDebugInfo() {
+		ramDump.setText("<html><head><style>body{font-family:monospace;font-size:10px;}</style></head><body>");
+		ramChar.setText("<html><head><style>body{font-family:monospace;font-size:10px;}</style></head><body>");
+
+		String text = "0x0000: ";
+		String charText = "";
+		for(int i = 0; i < 32 * 8; ++i) {
+			if((i + 1) % 8 == 0 && i != 32 * 8 - 1) {
+				text += "0x0000<br />0x0000: ";
+				charText += ".<br />";
+			} else if((i + 1) % 8 == 0) {
+				text += "0x0000";
+				charText += ".";
+			} else {
+				text += "0x0000, ";
+				charText += ".";
+			}
+
+		}
+		text += "</body></html>";
+		charText += "</body></html>";
+		ramDump.setText(text);
+		ramChar.setText(charText);
+
+		goToAddress.setEnabled(true);
+
+		regs.setText("<html>" +
+				"<head></head>" +
+				"<body>" +
+				"A: -, B: -, C: -<br />" +
+				"X: -, Y: -, Z: -<br />" +
+				"I: -, J: -<br />" +
+				"PC: -, SP: -, EX: -, IA: -" +
+				"</body>" +
+				"</html>");
+		stack.setText("<html>" +
+				"<head></head>" +
+				"<body>" +
+				"Stack: (0xFFFF) 0x0000 (0xFFFF)" +
+				"</body>" +
+				"</html>");
 	}
 }
