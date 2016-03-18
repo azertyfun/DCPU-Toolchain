@@ -70,7 +70,7 @@ public class AssemblerManager {
 			System.out.print("Tokenizing... ");
 			start = System.currentTimeMillis();
 
-			Tokenizer tokenizer = new Tokenizer(sourceManager);
+			Tokenizer tokenizer = new Tokenizer(sourceManager, optimize_shortLiterals);
 			LinkedList<Token> tokens = tokenizer.tokenize();
 
 			System.out.println("Done in " + (System.currentTimeMillis() - start) + " ms.");

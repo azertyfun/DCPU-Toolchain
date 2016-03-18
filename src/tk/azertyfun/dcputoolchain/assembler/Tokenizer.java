@@ -10,9 +10,11 @@ import java.util.LinkedList;
 public class Tokenizer {
 
 	private SourceManager sourceManager;
+	private boolean optimizeShortLiterals;
 
-	public Tokenizer(SourceManager sourceManager) {
+	public Tokenizer(SourceManager sourceManager, boolean optimizeShortLiterals) {
 		this.sourceManager = sourceManager;
+		this.optimizeShortLiterals = optimizeShortLiterals;
 	}
 
 	public LinkedList<Token> tokenize() throws ParsingException {
@@ -131,7 +133,7 @@ public class Tokenizer {
 
 	private Argument getArgumentA(String a, Line line) throws ParsingException {
 		if(a.charAt(0) >= '0' && a.charAt(0) <= '9') //A is a number
-			return new ArgumentLiteral(a, line, sourceManager.getS_labels());
+			return new ArgumentLiteral(a, line, sourceManager.getS_labels(), optimizeShortLiterals);
 		else if(a.length() == 1) //A is a register
 			return new ArgumentRegister(a, line);
 		else if(a.equalsIgnoreCase("SP"))
