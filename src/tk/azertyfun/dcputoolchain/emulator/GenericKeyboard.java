@@ -60,12 +60,14 @@ public class GenericKeyboard extends DCPUHardware {
 	}
 
 	public void pressedKeyCode(int keyCode) {
-		buffer[++buffer_pointer] = (char) keyCode;
-		if(interruptMessage != 0)
- 			dcpu.interrupt((char) interruptMessage);
+		if(buffer_pointer + 1 < buffer.length) {
+			buffer[++buffer_pointer] = (char) keyCode;
+			if (interruptMessage != 0)
+				dcpu.interrupt((char) interruptMessage);
 
-		for(KeyboardCallback keyboardCallback : keyboardCallbacks) {
-			keyboardCallback.pressedKeyCode(keyCode);
+			for (KeyboardCallback keyboardCallback : keyboardCallbacks) {
+				keyboardCallback.pressedKeyCode(keyCode);
+			}
 		}
 	}
 
