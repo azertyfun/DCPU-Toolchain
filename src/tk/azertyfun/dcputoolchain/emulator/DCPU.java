@@ -39,6 +39,8 @@ public class DCPU extends Thread implements Identifiable {
 
 	private boolean tickRequested = false;
 
+	private DebuggerCallback debuggerCallback;
+
 	public DCPU(String id) {
 		this.id = id;
 	}
@@ -89,7 +91,7 @@ public class DCPU extends Thread implements Identifiable {
 
 		while(!stopped) {
 			long start_ns = System.nanoTime();
-			for(int i = 0; i < batchSize; ++i) {
+			for(int i = 0; i < batchSize && !pausing; ++i) {
 				if(!sleeping)
 					tick();
 			}
@@ -213,6 +215,14 @@ public class DCPU extends Thread implements Identifiable {
 							if(a >= 0 && a < hardware.size())
 								((DCPUHardware) hardware.get(a)).interrupt();
 						}
+						break;
+					case 19: //LOG
+						if(debuggerCallback != null)
+							debuggerCallback.log(a);
+						break;
+					case 20: //BRK
+						if(debuggerCallback != null)
+							debuggerCallback.broke();
 						break;
 					default:
 						break;
@@ -663,5 +673,15 @@ public class DCPU extends Thread implements Identifiable {
 
 	public boolean isPausing() {
 		return pausing;
+	}
+
+	public void setCallback(DebuggerCallback debuggerCallback) {
+		this.debuggerCallback = debuggerCallback;
+	}
+
+	public interface DebuggerCallback {
+		void broke();
+
+		void log(char log);
 	}
 }

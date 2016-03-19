@@ -20,7 +20,7 @@ public class DebuggerInterface extends JFrame {
 	private JButton goToAddress = new JButton(goToAddressAction);
 	private JEditorPane ramDump = new JEditorPane("text/html", ""), ramChar = new JEditorPane("text/html", "");
 
-	private JLabel regs = new JLabel(), stack = new JLabel();
+	private JLabel regs = new JLabel(), stack = new JLabel(), logs = new JLabel("Logs: ");
 
 	private DCPU dcpu;
 	private TickingThread tickingThread;
@@ -80,8 +80,11 @@ public class DebuggerInterface extends JFrame {
 		regs.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
 		regsAndStack.add(regs, BorderLayout.WEST);
 
+		logs.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+		regsAndStack.add(logs, BorderLayout.EAST);
+
 		stack.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-		regsAndStack.add(stack, BorderLayout.EAST);
+		regsAndStack.add(stack, BorderLayout.SOUTH);
 
 		getContentPane().add(regsAndStack);
 
@@ -102,6 +105,18 @@ public class DebuggerInterface extends JFrame {
 		viewers.add(ramChar, BorderLayout.CENTER);
 
 		clearDebugInfo();
+
+		dcpu.setCallback(new DCPU.DebuggerCallback() {
+			@Override
+			public void broke() {
+				runpause();
+			}
+
+			@Override
+			public void log(char log) {
+				logs.setText(logs.getText() + ", 0x" + String.format("%04x", (int) log) + " ('" + log + "')");
+			}
+		});
 
 		Panel hardwarePanel = new Panel();
 		hardwarePanel.setLayout(new GridLayout(0, 1));
@@ -258,9 +273,7 @@ public class DebuggerInterface extends JFrame {
 			} else {
 				try {
 					if(input.length() > 2 && input.substring(0, 2).equalsIgnoreCase("0x")) {
-						System.out.println(input.substring(2, input.length()));
 						currentAddress = (char) Integer.parseInt(input.substring(2, input.length()), 16);
-						System.out.println(Integer.parseInt(input.substring(2, input.length()), 16));
 					} else {
 						currentAddress = dcpu.get(Integer.parseInt(input));
 					}
