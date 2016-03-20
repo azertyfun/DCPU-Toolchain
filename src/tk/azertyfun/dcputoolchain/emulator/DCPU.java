@@ -40,6 +40,7 @@ public class DCPU extends Thread implements Identifiable {
 	private boolean tickRequested = false;
 
 	private DebuggerCallback debuggerCallback;
+	private char currentInstruction = 0;
 
 	public DCPU(String id) {
 		this.id = id;
@@ -153,6 +154,8 @@ public class DCPU extends Thread implements Identifiable {
 				}
 			}
 		}
+
+		currentInstruction = pc;
 
 		char opcode = ram[pc++];
 		int cmd = opcode & 0x1F;
@@ -677,6 +680,10 @@ public class DCPU extends Thread implements Identifiable {
 
 	public void setCallback(DebuggerCallback debuggerCallback) {
 		this.debuggerCallback = debuggerCallback;
+	}
+
+	public char getCurrentInstruction() {
+		return currentInstruction;
 	}
 
 	public interface DebuggerCallback {

@@ -1,5 +1,6 @@
 package tk.azertyfun.dcputoolchain;
 
+import tk.azertyfun.dcputoolchain.disassembler.Disassembler;
 import tk.azertyfun.dcputoolchain.emulator.*;
 
 import javax.swing.*;
@@ -8,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.LinkedHashMap;
 
 public class DebuggerInterface extends JFrame {
 	private Action goToAddressAction = new AbstractAction("Go to address (Ctrl+G)") {
@@ -18,7 +20,7 @@ public class DebuggerInterface extends JFrame {
 	};
 
 	private JButton goToAddress = new JButton(goToAddressAction);
-	private JEditorPane ramDump = new JEditorPane("text/html", ""), ramChar = new JEditorPane("text/html", "");
+	private JEditorPane ramDump = new JEditorPane("text/html", ""), ramChar = new JEditorPane("text/html", ""), ramDisassembled = new JEditorPane("text/html", "");
 
 	private JLabel regs = new JLabel(), stack = new JLabel(), logs = new JLabel("Logs: ");
 
@@ -26,6 +28,7 @@ public class DebuggerInterface extends JFrame {
 	private TickingThread tickingThread;
 
 	private char currentAddress;
+	private boolean currentAddressisPC = false;
 
 	public DebuggerInterface(DCPU dcpu, TickingThread tickingThread, CallbackStop callbackStop) {
 		//runpause.addActionListener(actionEvent -> runpause());
@@ -90,19 +93,27 @@ public class DebuggerInterface extends JFrame {
 
 		Panel viewers = new Panel();
 		BorderLayout layout = new BorderLayout();
-		layout.setHgap(10);
 		viewers.setLayout(layout);
+
+		Panel rams = new Panel();
+		BorderLayout ramsLayout = new BorderLayout();
+		ramsLayout.setHgap(10);
 		ramDump.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
 		//ramDump.setColumns(68);
 		//ramDump.setRows(32);
 		ramDump.setEditable(false);
-		viewers.add(ramDump, BorderLayout.WEST);
+		rams.add(ramDump, BorderLayout.WEST);
 
 		ramChar.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
 		//ramChar.setColumns(10);
 		//ramChar.setRows(32);
 		ramChar.setEditable(false);
-		viewers.add(ramChar, BorderLayout.CENTER);
+		rams.add(ramChar, BorderLayout.CENTER);
+
+		ramDisassembled.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+		ramDisassembled.setEditable(false);
+		rams.add(ramDisassembled, BorderLayout.EAST);
+		viewers.add(rams, BorderLayout.WEST);
 
 		clearDebugInfo();
 
@@ -225,6 +236,12 @@ public class DebuggerInterface extends JFrame {
 
 	public void step() {
 		dcpu.step();
+		if(currentAddressisPC) {
+			currentAddress = dcpu.getCurrentInstruction();
+			while(currentAddress % 8 != 0) {
+				currentAddress--;
+			}
+		}
 		updateDebugInfo();
 	}
 
@@ -246,8 +263,10 @@ public class DebuggerInterface extends JFrame {
 
 		ActionListener actionListener = actionEvent -> {
 			String input = textField.getText();
+			currentAddressisPC = false;
 			if(input.equalsIgnoreCase("PC")) {
-				currentAddress = dcpu.get(0x10009);
+				currentAddress = dcpu.getCurrentInstruction();
+				currentAddressisPC = true;
 			} else if(input.equalsIgnoreCase("A")) {
 				currentAddress = dcpu.get(0x10000);
 			} else if(input.equalsIgnoreCase("B")) {
@@ -298,8 +317,10 @@ public class DebuggerInterface extends JFrame {
 		if(dcpu.isPausing()) {
 			ramDump.setText("<html><head><style>body{font-family:monospace;font-size:10px;}</style></head><body>");
 			ramChar.setText("<html><head><style>body{font-family:monospace;font-size:10px;}</style></head><body>");
+			ramDisassembled.setText("<html><head><style>body{font-family:monospace;font-size:10px;}</style></head><body>");
 			String text = "0x" + String.format("%04x", (int) currentAddress) + ": ";
 			String charText = "";
+			String disassembledText = "";
 			for(int i = currentAddress; i < currentAddress + 32 * 8; ++i) {
 				String pcHighlighterOpen = i == dcpu.get(0x10009) ? "<strong>" : "";
 				String pcHighlighterClose = i == dcpu.get(0x10009) ? "</strong>" : "";
@@ -322,13 +343,27 @@ public class DebuggerInterface extends JFrame {
 					else
 						charText += ".";
 				}
-
-
 			}
+
+			char[] ram = new char[32];
+			for(int i = 0; i < 32; ++i) {
+				ram[i] = dcpu.get(currentAddress + i - 16);
+			}
+			Disassembler disassembler = new Disassembler(ram, dcpu.getCurrentInstruction(), (char) (currentAddress - 16));
+			LinkedHashMap<String, Boolean> disassembled = disassembler.disassemble();
+			for(String key : disassembled.keySet()) {
+				if(disassembled.get(key))
+					disassembledText += "<strong>" + key + "</strong><br />";
+				else
+					disassembledText += key + "<br />";
+			}
+
 			text += "</body></html>";
 			charText += "</body></html>";
+			disassembledText += "</body></html>";
 			ramDump.setText(text);
 			ramChar.setText(charText);
+			ramDisassembled.setText(disassembledText);
 
 			goToAddress.setEnabled(true);
 
@@ -363,9 +398,11 @@ public class DebuggerInterface extends JFrame {
 	public void clearDebugInfo() {
 		ramDump.setText("<html><head><style>body{font-family:monospace;font-size:10px;}</style></head><body>");
 		ramChar.setText("<html><head><style>body{font-family:monospace;font-size:10px;}</style></head><body>");
+		ramDisassembled.setText("<html><head><style>body{font-family:monospace;font-size:10px;}</style></head><body>");
 
 		String text = "0x0000: ";
 		String charText = "";
+		String disassembledText = "";
 		for(int i = 0; i < 32 * 8; ++i) {
 			if((i + 1) % 8 == 0 && i != 32 * 8 - 1) {
 				text += "0x0000<br />0x0000: ";
@@ -377,12 +414,16 @@ public class DebuggerInterface extends JFrame {
 				text += "0x0000, ";
 				charText += ".";
 			}
-
 		}
+		for(int i = 0; i < 32; ++i)
+			disassembledText += "--------------------------<br />";
+
 		text += "</body></html>";
 		charText += "</body></html>";
+		disassembledText += "</body></html>";
 		ramDump.setText(text);
 		ramChar.setText(charText);
+		ramDisassembled.setText(disassembledText);
 
 		goToAddress.setEnabled(true);
 
