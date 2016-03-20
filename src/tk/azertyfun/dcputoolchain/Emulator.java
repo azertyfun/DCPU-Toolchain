@@ -193,7 +193,7 @@ public class Emulator implements CallbackStop {
 						s = sc.nextLine();
 					} while(!s.equalsIgnoreCase("stop"));
 
-					this.stop();
+					stopCallback();
 				}
 			}.start();
 		} catch (NoSuchFileException e) {
