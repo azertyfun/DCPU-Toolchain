@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>DCPU-Toolchain by azertyfun</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>DCPU-Toolchain</h1>
+        <p>DCPU emulator and assembler for the techcompliant game (see https://www.reddit.com/r/techcompliant)</p>
+
+        <p class="view"><a href="https://github.com/azertyfun/DCPU-Toolchain">View the Project on GitHub <small>azertyfun/DCPU-Toolchain</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/azertyfun/DCPU-Toolchain/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/azertyfun/DCPU-Toolchain/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/azertyfun/DCPU-Toolchain">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="about-dcpu-toolchain" class="anchor" href="#about-dcpu-toolchain" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>About DCPU-Toolchain</h1>
+
+<p>DCPU-Toolchain is an emulator, a debugger and an assembler for the techcompliant DCPU (formerly notch's in 0x10^c).</p>
+
+<h1>
+<a id="supported-hardware" class="anchor" href="#supported-hardware" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Supported hardware</h1>
+
+<ul>
+<li>DCPU;</li>
+<li>CPU-Control (IACM);</li>
+<li>Clock;</li>
+<li>Keyboard;</li>
+<li>LEM1802;</li>
+<li>EDC;</li>
+<li>M35FD.</li>
+</ul>
+
+<h1>
+<a id="planned-hardware" class="anchor" href="#planned-hardware" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Planned hardware</h1>
+
+<p>Everything planned by <a href="https://github.com/paultech/TC-Specs">Paul</a>.</p>
+
+<h1>
+<a id="how-to-build" class="anchor" href="#how-to-build" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to build</h1>
+
+<ul>
+<li>Import with IntelliJ idea;</li>
+<li>Install org.lwjgl:lwjgl:3.0.0b from Maven;</li>
+<li>Download and add the 3.0.0b LWJGL natives from <a href="https://www.lwjgl.org/download">the LWJGL downloads page</a>;</li>
+<li>Enjoy!</li>
+</ul>
+
+<h1>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h1>
+
+<h2>
+<a id="using-the-launcher" class="anchor" href="#using-the-launcher" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Using the launcher</h2>
+
+<p>Simply download and run the launcher (also on <a href="https://github.com/azertyfun/DCPU-Toolchain-Launcher">github</a>). It works as an alternative to the command line. It also saves your configuration for the next launch.</p>
+
+<h2>
+<a id="using-the-command-line" class="anchor" href="#using-the-command-line" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Using the command line</h2>
+
+<ul>
+<li>To run a program: <code>java -jar DCPU-Toolchain.jar run &lt;file&gt; [--assemble] [--debugger] [--little-endian] [--clock] [--keyboard] [--lem1802] [--edc] [--M35FD=/path/to/file] [--M525HD=/path/to/file]</code>: Runs emulator for  (binary format) with specified hardware. If the --assemble flag is set, first assembles the file in the system temp directory. Big-endian by default, unless the --little-endian switch is present. If no hardware is specified, runs with clock, keyboard and LEM1802. --debugger enables a debugger interface with run/pause/stop/step, an interface to view the RAM and registers.</li>
+<li>To assemble a program: <code>java -jar DCPU-Toolchain.jar assemble &lt;input file&gt; &lt;output file&gt; [--little-endian]</code>: Assembles  to . Big-endian by default, unless the --little-endian switch is present.</li>
+</ul>
+
+<h2>
+<a id="screenshot" class="anchor" href="#screenshot" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Screenshot</h2>
+
+<p><img src="https://raw.githubusercontent.com/azertyfun/DCPU-Toolchain/master/res/screenshot.png" alt="Screenshot of DCPU-Toolchain"></p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/azertyfun">azertyfun</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
