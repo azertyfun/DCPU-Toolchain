@@ -1,28 +1,33 @@
-package tk.azertyfun.dcputoolchain;
+package tk.azertyfun.dcputoolchain.interfaces;
 
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWKeyCallback;
+import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
 import tk.azertyfun.dcputoolchain.emulator.LEM1802;
 import tk.azertyfun.dcputoolchain.emulator.Texture;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glVertex2f;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class LemDisplay extends Thread {
+public class LemDisplayGlfw extends LemDisplay {
+
 	public final int SCALE = 5;
-	public final int WIDTH = (128 +8) * SCALE;
-	public final int HEIGHT = (96 +8) * SCALE;
+	public final int REAL_WIDTH = (WIDTH +8) * SCALE;
+	public final int REAL_HEIGHT = (HEIGHT +8) * SCALE;
 
 	private GLFWErrorCallback errorCallback;
 	private GLFWKeyCallback keyCallback;
 
 	private long window;
 
-	private LEM1802 lem1802;
-
-	public LemDisplay(LEM1802 lem1802) {
-		this.lem1802 = lem1802;
+	public LemDisplayGlfw(LEM1802 lem1802) {
+		super(lem1802);
 	}
 
 	public void run() {
@@ -44,7 +49,7 @@ public class LemDisplay extends Thread {
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-		window = glfwCreateWindow(WIDTH, HEIGHT, "DCPU Emulator Display for techcompliant", NULL, NULL);
+		window = glfwCreateWindow(REAL_WIDTH, REAL_HEIGHT, "DCPU Emulator Display for techcompliant", NULL, NULL);
 		if(window == NULL)
 			throw new RuntimeException("Could not create the GLFW window. Screen will not be displayed.");
 
@@ -58,8 +63,8 @@ public class LemDisplay extends Thread {
 		GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 		glfwSetWindowPos(
 				window,
-				(vidMode.width() - WIDTH) / 2,
-				(vidMode.height() - HEIGHT) / 2
+				(vidMode.width() - REAL_WIDTH) / 2,
+				(vidMode.height() - REAL_HEIGHT) / 2
 		);
 
 		glfwMakeContextCurrent(window);
@@ -74,7 +79,7 @@ public class LemDisplay extends Thread {
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(0, WIDTH, HEIGHT, 0, 1, -1);
+		glOrtho(0, REAL_WIDTH, REAL_HEIGHT, 0, 1, -1);
 		glMatrixMode(GL_MODELVIEW);
 
 		while(glfwWindowShouldClose(window) == GLFW_FALSE) {

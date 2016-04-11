@@ -1,4 +1,4 @@
-package tk.azertyfun.dcputoolchain;
+package tk.azertyfun.dcputoolchain.interfaces;
 
 import tk.azertyfun.dcputoolchain.emulator.CPUControl;
 import tk.azertyfun.dcputoolchain.emulator.CallbackIsKeyDown;
@@ -10,22 +10,15 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
 
-public class KeyboardDisplay extends JFrame implements KeyListener, CallbackIsKeyDown, ActionListener {
+public class KeyboardDisplay extends KeyboardInterface implements KeyListener, CallbackIsKeyDown, ActionListener {
 
 	private JButton powerButton = new JButton("PWR");
 	private JButton modeButton = new JButton("MDE");
 	private CustomPanel kbPanel;
 
-	private LinkedList<Integer> keys = new LinkedList<>();
-
-	private GenericKeyboard keyboard;
-	private CPUControl cpuControl;
-
 	public KeyboardDisplay(GenericKeyboard keyboard, CPUControl cpuControl) {
-		this.keyboard = keyboard;
-		this.cpuControl = cpuControl;
+		super(keyboard, cpuControl);
 
 		keyboard.setCallbackIsKeyDown(this);
 

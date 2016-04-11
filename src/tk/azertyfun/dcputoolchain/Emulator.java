@@ -1,5 +1,6 @@
 package tk.azertyfun.dcputoolchain;
 
+import tk.azertyfun.dcputoolchain.interfaces.*;
 import tk.azertyfun.dcputoolchain.emulator.*;
 
 import java.io.File;
@@ -15,7 +16,7 @@ public class Emulator implements CallbackStop {
 
 	private LinkedList<DCPUHardware> hardware = new LinkedList<>();
 	private LinkedList<LemDisplay> lemDisplays = new LinkedList<>();
-	private LinkedList<KeyboardDisplay> keyboardDisplays = new LinkedList<>();
+	private LinkedList<KeyboardInterface> keyboardInterfaces = new LinkedList<>();
 	private LinkedList<EdcDisplay> edcDisplays = new LinkedList<>();
 
 	private TickingThread ticking;
@@ -40,25 +41,34 @@ public class Emulator implements CallbackStop {
 		boolean assemble = false;
 		boolean debugger = false;
 		boolean optimize_shortLiterals = true;
+		boolean console = false;
+		boolean addLem = false; //If we have to add a LEM, it must be initialized last because creating a JFrame after having initialized glfw will make java (at least with OpenJDK 8) crash.
+
+		int console_offset = 0;
 
 		if(args.length > 2) {
+
+			for(int i = 2; i < args.length; ++i) {
+				if(args[i].equalsIgnoreCase("--console")) {
+					console = true;
+					break;
+				}
+			}
+
 			for(int i = 2; i < args.length; ++i) {
 				if (args[i].equalsIgnoreCase("--assemble")) {
 					assemble = true;
 				} else if (args[i].equalsIgnoreCase("--debugger")) {
-					debugger = true;
+					if(!console)
+						debugger = true;
+					else
+						System.out.println("WARNING: Ignored debugger flag, console flag specified.");
 				} else if (args[i].equalsIgnoreCase("--little-endian")) {
 					big_endian = false;
 				} else if(args[i].equalsIgnoreCase("--disable-shortLiterals")) {
 					optimize_shortLiterals = false;
 				} else if(args[i].equalsIgnoreCase("--LEM1802")) {
-					hardware.add(hardwareTracker.requestLem());
-					hardware.getLast().connectTo(dcpu);
-					hardware.getLast().powerOn();
-
-					LemDisplay lemDisplay = new LemDisplay((LEM1802) hardware.getLast());
-					lemDisplay.start();
-					lemDisplays.add(lemDisplay);
+					addLem = true;
 				} else if(args[i].equalsIgnoreCase("--CLOCK")) {
 					hardware.add(hardwareTracker.requestClock());
 					hardware.getLast().connectTo(dcpu);
@@ -68,8 +78,14 @@ public class Emulator implements CallbackStop {
 					hardware.getLast().connectTo(dcpu);
 					hardware.getLast().powerOn();
 
-					KeyboardDisplay keyboardDisplay = new KeyboardDisplay((GenericKeyboard) hardware.getLast(), cpuControl);
-					keyboardDisplays.add(keyboardDisplay);
+					KeyboardInterface keyboardInterface;
+					if(console) {
+						keyboardInterface = new KeyboardConsole((GenericKeyboard) hardware.getLast(), cpuControl, this);
+						(new Thread((KeyboardConsole) keyboardInterface)).start();
+					} else {
+						keyboardInterface = new KeyboardDisplay((GenericKeyboard) hardware.getLast(), cpuControl);
+					}
+					keyboardInterfaces.add(keyboardInterface);
 				} else if(args[i].equalsIgnoreCase("--EDC")) {
 					hardware.add(hardwareTracker.requestEDC());
 					hardware.getLast().connectTo(dcpu);
@@ -78,72 +94,91 @@ public class Emulator implements CallbackStop {
 					EdcDisplay edcDisplay = new EdcDisplay((EDC) hardware.getLast());
 					edcDisplays.add(edcDisplay);
 				} else {
-					String[] splitted = args[i].split("=");
-					if (splitted.length != 2) {
-						DCPUToolChain.usage();
-					}
-
-					if(splitted[0].equalsIgnoreCase("--M35FD")) {
-						try {
-							String disk_path = splitted[1];
-
-							if (!disk_path.isEmpty()) {
-								if ((new File(disk_path)).length() / 2 > M35FD.WORDS_PER_SECTOR * M35FD.SECTORS_PER_TRACK * M35FD.TRACKS) {
-									System.err.println("The provided disk file is longer than " + M35FD.WORDS_PER_SECTOR * M35FD.SECTORS_PER_TRACK * M35FD.TRACKS + " words!\n");
-									DCPUToolChain.usage();
-								}
-
-								byte[] disk_b = Files.readAllBytes(Paths.get(disk_path));
-								char[] disk = new char[M35FD.WORDS_PER_SECTOR * M35FD.SECTORS_PER_TRACK * M35FD.TRACKS];
-								for (int j = 0; j < disk_b.length / 2; ++j) {
-									disk[j] = (char) (disk_b[j * 2] << 8);
-									disk[j] |= (char) (disk_b[j * 2 + 1] & 0xFF);
-								}
-
-								M35FD m35FD = hardwareTracker.requestM35FD(disk_path);
-								m35FD.connectTo(dcpu);
-								m35FD.powerOn();
-								hardware.add(m35FD);
-							} else {
-								M35FD m35FD = hardwareTracker.requestM35FD();
-								m35FD.connectTo(dcpu);
-								m35FD.powerOn();
-								hardware.add(m35FD);
-							}
-						} catch (NoSuchFileException e) {
-							System.err.println("Error: File not found: " + e.getFile() + ".\n");
+					if (!args[i].equalsIgnoreCase("--console")) {
+						String[] splitted = args[i].split("=");
+						if (splitted.length != 2) {
 							DCPUToolChain.usage();
-						} catch (IOException e) {
-							e.printStackTrace();
 						}
-					} else if(splitted[0].equalsIgnoreCase("--M525HD")) {
-						try {
-							String disk_path = splitted[1];
 
-							if (!disk_path.isEmpty()) {
-								if ((new File(disk_path)).length() / 2 > M525HD.WORDS_PER_SECTOR * M525HD.SECTORS_PER_TRACK * M525HD.TRACKS) {
-									System.err.println("The provided disk file is longer than " + M525HD.WORDS_PER_SECTOR * M525HD.SECTORS_PER_TRACK * M525HD.TRACKS + " words!\n");
-									DCPUToolChain.usage();
+						if (splitted[0].equalsIgnoreCase("--M35FD")) {
+							try {
+								String disk_path = splitted[1];
+
+								if (!disk_path.isEmpty()) {
+									if ((new File(disk_path)).length() / 2 > M35FD.WORDS_PER_SECTOR * M35FD.SECTORS_PER_TRACK * M35FD.TRACKS) {
+										System.err.println("The provided disk file is longer than " + M35FD.WORDS_PER_SECTOR * M35FD.SECTORS_PER_TRACK * M35FD.TRACKS + " words!\n");
+										DCPUToolChain.usage();
+									}
+
+									byte[] disk_b = Files.readAllBytes(Paths.get(disk_path));
+									char[] disk = new char[M35FD.WORDS_PER_SECTOR * M35FD.SECTORS_PER_TRACK * M35FD.TRACKS];
+									for (int j = 0; j < disk_b.length / 2; ++j) {
+										disk[j] = (char) (disk_b[j * 2] << 8);
+										disk[j] |= (char) (disk_b[j * 2 + 1] & 0xFF);
+									}
+
+									M35FD m35FD = hardwareTracker.requestM35FD(disk_path);
+									m35FD.connectTo(dcpu);
+									m35FD.powerOn();
+									hardware.add(m35FD);
+								} else {
+									M35FD m35FD = hardwareTracker.requestM35FD();
+									m35FD.connectTo(dcpu);
+									m35FD.powerOn();
+									hardware.add(m35FD);
 								}
-
-								M525HD m525HD = hardwareTracker.requestM525HD(disk_path);
-								m525HD.connectTo(dcpu);
-								m525HD.powerOn();
-								hardware.add(m525HD);
-							} else {
-								System.err.println("Please specify a path for the M525HD!\n");
+							} catch (NoSuchFileException e) {
+								System.err.println("Error: File not found: " + e.getFile() + ".\n");
 								DCPUToolChain.usage();
+							} catch (IOException e) {
+								e.printStackTrace();
 							}
-						} catch (NoSuchFileException e) {
-							System.err.println("Error: File not found: " + e.getFile() + ".\n");
+						} else if (splitted[0].equalsIgnoreCase("--M525HD")) {
+							try {
+								String disk_path = splitted[1];
+
+								if (!disk_path.isEmpty()) {
+									if ((new File(disk_path)).length() / 2 > M525HD.WORDS_PER_SECTOR * M525HD.SECTORS_PER_TRACK * M525HD.TRACKS) {
+										System.err.println("The provided disk file is longer than " + M525HD.WORDS_PER_SECTOR * M525HD.SECTORS_PER_TRACK * M525HD.TRACKS + " words!\n");
+										DCPUToolChain.usage();
+									}
+
+									M525HD m525HD = hardwareTracker.requestM525HD(disk_path);
+									m525HD.connectTo(dcpu);
+									m525HD.powerOn();
+									hardware.add(m525HD);
+								} else {
+									System.err.println("Please specify a path for the M525HD!\n");
+									DCPUToolChain.usage();
+								}
+							} catch (NoSuchFileException e) {
+								System.err.println("Error: File not found: " + e.getFile() + ".\n");
+								DCPUToolChain.usage();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						} else {
+							System.err.println("Error: Unknown flag \"" + splitted[0] + "\"");
 							DCPUToolChain.usage();
-						} catch (IOException e) {
-							e.printStackTrace();
 						}
-					} else {
-						DCPUToolChain.usage();
 					}
 				}
+			}
+
+			if(addLem) {
+				hardware.add(hardwareTracker.requestLem());
+				hardware.getLast().connectTo(dcpu);
+				hardware.getLast().powerOn();
+
+				LemDisplay lemDisplay;
+				if(console) {
+					lemDisplay = new LemDisplayConsole((LEM1802) hardware.getLast(), console_offset);
+					console_offset += 12;
+				} else {
+					lemDisplay = new LemDisplayGlfw((LEM1802) hardware.getLast());
+				}
+				lemDisplay.start();
+				lemDisplays.add(lemDisplay);
 			}
 		} else {
 			LEM1802 lem1802 = hardwareTracker.requestLem();
@@ -220,8 +255,8 @@ public class Emulator implements CallbackStop {
 			debuggerInterface.close();
 		for(LemDisplay lemDisplay : lemDisplays)
 			lemDisplay.close();
-		for(KeyboardDisplay keyboardDisplay : keyboardDisplays)
-			keyboardDisplay.close();
+		for(KeyboardInterface keyboardInterface : keyboardInterfaces)
+			keyboardInterface.close();
 		for(EdcDisplay edcDisplay : edcDisplays)
 			edcDisplay.close();
 		ticking.setStopped();

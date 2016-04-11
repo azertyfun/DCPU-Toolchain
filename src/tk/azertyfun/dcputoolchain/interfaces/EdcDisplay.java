@@ -1,4 +1,4 @@
-package tk.azertyfun.dcputoolchain;
+package tk.azertyfun.dcputoolchain.interfaces;
 
 import tk.azertyfun.dcputoolchain.emulator.EDC;
 import tk.azertyfun.dcputoolchain.emulator.Texture;

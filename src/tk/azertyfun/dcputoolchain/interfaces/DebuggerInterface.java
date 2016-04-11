@@ -1,5 +1,6 @@
-package tk.azertyfun.dcputoolchain;
+package tk.azertyfun.dcputoolchain.interfaces;
 
+import tk.azertyfun.dcputoolchain.TickingThread;
 import tk.azertyfun.dcputoolchain.disassembler.Disassembler;
 import tk.azertyfun.dcputoolchain.emulator.*;
 
