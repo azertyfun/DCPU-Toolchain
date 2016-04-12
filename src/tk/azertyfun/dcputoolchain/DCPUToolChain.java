@@ -29,11 +29,24 @@ public class DCPUToolChain {
 	}
 
 	public static void usage() {
-		System.out.println("Usage: \n" +
-				"java -jar DasmTC.jar <Action> [Options]\n" +
-				"\tACTIONS:\n" +
-				"\t\t- assemble <input file> <output file> [--little-endian] [--disable-shortLiterals]: Assembles <input file> to <output file>. Big-endian by default, unless the --little-endian switch is present. --disable-shortLiterals disabled optimizations of numbers from -1 to 30 to be integrated into the opcode.\n" +
-				"\t\t- run <file> [--assemble] [--debugger] [--little-endian] [--clock] [--keyboard] [--lem1802] [--edc] [--M35FD=/path/to/file] [--M525HD=/path/to/file] [--console]: Runs emulator for <file> (binary format) with specified hardware. If the --assemble flag is set, first assembles the file in the system temp directory. Big-endian by default, unless the --little-endian switch is present. --disable-shortLiterals disabled optimizations of numbers from -1 to 30 to be integrated into the opcode. If no hardware is specified, runs with clock, keyboard and LEM1802. --debugger enables a debugger interface with run/pause/stop/step, an interface to view the RAM and registers. --console makes the lem1802s and keyboards work in ANSI (i.e. cygwin only on windows) consoles, and disables X windows.");
+		System.out.println("DCPU-Toolchain.\n" +
+				"\n" +
+				"Usage:\n" +
+				"  java -jar DCPU-Toolchain.jar assemble <input file> <output file> [--little-endian] [--disable-shortLiterals]\n" +
+				"  java -jar DCPU-Toolchain.jar run <file> [--assemble] [--debugger] [--little-endian] [--clock] [--keyboard] [--lem1802] [--edc] [--M35FD=/path/to/file] [--M525HD=/path/to/file] [--console]\n" +
+				"\n" +
+				"Options:\n" +
+				"  --little-endian          Treat files as little endian instead of big endian by default.\n" +
+				"  --disable-shortLiterals  Disables optimization of short literals (-1 -> 30) to be included in the opcode instead of the next word.\n" +
+				"  --assemble               The specified input file is assembly instead of binary and must be assembled at runtime.\n" +
+				"  --debugger               Enable the debugger interface.\n" +
+				"  --clock                  Adds a clock device.\n" +
+				"  --keyboard               Adds a keyboard device.\n" +
+				"  --lem1802                Adds a LEM1802 device.\n" +
+				"  --edc                    Adds an EDC device.\n" +
+				"  --M35FD=path/to/file     Adds an M35FD device with a floppy stored in path/to/file.\n" +
+				"  --M525HD=path/to/file    Adds an M525HD device with a hard disk stored in path/to/file.\n" +
+				"  --console                Makes the LEM1802s and keyboard work with stdin/stdout. Only works with consoles that support ANSI escape codes (i.e. not cmd, but cygwin does). Flags that would otherwise spawn a window are disabled.");
 
 		System.exit(-1);
 	}
