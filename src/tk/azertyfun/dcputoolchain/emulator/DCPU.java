@@ -34,7 +34,7 @@ public class DCPU extends Thread implements Identifiable {
 	protected boolean stopped = false, pausing = false, paused = false;
 	protected boolean isSkiping = false, isOnFire = false, isQueueingEnabled = false, sleeping = false;
 
-	protected LinkedList<Character> interrupts = new LinkedList<>();
+	protected final LinkedList<Character> interrupts = new LinkedList<>();
 	private LinkedList<InterruptListener> interruptListeners = new LinkedList<>();
 
 	private boolean tickRequested = false;
@@ -142,15 +142,17 @@ public class DCPU extends Thread implements Identifiable {
 		}
 
 		if(!isQueueingEnabled) {
-			if(interrupts.size() > 0) {
-				char a = interrupts.getFirst();
-				if(ia > 0) {
-					isQueueingEnabled = true;
-					ram[--sp & 0xFFFF] = pc;
-					ram[--sp & 0xFFFF] = registers[0];
-					registers[0] = a;
-					pc = ia;
-					interrupts.removeFirst();
+			synchronized (interrupts) {
+				if (interrupts.size() > 0) {
+					char a = interrupts.getFirst();
+					if (ia > 0) {
+						isQueueingEnabled = true;
+						ram[--sp & 0xFFFF] = pc;
+						ram[--sp & 0xFFFF] = registers[0];
+						registers[0] = a;
+						pc = ia;
+						interrupts.removeFirst();
+					}
 				}
 			}
 		}
