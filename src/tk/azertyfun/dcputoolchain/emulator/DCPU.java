@@ -391,7 +391,7 @@ public class DCPU extends Thread implements Identifiable {
 		}
 	}
 
-	public void interrupt(char a) {
+	public synchronized void interrupt(char a) {
 		interrupts.add(a);
 		if(interrupts.size() > MAX_QUEUE_SIZE) { //Woops, overflowed the interrupt queue - catching fire (insert evil laugh here)
 			interrupts.removeLast();
