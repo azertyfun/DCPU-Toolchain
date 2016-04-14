@@ -45,7 +45,7 @@ Options:
   --edc                    Adds an EDC device.
   --M35FD=path/to/file     Adds an M35FD device with a floppy stored in path/to/file.
   --M525HD=path/to/file    Adds an M525HD device with a hard disk stored in path/to/file.
-  --console                Makes the LEM1802s and keyboard work with stdin/stdout. Only works with consoles that support ANSI escape codes (i.e. not cmd, but cygwin does). Flags that would otherwise spawn a window are disabled.
+  --console                Disables debugger and EDC, and creates a server on port 25570 that can be used by remoteConsole.py to control the LEM1802 and keyboard via a remote console. Useful if you want to run the emulator headless.
 ```
 
 Screenshot

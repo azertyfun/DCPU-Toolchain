@@ -10,15 +10,22 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 
-public class KeyboardDisplay extends KeyboardInterface implements KeyListener, CallbackIsKeyDown, ActionListener {
+public class KeyboardDisplay extends JFrame implements KeyListener, CallbackIsKeyDown, ActionListener {
 
 	private JButton powerButton = new JButton("PWR");
 	private JButton modeButton = new JButton("MDE");
 	private CustomPanel kbPanel;
 
+	protected GenericKeyboard keyboard;
+	protected CPUControl cpuControl;
+
+	protected LinkedList<Integer> keys = new LinkedList<>();
+
 	public KeyboardDisplay(GenericKeyboard keyboard, CPUControl cpuControl) {
-		super(keyboard, cpuControl);
+		this.keyboard = keyboard;
+		this.cpuControl = cpuControl;
 
 		keyboard.setCallbackIsKeyDown(this);
 

@@ -16,12 +16,15 @@ public class Emulator implements CallbackStop {
 
 	private LinkedList<DCPUHardware> hardware = new LinkedList<>();
 	private LinkedList<LemDisplay> lemDisplays = new LinkedList<>();
-	private LinkedList<KeyboardInterface> keyboardInterfaces = new LinkedList<>();
+	private LinkedList<KeyboardDisplay> keyboardDisplays = new LinkedList<>();
 	private LinkedList<EdcDisplay> edcDisplays = new LinkedList<>();
 
 	private TickingThread ticking;
 
 	private DebuggerInterface debuggerInterface;
+
+	private boolean console = false;
+	private ConsoleServer consoleServer;
 
 	public Emulator(String[] args) {
 		String input_file = args[1];
@@ -41,10 +44,7 @@ public class Emulator implements CallbackStop {
 		boolean assemble = false;
 		boolean debugger = false;
 		boolean optimize_shortLiterals = true;
-		boolean console = false;
 		boolean addLem = false; //If we have to add a LEM, it must be initialized last because creating a JFrame after having initialized glfw will make java (at least with OpenJDK 8) crash.
-
-		int console_offset = 0;
 
 		if(args.length > 2) {
 
@@ -78,21 +78,21 @@ public class Emulator implements CallbackStop {
 					hardware.getLast().connectTo(dcpu);
 					hardware.getLast().powerOn();
 
-					KeyboardInterface keyboardInterface;
-					if(console) {
-						keyboardInterface = new KeyboardConsole((GenericKeyboard) hardware.getLast(), cpuControl, this);
-						(new Thread((KeyboardConsole) keyboardInterface)).start();
-					} else {
-						keyboardInterface = new KeyboardDisplay((GenericKeyboard) hardware.getLast(), cpuControl);
+					if(!console) {
+						KeyboardDisplay keyboardDisplay = new KeyboardDisplay((GenericKeyboard) hardware.getLast(), cpuControl);
+						keyboardDisplays.add(keyboardDisplay);
 					}
-					keyboardInterfaces.add(keyboardInterface);
 				} else if(args[i].equalsIgnoreCase("--EDC")) {
-					hardware.add(hardwareTracker.requestEDC());
-					hardware.getLast().connectTo(dcpu);
-					hardware.getLast().powerOn();
+					if(!console) {
+						hardware.add(hardwareTracker.requestEDC());
+						hardware.getLast().connectTo(dcpu);
+						hardware.getLast().powerOn();
 
-					EdcDisplay edcDisplay = new EdcDisplay((EDC) hardware.getLast());
-					edcDisplays.add(edcDisplay);
+						EdcDisplay edcDisplay = new EdcDisplay((EDC) hardware.getLast());
+						edcDisplays.add(edcDisplay);
+					} else {
+						System.out.println("WARNING: Ignored edc flag, console flag specified.");
+					}
 				} else {
 					if (!args[i].equalsIgnoreCase("--console")) {
 						String[] splitted = args[i].split("=");
@@ -170,15 +170,11 @@ public class Emulator implements CallbackStop {
 				hardware.getLast().connectTo(dcpu);
 				hardware.getLast().powerOn();
 
-				LemDisplay lemDisplay;
-				if(console) {
-					lemDisplay = new LemDisplayConsole((LEM1802) hardware.getLast(), console_offset);
-					console_offset += 12;
-				} else {
-					lemDisplay = new LemDisplayGlfw((LEM1802) hardware.getLast());
+				if(!console) {
+					LemDisplay lemDisplay = new LemDisplay((LEM1802) hardware.getLast());
+					lemDisplay.start();
+					lemDisplays.add(lemDisplay);
 				}
-				lemDisplay.start();
-				lemDisplays.add(lemDisplay);
 			}
 		} else {
 			LEM1802 lem1802 = hardwareTracker.requestLem();
@@ -198,6 +194,19 @@ public class Emulator implements CallbackStop {
 
 		if(debugger) {
 			debuggerInterface = new DebuggerInterface(dcpu, ticking, this);
+		}
+
+		if(console) {
+			consoleServer = new ConsoleServer(25570);
+			for(GenericKeyboard genericKeyboard : hardwareTracker.getKeyboards()) {
+				consoleServer.addKeyboard(genericKeyboard);
+			}
+
+			for(LEM1802 lem1802 : hardwareTracker.getLems()) {
+				consoleServer.addLemDisplayConsole(lem1802);
+			}
+
+			consoleServer.start();
 		}
 
 		try {
@@ -255,11 +264,14 @@ public class Emulator implements CallbackStop {
 			debuggerInterface.close();
 		for(LemDisplay lemDisplay : lemDisplays)
 			lemDisplay.close();
-		for(KeyboardInterface keyboardInterface : keyboardInterfaces)
+		for(KeyboardDisplay keyboardInterface : keyboardDisplays)
 			keyboardInterface.close();
 		for(EdcDisplay edcDisplay : edcDisplays)
 			edcDisplay.close();
 		ticking.setStopped();
+
+		if(console)
+			consoleServer.setStopped();
 
 		try {
 			Thread.sleep(1000);

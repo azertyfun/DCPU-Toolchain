@@ -109,4 +109,12 @@ public class HardwareTracker {
 		}
 		return null;
 	}
+
+	public LinkedList<GenericKeyboard> getKeyboards() {
+		return keyboards;
+	}
+
+	public LinkedList<LEM1802> getLems() {
+		return lems;
+	}
 }
