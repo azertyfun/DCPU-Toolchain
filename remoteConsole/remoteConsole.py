@@ -11,6 +11,7 @@ def init_curses():
     curses.noecho()
     curses.raw()
     curses.start_color()
+    curses.curs_set(False)
     stdscr.keypad(True)
 
     stdscr.timeout(0)
@@ -36,18 +37,19 @@ if len(sys.argv) != 3:
 stdscr = init_curses()
 try:
     socket = init_networking()
-    while True:
+    stdscr.clear()
 
+    while True:
         # We can't make a receive of 12*32*2 bytes at once because a bytearray doesn't work after 512 items for some reason.
         data = []
         for i in range(0, 12*32*2):
             b = socket.recv(1)
             data.append(b[0])
 
-        stdscr.clear()
-
         pairs = []
         pairPointer = 1
+
+        stdscr.move(1, 1)
 
         for i in range(0, 12*32):
             try:
@@ -80,7 +82,12 @@ try:
                     stdscr.addstr("pairPointer: " + str(pairPointer))
                     stdscr.getch()
 
-            stdscr.addstr(chr(c), curses.color_pair(pair[0]))
+            if c >= 0x20 and c < 0x7F:
+                c = chr(c)
+            else:
+                c = ' '
+
+            stdscr.addstr(c, curses.color_pair(pair[0]))
             #stdscr.getch()
 
         c = stdscr.getch()
