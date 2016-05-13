@@ -688,6 +688,26 @@ public class DCPU extends Thread implements Identifiable {
 		return currentInstruction;
 	}
 
+	public char[] getRegisters() {
+		return registers;
+	}
+
+	public char getPc() {
+		return pc;
+	}
+
+	public char getSp() {
+		return sp;
+	}
+
+	public char getEx() {
+		return ex;
+	}
+
+	public char getIa() {
+		return ia;
+	}
+
 	public interface DebuggerCallback {
 		void broke();
 
