@@ -249,26 +249,26 @@ public class DCPU extends Thread implements Identifiable {
 				case 0x02: //ADD
 					cycles++;
 					val = b + a;
-					b = (char) val;
 					ex = (char) (val >> 16);
+					b = (char) val;
 					break;
 				case 0x03: //SUB
 					cycles++;
 					val = b - a;
-					b = (char) val;
 					ex = (char) (val >> 16);
+					b = (char) val;
 					break;
 				case 0x04: //MUL
 					cycles++;
 					val = b * a;
-					b = (char) val;
 					ex = (char) (val >> 16);
+					b = (char) val;
 					break;
 				case 0x05: //MLI
 					cycles++;
 					val = (short) b * (short) a;
-					b = (char) val;
 					ex = (char) (val >> 16);
+					b = (char) val;
 					break;
 				case 0x06: //DIV
 					cycles += 2;
