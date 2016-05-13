@@ -197,7 +197,7 @@ public class Emulator implements CallbackStop {
 		}
 
 		if(console) {
-			consoleServer = new ConsoleServer(25570);
+			consoleServer = new ConsoleServer(25570, dcpu);
 			for(GenericKeyboard genericKeyboard : hardwareTracker.getKeyboards()) {
 				consoleServer.addKeyboard(genericKeyboard);
 			}
