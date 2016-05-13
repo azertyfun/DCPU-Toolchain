@@ -3,6 +3,7 @@
 import sys
 import curses
 import socket
+import json
 
 colors = [curses.COLOR_BLACK, curses.COLOR_BLUE, curses.COLOR_GREEN, curses.COLOR_CYAN, curses.COLOR_RED, curses.COLOR_MAGENTA, curses.COLOR_RED, curses.COLOR_CYAN, curses.COLOR_WHITE, curses.COLOR_RED, curses.COLOR_GREEN, curses.COLOR_CYAN, curses.COLOR_RED, curses.COLOR_RED, curses.COLOR_YELLOW, curses.COLOR_WHITE]
 
@@ -41,21 +42,25 @@ try:
 
     while True:
         # We can't make a receive of 12*32*2 bytes at once because a bytearray doesn't work after 512 items for some reason.
-        data = []
-        for i in range(0, 12*32*2):
+        j = ""
+        while True:
             b = socket.recv(1)
-            data.append(b[0])
+            if b == b'\x04':
+                sys.exit()
+            elif b == b'\x03':
+                break
+            else:
+                j += b.decode('utf-8')
 
         pairs = []
         pairPointer = 1
 
         stdscr.move(1, 1)
 
+        data = json.loads(j)
+
         for i in range(0, 12*32):
-            try:
-                d = (data[i * 2] << 8) | data[i * 2 + 1]
-            except IndexError:
-                stdscr.addstr("error at index " + str(i))
+            d = data["ram"][i]
 
             if i % 32 == 0 and i != 0:
                 stdscr.addstr("\n");
@@ -99,6 +104,9 @@ try:
             if c == 3:
                 free_curses()
                 break
+
+        stdscr.addstr(13, 0, "A: " + str(data["registers"][0]) + ", B: " + str(data["registers"][1]) + ", C: " + str(data["registers"][2]) + ", X: " + str(data["registers"][3]) + ", Y: " + str(data["registers"][4]) + ", Z: " + str(data["registers"][5]) + ", I: " + str(data["registers"][6]) + ", J: " + str(data["registers"][7]))
+        stdscr.addstr(14, 0, "PC: " + str(data["pc"]) + ", SP: " + str(data["sp"]) + ", EX: " + str(data["ex"]) + ", IA: " + str(data["ia"]))
 
         stdscr.refresh()
 
