@@ -312,16 +312,29 @@ public class DCPU extends Thread implements Identifiable {
 					b = (char) (b ^ a);
 					break;
 				case 0xd: //SHR
-					ex = (char) (b << 16 >> a);
-					b = (char) (b >>> a);
+					if(a > 31) {
+						b = 0;
+						ex = 0;
+					} else {
+						ex = (char) (b << 16 >> a);
+						b = (char) (b >>> a);
+					}
 					break;
 				case 0xe: //ASR
+					if(a > 31)
+						a = 31;
+
 					ex = (char) ((short) b << 16 >>> a);
 					b = (char) ((short) b >> a);
 					break;
 				case 0xf: //SHL
-					ex = (char) (b << a >> 16);
-					b = (char) (b << a);
+					if(a > 31) {
+						ex = 0;
+						
+					} else {
+						ex = (char) (b << a >> 16);
+						b = (char) (b << a);
+					}
 					break;
 				case 0x10: //IFB
 					cycles++;
