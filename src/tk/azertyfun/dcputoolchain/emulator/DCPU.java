@@ -276,7 +276,7 @@ public class DCPU extends Thread implements Identifiable {
 						b = ex = 0;
 					} else {
 						b /= a;
-						ex = (char) ((b << 16) / a);
+						ex = (char) (((long) b << 16) / a);
 					}
 					break;
 				case 0x07: //DVI
@@ -330,7 +330,7 @@ public class DCPU extends Thread implements Identifiable {
 				case 0xf: //SHL
 					if(a > 31) {
 						ex = 0;
-						
+
 					} else {
 						ex = (char) (b << a >> 16);
 						b = (char) (b << a);
