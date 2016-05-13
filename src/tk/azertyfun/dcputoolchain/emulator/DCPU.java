@@ -432,9 +432,9 @@ public class DCPU extends Thread implements Identifiable {
 		} else {
 			int atype = opcode >> 5 & 0x1F;
 			int btype = opcode >> 10 & 0x3F;
-			if((atype & 0xF8) == 16 || atype == 31 || atype == 30)
+			if((atype & 0xF8) == 16 || atype == 26 || atype == 31 || atype == 30)
 				length++;
-			if((btype & 0xF8) == 16 || btype == 31 || btype == 30)
+			if((btype & 0xF8) == 16 || btype == 26 || btype == 31 || btype == 30)
 				length++;
 		}
 
