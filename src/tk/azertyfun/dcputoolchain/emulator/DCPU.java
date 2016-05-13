@@ -330,7 +330,7 @@ public class DCPU extends Thread implements Identifiable {
 				case 0xf: //SHL
 					if(a > 31) {
 						ex = 0;
-
+						b = 0;
 					} else {
 						ex = (char) (b << a >> 16);
 						b = (char) (b << a);
