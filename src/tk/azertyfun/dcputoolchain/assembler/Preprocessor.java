@@ -1,5 +1,7 @@
 package tk.azertyfun.dcputoolchain.assembler;
 
+import tk.azertyfun.dcputoolchain.assembler.arguments.Parser;
+import tk.azertyfun.dcputoolchain.assembler.exceptions.ParsingException;
 import tk.azertyfun.dcputoolchain.assembler.sourceManagement.Line;
 import tk.azertyfun.dcputoolchain.assembler.sourceManagement.SourceManager;
 
@@ -14,7 +16,7 @@ public class Preprocessor {
 		this.sourceManager = sourceManager;
 	}
 
-	public void processDefines() {
+	public void processDefines() throws ParsingException {
 		for(Line line : sourceManager.getLines()) {
 			String[] splitted = line.getLine().split(" ");
 			if(splitted[0].equalsIgnoreCase(".define") || splitted[0].equalsIgnoreCase("#define")) {
@@ -24,6 +26,12 @@ public class Preprocessor {
 					define_body += splitted[2];
 
 				defines.put(define_name, define_body);
+				line.setLine(""); //Set the line for deletion
+			} else if(splitted[0].equalsIgnoreCase(".magic") || splitted[0].equalsIgnoreCase("#magic")) {
+				if(splitted.length == 3)
+					sourceManager.addMagic(Parser.parseNumber(splitted[1], line), Parser.parseNumber(splitted[2], line));
+				else
+					throw new ParsingException("Error: Excpected 2 arguments for magic directive, got " + (splitted.length - 1) + " at " + line.getFile() + ":" + line.getLine() + " (" + line.getOriginal_line() + ")");
 				line.setLine(""); //Set the line for deletion
 			}
 		}

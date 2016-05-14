@@ -2,6 +2,7 @@ package tk.azertyfun.dcputoolchain.assembler.sourceManagement;
 
 import tk.azertyfun.dcputoolchain.assembler.Label;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -10,6 +11,7 @@ public class SourceManager {
 	private LinkedList<Line> lines = new LinkedList<>();
 	private LinkedList<String> s_labels = new LinkedList<>();
 	private LinkedList<Label> labels = new LinkedList<>();
+	private HashMap<Character, Character> magic = new HashMap<>();
 
 	public SourceManager() {
 
@@ -54,6 +56,10 @@ public class SourceManager {
 		labels.add(new Label(label, line.getFile(), line.getLineNumber()));
 	}
 
+	public void addMagic(char location, char magic) {
+		this.magic.put(location, magic);
+	}
+
 	public LinkedList<String> getS_labels() {
 		return s_labels;
 	}
@@ -70,5 +76,9 @@ public class SourceManager {
 		}
 
 		return s;
+	}
+
+	public HashMap<Character, Character> getMagic() {
+		return magic;
 	}
 }
