@@ -66,10 +66,11 @@ public class SourceAggregator {
 							file += splitted[i];
 						}
 					} else {
-						if (splitted[1].charAt(splitted[1].length()) != '"')
+						if (splitted[1].charAt(splitted[1].length() - 1) != '"')
 							throw new ParsingException("Error: Expected quote at " + file_path + ":" + line_number + " (" + original_line + ")");
 
-						file += splitted[1].substring(0, splitted[1].length() - 1);
+						splitted[1] = splitted[1].substring(0, splitted[1].length() - 1);
+						file += splitted[1];
 
 						if (splitted[1].contains("\""))
 							throw new ParsingException("Error: Unexpected quote at " + file_path + ":" + line_number + " (" + original_line + ")");
