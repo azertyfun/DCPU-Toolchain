@@ -13,6 +13,8 @@ public class AssemblerManager {
 	private boolean big_endian = true, optimize_shortLiterals = true;
 	private String inputFile_path;
 	private String outputFile_path;
+	private boolean bootloader = false;
+	private char[] bootloader_data;
 
 	public AssemblerManager(String[] args) {
 		inputFile_path = args[1];
@@ -26,6 +28,23 @@ public class AssemblerManager {
 					optimize_shortLiterals = false;
 			}
 		}
+	}
+
+	public AssemblerManager(String[] args, char[] bootloader_data) {
+		inputFile_path = args[1];
+		outputFile_path = args[2];
+
+		if(args.length > 3) {
+			for(int i = 3; i < args.length; ++i) {
+				if(args[i].equalsIgnoreCase("--little-endian")) {
+					big_endian = false;
+				} else if(args[i].equalsIgnoreCase("--disable-shortLiterals"))
+					optimize_shortLiterals = false;
+			}
+		}
+
+		bootloader = true;
+		this.bootloader_data = bootloader_data;
 	}
 
 	public boolean assemble() {
@@ -92,9 +111,51 @@ public class AssemblerManager {
 
 			System.out.println("Done in " + (System.currentTimeMillis() - start) + " ms.");
 
-			byte[] bytes_array = new byte[bytes.size()];
-			for(int i = 0; i < bytes.size(); ++i) {
-				bytes_array[i] = bytes.get(i);
+			System.out.print("Replacing magic numbers... ");
+			start = System.currentTimeMillis();
+
+			for(Character location : sourceManager.getMagic().keySet()) {
+				if(location + 1 > bytes.size() / 2) { // The bytes list is not as long as the ram itself, so if a magic word is outside it we need to biggen it
+					for(int i = bytes.size(); i < location * 2 + 2; ++i) {
+						bytes.add((byte) 0);
+					}
+				}
+
+				char magic = sourceManager.getMagic().get(location);
+				System.out.println("Writing " + Integer.toHexString(magic) + " to " + Integer.toHexString(location));
+
+				if(big_endian) {
+					bytes.set(location * 2, (byte) ((magic >> 8) & 0xFF));
+					bytes.set(location * 2 + 1, (byte) (magic & 0xFF));
+				} else {
+					bytes.set(location * 2, (byte) (magic & 0xFF));
+					bytes.set(location * 2 + 1, (byte) ((magic >> 8) & 0xFF));
+				}
+			}
+
+			System.out.println("Done in " + (System.currentTimeMillis() - start) + " ms.");
+
+			byte[] bytes_array;
+			if(bootloader) {
+				System.out.println("Appending bootloader.");
+				bytes_array = new byte[bytes.size() + 1024];
+				for (int i = 0; i < 512; ++i) {
+					if(big_endian) {
+						bytes_array[i * 2] = (byte) ((bootloader_data[i] >> 8) & 0xFF);
+						bytes_array[i * 2 + 1] = (byte) (bootloader_data[i] & 0xFF);
+					} else {
+						bytes_array[i * 2] = (byte) (bootloader_data[i] & 0xFF);
+						bytes_array[i * 2 + 1] = (byte) ((bootloader_data[i] >> 8) & 0xFF);
+					}
+				}
+				for (int i = 1024; i < bytes.size() + 1024; ++i) {
+					bytes_array[i] = bytes.get(i - 1024);
+				}
+			} else {
+				bytes_array = new byte[bytes.size()];
+				for (int i = 0; i < bytes.size(); ++i) {
+					bytes_array[i] = bytes.get(i);
+				}
 			}
 
 			try {

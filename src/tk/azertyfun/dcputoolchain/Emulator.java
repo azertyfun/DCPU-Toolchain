@@ -4,6 +4,7 @@ import tk.azertyfun.dcputoolchain.interfaces.*;
 import tk.azertyfun.dcputoolchain.emulator.*;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -42,6 +43,8 @@ public class Emulator implements CallbackStop {
 		cpuControl.powerOn();
 
 		boolean assemble = false;
+		boolean bootloader = false;
+		char[] bootloader_data = new char[512];
 		boolean debugger = false;
 		boolean optimize_shortLiterals = true;
 		boolean addLem = false; //If we have to add a LEM, it must be initialized last because creating a JFrame after having initialized glfw will make java (at least with OpenJDK 8) crash.
@@ -100,7 +103,28 @@ public class Emulator implements CallbackStop {
 							DCPUToolChain.usage();
 						}
 
-						if (splitted[0].equalsIgnoreCase("--M35FD")) {
+						if(splitted[0].equalsIgnoreCase("--bootloader")) {
+							try {
+								bootloader = true;
+								String bootloader_path = splitted[1];
+
+								if ((new File(bootloader_path)).length() / 2 > 512) {
+									System.err.println("The provided bootloader is longer than 512 words!\n");
+									DCPUToolChain.usage();
+								}
+
+								byte[] bootloader_b = Files.readAllBytes(Paths.get(bootloader_path));
+								for (int j = 0; j < bootloader_b.length / 2; ++j) {
+									bootloader_data[j] = (char) (bootloader_b[j * 2] << 8);
+									bootloader_data[j] |= (char) (bootloader_b[j * 2 + 1] & 0xFF);
+								}
+							} catch (NoSuchFileException e) {
+								System.err.println("Error: File not found: " + e.getFile() + ".\n");
+								DCPUToolChain.usage();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						} else if (splitted[0].equalsIgnoreCase("--M35FD")) {
 							try {
 								String disk_path = splitted[1];
 
@@ -192,10 +216,6 @@ public class Emulator implements CallbackStop {
 			hardware.add(genericKeyboard);
 		}
 
-		if(debugger) {
-			debuggerInterface = new DebuggerInterface(dcpu, ticking, this);
-		}
-
 		if(console) {
 			consoleServer = new ConsoleServer(25570, dcpu);
 			for(GenericKeyboard genericKeyboard : hardwareTracker.getKeyboards()) {
@@ -210,20 +230,70 @@ public class Emulator implements CallbackStop {
 		}
 
 		try {
+			File romFile = new File("res/rom.bin");
 			if(assemble) {
 				File tmpFile = File.createTempFile("DCPUToolchain", Long.toString(System.currentTimeMillis()));
 				AssemblerManager assemblerManager;
+
+				String[] assembleCmdLine;
 				if(optimize_shortLiterals)
-					assemblerManager = new AssemblerManager(new String[] {"assemble", input_file, tmpFile.getAbsolutePath()});
+					assembleCmdLine = new String[] {"assemble", input_file, tmpFile.getAbsolutePath()};
 				else
-					assemblerManager = new AssemblerManager(new String[] {"assemble", input_file, tmpFile.getAbsolutePath(), "--disable-shortLiterals"});
+					assembleCmdLine = new String[] {"assemble", input_file, tmpFile.getAbsolutePath(), "--disable-shortLiterals"};
+
+				if(bootloader)
+					assemblerManager = new AssemblerManager(assembleCmdLine, bootloader_data);
+				else
+					assemblerManager = new AssemblerManager(assembleCmdLine);
 				boolean success = assemblerManager.assemble();
 				if(!success)
 					System.exit(-1);
-				dcpu.setRam(tmpFile.getAbsolutePath(), true);
+
+				M35FD bootDrive = hardwareTracker.requestM35FD(tmpFile.getAbsolutePath());
+				bootDrive.connectTo(dcpu);
+				bootDrive.powerOn();
+
+				hardware.add(bootDrive);
+
+				dcpu.setRam(romFile.getAbsolutePath(), true);
 			} else {
-				dcpu.setRam(input_file, big_endian);
+				M35FD bootDrive;
+				if(bootloader) {
+					File tmpFile = File.createTempFile("DCPUToolchain", Long.toString(System.currentTimeMillis()));
+					byte[] input_file_data = Files.readAllBytes(Paths.get(input_file));
+
+					byte[] bootloader_data_bytes = new byte[1024];
+					for (int i = 0; i < 512; ++i) {
+						if(big_endian) {
+							bootloader_data_bytes[i * 2] = (byte) ((bootloader_data[i] >> 8) & 0xFF);
+							bootloader_data_bytes[i * 2 + 1] = (byte) (bootloader_data[i] & 0xFF);
+						} else {
+							bootloader_data_bytes[i * 2] = (byte) (bootloader_data[i] & 0xFF);
+							bootloader_data_bytes[i * 2 + 1] = (byte) ((bootloader_data[i] >> 8) & 0xFF);
+						}
+					}
+
+					FileOutputStream fos = new FileOutputStream(tmpFile);
+					fos.write(bootloader_data_bytes);
+					fos.write(input_file_data);
+					fos.close();
+
+					bootDrive = hardwareTracker.requestM35FD(tmpFile.getAbsolutePath());
+				} else {
+					bootDrive = hardwareTracker.requestM35FD(input_file);
+				}
+				bootDrive.connectTo(dcpu);
+				bootDrive.powerOn();
+
+				hardware.add(bootDrive);
+
+				dcpu.setRam(romFile.getAbsolutePath(), big_endian);
 			}
+
+			if(debugger) {
+				debuggerInterface = new DebuggerInterface(dcpu, ticking, this);
+			}
+
 			dcpu.start();
 			ticking.start();
 
