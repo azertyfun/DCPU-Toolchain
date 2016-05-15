@@ -8,9 +8,8 @@
   <component name="ChangeListManager">
     <list default="true" id="0dbc213d-e695-463a-9756-41261c1efa9e" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/AssemblerManager.java" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/AssemblerManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/DCPUToolChain.java" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/DCPUToolChain.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/Emulator.java" afterPath="$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/Emulator.java" />
     </list>
     <ignored path="DASM-techcompliant.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -35,8 +34,8 @@
       <file leaf-file-name="DCPUToolChain.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/DCPUToolChain.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="331">
-              <caret line="40" column="79" selection-start-line="40" selection-start-column="77" selection-end-line="40" selection-end-column="79" />
+            <state relative-caret-position="493">
+              <caret line="70" column="101" selection-start-line="70" selection-start-column="101" selection-end-line="70" selection-end-column="101" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -44,56 +43,38 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Emulator.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/Emulator.java">
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="517">
-              <caret line="277" column="47" selection-start-line="277" selection-start-column="47" selection-end-line="277" selection-end-column="47" />
+            <state relative-caret-position="630">
+              <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
               <folding />
             </state>
           </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="M35FD.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/emulator/M35FD.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="283">
-              <caret line="38" column="0" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
-              <folding />
-            </state>
+          <provider editor-type-id="MarkdownPreviewEditor">
+            <state />
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AssemblerManager.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/AssemblerManager.java">
+      <file leaf-file-name="DCPU.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/emulator/DCPU.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="329">
-              <caret line="149" column="17" selection-start-line="141" selection-start-column="16" selection-end-line="149" selection-end-column="17" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Preprocessor.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/assembler/Preprocessor.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SourceManager.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/assembler/sourceManagement/SourceManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="795">
-              <caret line="80" column="53" selection-start-line="80" selection-start-column="53" selection-end-line="80" selection-end-column="53" />
+            <state relative-caret-position="252">
+              <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
               <folding>
-                <element signature="e#1423#1424#0" expanded="true" />
-                <element signature="e#1461#1462#0" expanded="true" />
-                <element signature="e#1806#1807#0" expanded="true" />
+                <element signature="e#15318#15319#0" expanded="true" />
+                <element signature="e#15366#15367#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LemDisplay.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/interfaces/LemDisplay.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="633">
+              <caret line="99" column="42" selection-start-line="99" selection-start-column="42" selection-end-line="99" selection-end-column="42" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -165,16 +146,16 @@
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/emulator/HardwareTracker.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/interfaces/LemDisplayGlfw.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/interfaces/LemDisplay.java" />
-        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/interfaces/StatusPacket.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/interfaces/ConsoleServer.java" />
-        <option value="$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/emulator/DCPU.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/assembler/SourceAggregator.java" />
-        <option value="$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/DCPUToolChain.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/assembler/sourceManagement/SourceManager.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/assembler/Preprocessor.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/AssemblerManager.java" />
         <option value="$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/Emulator.java" />
+        <option value="$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/emulator/DCPU.java" />
+        <option value="$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/DCPUToolChain.java" />
+        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
@@ -186,10 +167,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1440" />
+    <option name="x" value="1439" />
     <option name="y" value="21" />
-    <option name="width" value="1920" />
-    <option name="height" value="1059" />
+    <option name="width" value="1922" />
+    <option name="height" value="1060" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -232,6 +213,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -265,6 +249,28 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="dcputoolchain" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="DCPU-Toolchain" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="DCPU-Toolchain" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="dcputoolchain" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="interfaces" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -354,9 +360,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -388,7 +391,7 @@
       <recent name="tk.azertyfun.dasmtc.dasm" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Run binary">
+  <component name="RunManager" selected="Application.Run">
     <configuration default="false" name="Run" type="Application" factoryName="Application" temporary="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
@@ -398,7 +401,7 @@
       </extension>
       <option name="MAIN_CLASS_NAME" value="tk.azertyfun.dcputoolchain.DCPUToolChain" />
       <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="run $PROJECT_DIR$/../FrOSt/FrOSt/FrOSt.dasm --assemble --debugger --clock --keyboard --lem1802 --edc --m35fd=res/hello.floppy" />
+      <option name="PROGRAM_PARAMETERS" value="run $PROJECT_DIR$/../FrOSt/FrOSt/FrOSt.dasm --assemble --debugger --clock --keyboard --lem1802 --edc --m35fd=res/hello.floppy --bootloader=$PROJECT_DIR$/../FrOSt/FrOSt/FrOSt_header.bin" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
@@ -706,7 +709,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1440" y="21" width="1920" height="1059" extended-state="6" />
+    <frame x="1439" y="21" width="1922" height="1060" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -717,12 +720,11 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25879917" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25879917" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32919255" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14114584" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32815734" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -735,6 +737,7 @@
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="combo" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" x="1540" y="119" width="1720" height="861" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32815734" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -767,7 +770,7 @@
           <properties />
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="298" />
+      <option name="time" value="299" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -946,38 +949,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/biz/source_code/utils/RawConsoleInput.java" />
-    <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/emulator/LEM1802.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4752">
-          <caret line="278" column="18" selection-start-line="278" selection-start-column="18" selection-end-line="278" selection-end-column="18" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#8284#8285#0" expanded="false" />
-            <element signature="e#8305#8306#0" expanded="false" />
-            <element signature="e#8340#8341#0" expanded="false" />
-            <element signature="e#8366#8367#0" expanded="false" />
-            <element signature="e#9876#9877#0" expanded="false" />
-            <element signature="e#9937#9938#0" expanded="false" />
-            <element signature="e#9975#9976#0" expanded="false" />
-            <element signature="e#10028#10029#0" expanded="false" />
-            <element signature="e#10065#10066#0" expanded="false" />
-            <element signature="e#10124#10125#0" expanded="false" />
-            <element signature="e#11281#11282#0" expanded="false" />
-            <element signature="e#11326#11327#0" expanded="false" />
-            <element signature="e#11371#11372#0" expanded="false" />
-            <element signature="e#11402#11403#0" expanded="false" />
-            <element signature="e#11445#11446#0" expanded="false" />
-            <element signature="e#11474#11475#0" expanded="false" />
-            <element signature="e#11523#11524#0" expanded="false" />
-            <element signature="e#11558#11559#0" expanded="false" />
-            <element signature="e#11591#11592#0" expanded="false" />
-            <element signature="e#11616#11617#0" expanded="false" />
-            <element signature="e#11665#11666#0" expanded="false" />
-            <element signature="e#11702#11703#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar:///usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar!/sun/misc/Unsafe.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="203">
@@ -1016,23 +987,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/interfaces/LemDisplay.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="545">
-          <caret line="48" column="79" selection-start-line="48" selection-start-column="77" selection-end-line="48" selection-end-column="79" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider editor-type-id="MarkdownPreviewEditor">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="515">
-          <caret line="48" column="0" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/interfaces/EdcDisplay.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="72">
@@ -1059,17 +1013,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/emulator/DCPU.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="428">
-          <caret line="397" column="35" selection-start-line="397" selection-start-column="35" selection-end-line="397" selection-end-column="35" />
-          <folding>
-            <element signature="e#15803#15804#0" expanded="true" />
-            <element signature="e#15819#15820#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/assembler/Assembler.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1006">
@@ -1090,7 +1033,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
           <caret line="9" column="11" selection-start-line="9" selection-start-column="11" selection-end-line="9" selection-end-column="11" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1104,7 +1046,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/assembler/sourceManagement/SourceManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="795">
+        <state relative-caret-position="1260">
           <caret line="80" column="53" selection-start-line="80" selection-start-column="53" selection-end-line="80" selection-end-column="53" />
           <folding>
             <element signature="e#1423#1424#0" expanded="true" />
@@ -1130,19 +1072,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/DCPUToolChain.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="331">
-          <caret line="40" column="79" selection-start-line="40" selection-start-column="77" selection-end-line="40" selection-end-column="79" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/AssemblerManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="329">
+        <state relative-caret-position="2574">
           <caret line="149" column="17" selection-start-line="141" selection-start-column="16" selection-end-line="149" selection-end-column="17" />
           <folding />
         </state>
@@ -1150,16 +1082,64 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/emulator/M35FD.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="283">
+        <state relative-caret-position="612">
           <caret line="38" column="0" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/interfaces/LemDisplay.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="633">
+          <caret line="99" column="42" selection-start-line="99" selection-start-column="42" selection-end-line="99" selection-end-column="42" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/Emulator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="517">
-          <caret line="277" column="47" selection-start-line="277" selection-start-column="47" selection-end-line="277" selection-end-column="47" />
+        <state relative-caret-position="697">
+          <caret line="287" column="40" selection-start-line="287" selection-start-column="40" selection-end-line="287" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/emulator/DCPU.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+          <folding>
+            <element signature="e#15318#15319#0" expanded="true" />
+            <element signature="e#15366#15367#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/emulator/LEM1802.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="448">
+          <caret line="193" column="37" selection-start-line="193" selection-start-column="37" selection-end-line="193" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/tk/azertyfun/dcputoolchain/DCPUToolChain.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="493">
+          <caret line="70" column="101" selection-start-line="70" selection-start-column="101" selection-end-line="70" selection-end-column="101" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider editor-type-id="MarkdownPreviewEditor">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
           <folding />
         </state>
       </provider>

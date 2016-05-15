@@ -68,7 +68,7 @@ public class DCPUToolChain {
 				"\n" +
 				"Usage:\n" +
 				"  java -jar DCPU-Toolchain.jar assemble <input file> <output file> [--bootloader=/path/to/file] [--little-endian] [--disable-shortLiterals]\n" +
-				"  java -jar DCPU-Toolchain.jar run <file> [--assemble] [--debugger] [--little-endian] [--clock] [--keyboard] [--lem1802] [--edc] [--M35FD=/path/to/file] [--M525HD=/path/to/file] [--console]\n" +
+				"  java -jar DCPU-Toolchain.jar run <file> [--assemble] [--bootloader=/path/to/file] [--debugger] [--little-endian] [--clock] [--keyboard] [--lem1802] [--edc] [--M35FD=/path/to/file] [--M525HD=/path/to/file] [--console]\n" +
 				"\n" +
 				"Options:\n" +
 				"  --little-endian            Treat files as little endian instead of big endian by default.\n" +
