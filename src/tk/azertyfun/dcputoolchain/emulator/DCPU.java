@@ -249,43 +249,51 @@ public class DCPU extends Thread implements Identifiable {
 				case 0x02: //ADD
 					cycles++;
 					val = b + a;
-					ex = (char) (val >> 16);
 					b = (char) val;
-					break;
+					set(baddr, b);
+					ex = (char) (val >> 16);
+					return;
 				case 0x03: //SUB
 					cycles++;
 					val = b - a;
-					ex = (char) (val >> 16);
 					b = (char) val;
-					break;
+					set(baddr, b);
+					ex = (char) (val >> 16);
+					return;
 				case 0x04: //MUL
 					cycles++;
 					val = b * a;
-					ex = (char) (val >> 16);
 					b = (char) val;
-					break;
+					set(baddr, b);
+					ex = (char) (val >> 16);
+					return;
 				case 0x05: //MLI
 					cycles++;
 					val = (short) b * (short) a;
-					ex = (char) (val >> 16);
 					b = (char) val;
-					break;
+					set(baddr, b);
+					ex = (char) (val >> 16);
+					return;
 				case 0x06: //DIV
 					cycles += 2;
 					if(a == 0) {
-						b = ex = 0;
+						set(baddr, b);
+						return;
 					} else {
 						b /= a;
+						set(baddr, b);
 						ex = (char) (((long) b << 16) / a);
+						return;
 					}
-					break;
 				case 0x07: //DVI
 					cycles += 2;
 					if(a == 0) {
 						b = ex = 0;
 					} else {
 						b = (char) ((short) b / (short) a);
+						set(baddr, b);
 						ex = (char) (((short) b  << 16) / (short) a);
+						return;
 					}
 					break;
 				case 0x08: //MOD
@@ -314,28 +322,34 @@ public class DCPU extends Thread implements Identifiable {
 				case 0xd: //SHR
 					if(a > 31) {
 						b = 0;
+						set(baddr, b);
 						ex = 0;
+						return;
 					} else {
-						ex = (char) (b << 16 >> a);
 						b = (char) (b >>> a);
+						set(baddr, b);
+						ex = (char) (b << 16 >> a);
+						return;
 					}
-					break;
 				case 0xe: //ASR
 					if(a > 31)
 						a = 31;
 
-					ex = (char) ((short) b << 16 >>> a);
 					b = (char) ((short) b >> a);
-					break;
+					set(baddr, b);
+					ex = (char) ((short) b << 16 >>> a);
+					return;
 				case 0xf: //SHL
 					if(a > 31) {
-						ex = 0;
 						b = 0;
+						set(baddr, b);
+						ex = 0;
 					} else {
-						ex = (char) (b << a >> 16);
 						b = (char) (b << a);
+						set(baddr, b);
+						ex = (char) (b << a >> 16);
 					}
-					break;
+					return;
 				case 0x10: //IFB
 					cycles++;
 					if((b & a) == 0)
@@ -378,14 +392,16 @@ public class DCPU extends Thread implements Identifiable {
 					cycles++;
 					val = b + a + ex;
 					b = (char) val;
+					set(baddr, b);
 					ex = (char) (val >> 16);
-					break;
+					return;
 				case 0x1b: //SBX
 					cycles++;
 					val = b - a + ex;
 					b = (char) val;
+					set(baddr, b);
 					ex = (char) (val >> 16);
-					break;
+					return;
 				case 0x1e: //STI
 					b = a;
 					set(baddr, b);
