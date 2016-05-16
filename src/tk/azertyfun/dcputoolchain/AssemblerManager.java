@@ -142,7 +142,7 @@ public class AssemblerManager {
 				System.out.println("Appending bootloader.");
 				bytes_array = new byte[bytes.size() + 1024];
 				for (int i = 0; i < 512; ++i) {
-					if(bootloader_little_endian) {
+					if(little_endian != bootloader_little_endian) { // We need to change the endianness of the bootloader if it differs from the rest of the binary.
 						bytes_array[i * 2] = (byte) (bootloader_data[i] & 0xFF);
 						bytes_array[i * 2 + 1] = (byte) ((bootloader_data[i] >> 8) & 0xFF);
 					} else {
