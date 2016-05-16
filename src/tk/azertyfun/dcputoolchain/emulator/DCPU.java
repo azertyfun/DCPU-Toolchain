@@ -50,16 +50,16 @@ public class DCPU extends Thread implements Identifiable {
 		stopped = true;
 	}
 
-	public void setRam(String path, boolean big_endian) throws NoSuchFileException, IOException {
+	public void setRam(String path, boolean little_endian) throws NoSuchFileException, IOException {
 		byte[] ram_b = Files.readAllBytes(Paths.get(path));
 		char[] ram = new char[ram_b.length / 2];
 		for(int i = 0; i < ram.length; ++i) {
-			if(big_endian) {
-				ram[i] = (char) (ram_b[i * 2] << 8);
-				ram[i] |= (char) (ram_b[i * 2 + 1] & 0xFF);
-			} else {
+			if(little_endian) {
 				ram[i] = (char) (ram_b[i * 2 + 1] << 8);
 				ram[i] |= (char) (ram_b[i * 2] & 0xFF);
+			} else {
+				ram[i] = (char) (ram_b[i * 2] << 8);
+				ram[i] |= (char) (ram_b[i * 2 + 1] & 0xFF);
 			}
 		}
 

@@ -10,10 +10,11 @@ import java.util.LinkedList;
 
 public class AssemblerManager {
 
-	private boolean big_endian = true, optimize_shortLiterals = true;
+	private boolean little_endian = true, optimize_shortLiterals = true;
 	private String inputFile_path;
 	private String outputFile_path;
 	private boolean bootloader = false;
+	private boolean bootloader_little_endian = true;
 	private char[] bootloader_data;
 
 	public AssemblerManager(String[] args) {
@@ -22,28 +23,29 @@ public class AssemblerManager {
 
 		if(args.length > 3) {
 			for(int i = 3; i < args.length; ++i) {
-				if(args[i].equalsIgnoreCase("--little-endian")) {
-					big_endian = false;
+				if(args[i].equalsIgnoreCase("--big-endian")) {
+					little_endian = false;
 				} else if(args[i].equalsIgnoreCase("--disable-shortLiterals"))
 					optimize_shortLiterals = false;
 			}
 		}
 	}
 
-	public AssemblerManager(String[] args, char[] bootloader_data) {
+	public AssemblerManager(String[] args, char[] bootloader_data, boolean bootloader_little_endian) {
 		inputFile_path = args[1];
 		outputFile_path = args[2];
 
 		if(args.length > 3) {
 			for(int i = 3; i < args.length; ++i) {
-				if(args[i].equalsIgnoreCase("--little-endian")) {
-					big_endian = false;
+				if(args[i].equalsIgnoreCase("--big-endian")) {
+					little_endian = false;
 				} else if(args[i].equalsIgnoreCase("--disable-shortLiterals"))
 					optimize_shortLiterals = false;
 			}
 		}
 
 		bootloader = true;
+		this.bootloader_little_endian = bootloader_little_endian;
 		this.bootloader_data = bootloader_data;
 	}
 
@@ -107,7 +109,7 @@ public class AssemblerManager {
 			start = System.currentTimeMillis();
 
 			Assembler assembler = new Assembler(tokens);
-			LinkedList<Byte> bytes = assembler.assemble(big_endian);
+			LinkedList<Byte> bytes = assembler.assemble(little_endian);
 
 			System.out.println("Done in " + (System.currentTimeMillis() - start) + " ms.");
 
@@ -124,12 +126,12 @@ public class AssemblerManager {
 				char magic = sourceManager.getMagic().get(location);
 				System.out.println("Writing " + Integer.toHexString(magic) + " to " + Integer.toHexString(location));
 
-				if(big_endian) {
-					bytes.set(location * 2, (byte) ((magic >> 8) & 0xFF));
-					bytes.set(location * 2 + 1, (byte) (magic & 0xFF));
-				} else {
+				if(little_endian) {
 					bytes.set(location * 2, (byte) (magic & 0xFF));
 					bytes.set(location * 2 + 1, (byte) ((magic >> 8) & 0xFF));
+				} else {
+					bytes.set(location * 2, (byte) ((magic >> 8) & 0xFF));
+					bytes.set(location * 2 + 1, (byte) (magic & 0xFF));
 				}
 			}
 
@@ -140,12 +142,12 @@ public class AssemblerManager {
 				System.out.println("Appending bootloader.");
 				bytes_array = new byte[bytes.size() + 1024];
 				for (int i = 0; i < 512; ++i) {
-					if(big_endian) {
-						bytes_array[i * 2] = (byte) ((bootloader_data[i] >> 8) & 0xFF);
-						bytes_array[i * 2 + 1] = (byte) (bootloader_data[i] & 0xFF);
-					} else {
+					if(bootloader_little_endian) {
 						bytes_array[i * 2] = (byte) (bootloader_data[i] & 0xFF);
 						bytes_array[i * 2 + 1] = (byte) ((bootloader_data[i] >> 8) & 0xFF);
+					} else {
+						bytes_array[i * 2] = (byte) ((bootloader_data[i] >> 8) & 0xFF);
+						bytes_array[i * 2 + 1] = (byte) (bootloader_data[i] & 0xFF);
 					}
 				}
 				for (int i = 1024; i < bytes.size() + 1024; ++i) {

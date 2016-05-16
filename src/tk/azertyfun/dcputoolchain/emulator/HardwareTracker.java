@@ -38,17 +38,17 @@ public class HardwareTracker {
 	}
 
 	public M35FD requestM35FD() {
-		m35fds.add(new M35FD("m35fd_" + m35fds.size()));
+		m35fds.add(new M35FD("m35fd_" + m35fds.size(), true));
 		return m35fds.getLast();
 	}
 
-	public M35FD requestM35FD(String path) throws IOException {
-		m35fds.add(new M35FD("m35fd_" + m35fds.size(), path));
+	public M35FD requestM35FD(String path, boolean little_endian) throws IOException {
+		m35fds.add(new M35FD("m35fd_" + m35fds.size(), path, little_endian));
 		return m35fds.getLast();
 	}
 
-	public M525HD requestM525HD(String path) throws IOException {
-		m525hds.add(new M525HD("m525hd_" + m525hds.size(), path));
+	public M525HD requestM525HD(String path, boolean little_endian) throws IOException {
+		m525hds.add(new M525HD("m525hd_" + m525hds.size(), path, little_endian));
 		return m525hds.getLast();
 	}
 

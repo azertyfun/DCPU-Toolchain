@@ -12,7 +12,7 @@ public class Assembler {
 		this.tokens = tokens;
 	}
 
-	public LinkedList<Byte> assemble(boolean big_endian) throws ParsingException {
+	public LinkedList<Byte> assemble(boolean little_endian) throws ParsingException {
 		LinkedList<Byte> bytes = new LinkedList<>();
 
 		//Now let's create the final words!
@@ -30,42 +30,42 @@ public class Assembler {
 					c |= (token.getA().getValue() & 0b111111) << 10;
 				}
 
-				if (big_endian) {
-					bytes.add((byte) ((c >> 8) & 0b11111111));
+				if (little_endian) {
 					bytes.add((byte) (c & 0b11111111));
+					bytes.add((byte) ((c >> 8) & 0b11111111));
 				} else {
-					bytes.add((byte) (c & 0b11111111));
 					bytes.add((byte) ((c >> 8) & 0b11111111));
+					bytes.add((byte) (c & 0b11111111));
 				}
 
 				if (token.getA().hasNextWordValue()) {
 					char nextWord = token.getA().getNextWordValue();
-					if (big_endian) {
-						bytes.add((byte) ((nextWord >> 8) & 0b11111111));
+					if (little_endian) {
 						bytes.add((byte) (nextWord & 0b11111111));
+						bytes.add((byte) ((nextWord >> 8) & 0b11111111));
 					} else {
-						bytes.add((byte) (nextWord & 0b11111111));
 						bytes.add((byte) ((nextWord >> 8) & 0b11111111));
+						bytes.add((byte) (nextWord & 0b11111111));
 					}
 				}
 
 				if (token.getB().hasNextWordValue()) {
 					char nextWord = token.getB().getNextWordValue();
-					if (big_endian) {
-						bytes.add((byte) ((nextWord >> 8) & 0b11111111));
+					if (little_endian) {
 						bytes.add((byte) (nextWord & 0b11111111));
+						bytes.add((byte) ((nextWord >> 8) & 0b11111111));
 					} else {
-						bytes.add((byte) (nextWord & 0b11111111));
 						bytes.add((byte) ((nextWord >> 8) & 0b11111111));
+						bytes.add((byte) (nextWord & 0b11111111));
 					}
 				}
 			} else if(!token.isLabel()) {
-				if (big_endian) {
-					bytes.add((byte) ((token.getDatValue().getLiteral() >> 8) & 0b11111111));
+				if (little_endian) {
 					bytes.add((byte) (token.getDatValue().getLiteral() & 0b11111111));
+					bytes.add((byte) ((token.getDatValue().getLiteral() >> 8) & 0b11111111));
 				} else {
-					bytes.add((byte) (token.getDatValue().getLiteral() & 0b11111111));
 					bytes.add((byte) ((token.getDatValue().getLiteral() >> 8) & 0b11111111));
+					bytes.add((byte) (token.getDatValue().getLiteral() & 0b11111111));
 				}
 			}
 		}

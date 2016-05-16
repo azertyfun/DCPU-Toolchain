@@ -22,6 +22,7 @@ public class M525HD extends DCPUHardware {
 	protected boolean reading = false;
 	protected boolean writing = false;
 	protected char readFrom, readTo, writeFrom, writeTo;
+	protected boolean little_endian;
 	protected int ticksSkip = 0;
 	protected boolean spinning = false;
 	protected boolean spinningUp = false;
@@ -31,7 +32,7 @@ public class M525HD extends DCPUHardware {
 
 	private LinkedList<M525HDCallback> m525HDCallbacks = new LinkedList<>();
 
-	protected M525HD(String id, String path) throws IOException {
+	protected M525HD(String id, String path, boolean little_endian) throws IOException {
 		super(TYPE, REVISION, MANUFACTURER);
 		this.id = id;
 
@@ -39,9 +40,16 @@ public class M525HD extends DCPUHardware {
 
 		byte[] disk_b = Files.readAllBytes(Paths.get(path));
 		char[] disk = new char[WORDS_PER_SECTOR * SECTORS_PER_TRACK * TRACKS];
-		for (int j = 0; j < disk_b.length / 2; ++j) {
-			disk[j] = (char) (disk_b[j * 2] << 8);
-			disk[j] |= (char) (disk_b[j * 2 + 1] & 0xFF);
+		if(little_endian) {
+			for (int j = 0; j < disk_b.length / 2; ++j) {
+				disk[j] = (char) (disk_b[j * 2] & 0xFF);
+				disk[j] |= (char) (disk_b[j * 2 + 1] << 8);
+			}
+		} else {
+			for (int j = 0; j < disk_b.length / 2; ++j) {
+				disk[j] = (char) (disk_b[j * 2] << 8);
+				disk[j] |= (char) (disk_b[j * 2 + 1] & 0xFF);
+			}
 		}
 
 		if(disk.length > this.disk.length) {
@@ -58,6 +66,7 @@ public class M525HD extends DCPUHardware {
 
 		state = States.STATE_PARKED;
 		error = Errors.ERROR_NONE;
+		this.little_endian = little_endian;
 	}
 
 	@Override
@@ -210,8 +219,13 @@ public class M525HD extends DCPUHardware {
 	public void onDestroy() {
 		byte[] disk_b = new byte[disk.length * 2];
 		for(int i = 0; i < disk.length; ++i) {
-			disk_b[i * 2] = (byte) ((disk[i] >> 8) & 0xFF);
-			disk_b[i * 2 + 1] = (byte) (disk[i] & 0xFF);
+			if(little_endian) {
+				disk_b[i * 2] = (byte) (disk[i] & 0xFF);
+				disk_b[i * 2 + 1] = (byte) ((disk[i] >> 8) & 0xFF);
+			} else {
+				disk_b[i * 2] = (byte) ((disk[i] >> 8) & 0xFF);
+				disk_b[i * 2 + 1] = (byte) (disk[i] & 0xFF);
+			}
 		}
 
 		try {

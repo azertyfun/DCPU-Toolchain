@@ -30,7 +30,10 @@ public class Emulator implements CallbackStop {
 	public Emulator(String[] args) {
 		String input_file = args[1];
 
-		boolean big_endian = true;
+		boolean little_endian = true;
+		boolean rom_little_endian = true;
+		boolean bootloader_little_endian = true;
+		boolean disks_little_endian = true;
 
 		HardwareTracker hardwareTracker = new HardwareTracker();
 		dcpu = hardwareTracker.requestDCPU();
@@ -66,8 +69,14 @@ public class Emulator implements CallbackStop {
 						debugger = true;
 					else
 						System.out.println("WARNING: Ignored debugger flag, console flag specified.");
-				} else if (args[i].equalsIgnoreCase("--little-endian")) {
-					big_endian = false;
+				} else if (args[i].equalsIgnoreCase("--big-endian")) {
+					little_endian = false;
+				} else if (args[i].equalsIgnoreCase("--rom-big-endian")) {
+					rom_little_endian = false;
+				} else if (args[i].equalsIgnoreCase("--bootloader-big-endian")) {
+					bootloader_little_endian = false;
+				} else if (args[i].equalsIgnoreCase("--disks-big-endian")) {
+					disks_little_endian = false;
 				} else if(args[i].equalsIgnoreCase("--disable-shortLiterals")) {
 					optimize_shortLiterals = false;
 				} else if(args[i].equalsIgnoreCase("--LEM1802")) {
@@ -141,7 +150,7 @@ public class Emulator implements CallbackStop {
 										disk[j] |= (char) (disk_b[j * 2 + 1] & 0xFF);
 									}
 
-									M35FD m35FD = hardwareTracker.requestM35FD(disk_path);
+									M35FD m35FD = hardwareTracker.requestM35FD(disk_path, true);
 									m35FD.connectTo(dcpu);
 									m35FD.powerOn();
 									hardware.add(m35FD);
@@ -167,7 +176,7 @@ public class Emulator implements CallbackStop {
 										DCPUToolChain.usage();
 									}
 
-									M525HD m525HD = hardwareTracker.requestM525HD(disk_path);
+									M525HD m525HD = hardwareTracker.requestM525HD(disk_path, disks_little_endian);
 									m525HD.connectTo(dcpu);
 									m525HD.powerOn();
 									hardware.add(m525HD);
@@ -242,20 +251,20 @@ public class Emulator implements CallbackStop {
 					assembleCmdLine = new String[] {"assemble", input_file, tmpFile.getAbsolutePath(), "--disable-shortLiterals"};
 
 				if(bootloader)
-					assemblerManager = new AssemblerManager(assembleCmdLine, bootloader_data);
+					assemblerManager = new AssemblerManager(assembleCmdLine, bootloader_data, bootloader_little_endian);
 				else
 					assemblerManager = new AssemblerManager(assembleCmdLine);
 				boolean success = assemblerManager.assemble();
 				if(!success)
 					System.exit(-1);
 
-				M35FD bootDrive = hardwareTracker.requestM35FD(tmpFile.getAbsolutePath());
+				M35FD bootDrive = hardwareTracker.requestM35FD(tmpFile.getAbsolutePath(), true);
 				bootDrive.connectTo(dcpu);
 				bootDrive.powerOn();
 
 				hardware.add(bootDrive);
 
-				dcpu.setRam(romFile.getAbsolutePath(), true);
+				dcpu.setRam(romFile.getAbsolutePath(), rom_little_endian);
 			} else {
 				M35FD bootDrive;
 				if(bootloader) {
@@ -264,12 +273,12 @@ public class Emulator implements CallbackStop {
 
 					byte[] bootloader_data_bytes = new byte[1024];
 					for (int i = 0; i < 512; ++i) {
-						if(big_endian) {
-							bootloader_data_bytes[i * 2] = (byte) ((bootloader_data[i] >> 8) & 0xFF);
-							bootloader_data_bytes[i * 2 + 1] = (byte) (bootloader_data[i] & 0xFF);
-						} else {
+						if(little_endian) {
 							bootloader_data_bytes[i * 2] = (byte) (bootloader_data[i] & 0xFF);
 							bootloader_data_bytes[i * 2 + 1] = (byte) ((bootloader_data[i] >> 8) & 0xFF);
+						} else {
+							bootloader_data_bytes[i * 2] = (byte) ((bootloader_data[i] >> 8) & 0xFF);
+							bootloader_data_bytes[i * 2 + 1] = (byte) (bootloader_data[i] & 0xFF);
 						}
 					}
 
@@ -278,16 +287,16 @@ public class Emulator implements CallbackStop {
 					fos.write(input_file_data);
 					fos.close();
 
-					bootDrive = hardwareTracker.requestM35FD(tmpFile.getAbsolutePath());
+					bootDrive = hardwareTracker.requestM35FD(tmpFile.getAbsolutePath(), little_endian);
 				} else {
-					bootDrive = hardwareTracker.requestM35FD(input_file);
+					bootDrive = hardwareTracker.requestM35FD(input_file, little_endian);
 				}
 				bootDrive.connectTo(dcpu);
 				bootDrive.powerOn();
 
 				hardware.add(bootDrive);
 
-				dcpu.setRam(romFile.getAbsolutePath(), big_endian);
+				dcpu.setRam(romFile.getAbsolutePath(), rom_little_endian);
 			}
 
 			if(debugger) {

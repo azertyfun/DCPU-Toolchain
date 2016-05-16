@@ -22,12 +22,13 @@ public class M35FD extends DCPUHardware {
 	protected boolean reading = false;
 	protected boolean writing = false;
 	protected char readFrom, readTo, writeFrom, writeTo;
+	protected boolean little_endian;
 
 	private String disk_path;
 
 	private LinkedList<M35FDCallback> m35FDCallbacks = new LinkedList<>();
 
-	protected M35FD(String id, String path) throws IOException {
+	protected M35FD(String id, String path, boolean little_endian) throws IOException {
 		super(TYPE, REVISION, MANUFACTURER);
 		this.id = id;
 
@@ -35,9 +36,16 @@ public class M35FD extends DCPUHardware {
 
 		byte[] disk_b = Files.readAllBytes(Paths.get(path));
 		char[] disk = new char[WORDS_PER_SECTOR * SECTORS_PER_TRACK * TRACKS];
-		for (int j = 0; j < disk_b.length / 2; ++j) {
-			disk[j] = (char) (disk_b[j * 2] << 8);
-			disk[j] |= (char) (disk_b[j * 2 + 1] & 0xFF);
+		if(little_endian) {
+			for (int j = 0; j < disk_b.length / 2; ++j) {
+				disk[j] = (char) (disk_b[j * 2] & 0xFF);
+				disk[j] |= (char) (disk_b[j * 2 + 1] << 8);
+			}
+		} else {
+			for (int j = 0; j < disk_b.length / 2; ++j) {
+				disk[j] = (char) (disk_b[j * 2] << 8);
+				disk[j] |= (char) (disk_b[j * 2 + 1] & 0xFF);
+			}
 		}
 
 		if(disk.length > this.disk.length) {
@@ -54,14 +62,18 @@ public class M35FD extends DCPUHardware {
 
 		state = States.STATE_READY;
 		error = Errors.ERROR_NONE;
+
+		this.little_endian = little_endian;
 	}
 
-	protected M35FD(String id) {
+	protected M35FD(String id, boolean little_endian) {
 		super(TYPE, REVISION, MANUFACTURER);
 		this.id = id;
 
 		state = States.STATE_NO_MEDIA;
 		error = Errors.ERROR_NO_MEDIA;
+
+		this.little_endian = little_endian;
 	}
 
 	@Override
@@ -174,8 +186,13 @@ public class M35FD extends DCPUHardware {
 	public void onDestroy() {
 		byte[] disk_b = new byte[disk.length * 2];
 		for(int i = 0; i < disk.length; ++i) {
-			disk_b[i * 2] = (byte) ((disk[i] >> 8) & 0xFF);
-			disk_b[i * 2 + 1] = (byte) (disk[i] & 0xFF);
+			if(little_endian) {
+				disk_b[i * 2] = (byte) (disk[i] & 0xFF);
+				disk_b[i * 2 + 1] = (byte) ((disk[i] >> 8) & 0xFF);
+			} else {
+				disk_b[i * 2] = (byte) ((disk[i] >> 8) & 0xFF);
+				disk_b[i * 2 + 1] = (byte) (disk[i] & 0xFF);
+			}
 		}
 
 		try {
