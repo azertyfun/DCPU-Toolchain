@@ -72,7 +72,7 @@ public class EdcDisplay extends JFrame {
 		}
 
 		public void run() {
-			float expectedTime = 1000f / 60f;
+			float expectedTime = 1000f / 10f;
 
 			while (!stopped) {
 				long start = System.currentTimeMillis();

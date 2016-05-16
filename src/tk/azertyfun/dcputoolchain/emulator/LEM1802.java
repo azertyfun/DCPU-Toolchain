@@ -36,6 +36,8 @@ public class LEM1802 extends DCPUHardware {
 	protected boolean blinkOn;
 	protected int blinkDelay;
 
+	protected boolean renderedLastTick = false;
+
 	/*
 	 * This font originally comes from SirCmpwn's Tomato, and has been used by paul here: http://hastebin.com/opumobutuf.cs
 	 */
@@ -275,6 +277,13 @@ public class LEM1802 extends DCPUHardware {
 		if(blinkDelay == 0) {
 			blinkOn = !blinkOn;
 			blinkDelay = 30;
+		}
+
+		if(!renderedLastTick) {
+			render();
+			renderedLastTick = true;
+		} else {
+			renderedLastTick = false;
 		}
 	}
 

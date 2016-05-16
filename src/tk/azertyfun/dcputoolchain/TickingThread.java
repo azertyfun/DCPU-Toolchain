@@ -28,6 +28,8 @@ public class TickingThread extends Thread {
 			try {
 				if((int) (1000f / 60f - (endTime - startTime)) > 0)
 					Thread.sleep((int) (1000f / 60f - (endTime - startTime)));
+				else
+					System.err.println("Late by " + ((endTime - startTime) - 1000f/60f) + " ms on device ticking.");
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

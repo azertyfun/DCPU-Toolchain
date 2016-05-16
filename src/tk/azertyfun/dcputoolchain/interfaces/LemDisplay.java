@@ -80,7 +80,7 @@ public class LemDisplay extends Thread {
 	private void loop() {
 		GL.createCapabilities();
 
-		glClearColor(1, 0, 0, 0);
+		glClearColor(0, 0, 0, 0);
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -90,7 +90,6 @@ public class LemDisplay extends Thread {
 		while(glfwWindowShouldClose(window) == GLFW_FALSE) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			lem1802.render();
 			Texture texture = lem1802.getTexture();
 
 			if(texture != null) {
