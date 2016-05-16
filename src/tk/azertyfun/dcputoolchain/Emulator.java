@@ -273,7 +273,7 @@ public class Emulator implements CallbackStop {
 
 					byte[] bootloader_data_bytes = new byte[1024];
 					for (int i = 0; i < 512; ++i) {
-						if(little_endian) {
+						if(little_endian != bootloader_little_endian) {
 							bootloader_data_bytes[i * 2] = (byte) (bootloader_data[i] & 0xFF);
 							bootloader_data_bytes[i * 2 + 1] = (byte) ((bootloader_data[i] >> 8) & 0xFF);
 						} else {
