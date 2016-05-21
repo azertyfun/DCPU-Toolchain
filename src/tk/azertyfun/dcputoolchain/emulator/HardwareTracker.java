@@ -12,6 +12,7 @@ public class HardwareTracker {
 	private LinkedList<M525HD> m525hds = new LinkedList<>();
 	private LinkedList<CPUControl> cpuControls = new LinkedList<>();
 	private LinkedList<EDC> edcs = new LinkedList<>();
+	private LinkedList<Speaker> speakers = new LinkedList<>();
 
 	public HardwareTracker() {
 
@@ -62,6 +63,11 @@ public class HardwareTracker {
 		return edcs.getLast();
 	}
 
+	public DCPUHardware requestSpeaker() {
+		speakers.add(new Speaker("speaker_" + speakers.size()));
+		return speakers.getLast();
+	}
+
 	public DCPU getDCPU(String id) {
 		for(DCPU d : dcpus) {
 			if(d.getID().equals(id))
@@ -106,6 +112,14 @@ public class HardwareTracker {
 		for(M525HD hd : m525hds) {
 			if(hd.getID().equals(id))
 				return hd;
+		}
+		return null;
+	}
+
+	public Speaker getSpeaker(String id) {
+		for(Speaker speaker : speakers) {
+			if(speaker.getID().equals(id))
+				return speaker;
 		}
 		return null;
 	}

@@ -94,6 +94,7 @@ public class DCPUToolChain {
 				"  --edc                      Adds an EDC device.\n" +
 				"  --M35FD=path/to/file       Adds an M35FD device with a floppy stored in path/to/file.\n" +
 				"  --M525HD=path/to/file      Adds an M525HD device with a hard disk stored in path/to/file.\n" +
+				"  --speaker                  Adds an speaker device.\n" +
 				"  --console                  Disables debugger and EDC, and creates a server on port 25570 that can be used by remoteConsole.py to control the LEM1802 and keyboard via a remote console. Useful if you want to run the emulator headless.");
 
 		System.exit(-1);

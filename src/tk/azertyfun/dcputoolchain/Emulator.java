@@ -105,6 +105,14 @@ public class Emulator implements CallbackStop {
 					} else {
 						System.out.println("WARNING: Ignored edc flag, console flag specified.");
 					}
+				} else if(args[i].equalsIgnoreCase("--SPEAKER")) {
+					if(!console) {
+						hardware.add(hardwareTracker.requestSpeaker());
+						hardware.getLast().connectTo(dcpu);
+						hardware.getLast().powerOn();
+					} else {
+						System.out.println("WARNING: Ignored speaker flag, console flag specified.");
+					}
 				} else {
 					if (!args[i].equalsIgnoreCase("--console")) {
 						String[] splitted = args[i].split("=");
