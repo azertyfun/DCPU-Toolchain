@@ -105,42 +105,40 @@ public class LEM1802 extends DCPUHardware {
 			int pos = 0;
 			for(int y = 0; y < 12; ++y) {
 				for(int x = 0; x < 32; ++x) {
-					if((useGivenBuffers && videoRam[pos & 0xFFFF] != 0) || (!useGivenBuffers && dcpu.ram[(screenMemMap + pos) & 0xFFFF] != 0)) {
-						char fgCol;
-						char bgCol;
-						boolean blink;
-						char character;
-						if(!useGivenBuffers) {
-							fgCol = (char) ((dcpu.ram[(screenMemMap + pos) & 0xFFFF] & 0xF000) >> 12);
-							bgCol = (char) ((dcpu.ram[(screenMemMap + pos) & 0xFFFF] & 0xF00) >> 8);
-							blink = ((dcpu.ram[(screenMemMap + pos & 0xFFFF)] & 0x80) >> 7) == 1;
-							character = (char) (dcpu.ram[(screenMemMap + pos) & 0xFFFF] & 0x7F);
-						} else {
-							fgCol = (char) ((videoRam[(pos) & 0xFFFF] & 0xF000) >> 12);
-							bgCol = (char) ((videoRam[(pos) & 0xFFFF] & 0xF00) >> 8);
-							blink = ((videoRam[(pos & 0xFFFF)] & 0x80) >> 7) == 1;
-							character = (char) (videoRam[pos & 0xFFFF] & 0x7F);
-						}
+					char fgCol;
+					char bgCol;
+					boolean blink;
+					char character;
+					if(!useGivenBuffers) {
+						fgCol = (char) ((dcpu.ram[(screenMemMap + pos) & 0xFFFF] & 0xF000) >> 12);
+						bgCol = (char) ((dcpu.ram[(screenMemMap + pos) & 0xFFFF] & 0xF00) >> 8);
+						blink = ((dcpu.ram[(screenMemMap + pos & 0xFFFF)] & 0x80) >> 7) == 1;
+						character = (char) (dcpu.ram[(screenMemMap + pos) & 0xFFFF] & 0x7F);
+					} else {
+						fgCol = (char) ((videoRam[(pos) & 0xFFFF] & 0xF000) >> 12);
+						bgCol = (char) ((videoRam[(pos) & 0xFFFF] & 0xF00) >> 8);
+						blink = ((videoRam[(pos & 0xFFFF)] & 0x80) >> 7) == 1;
+						character = (char) (videoRam[pos & 0xFFFF] & 0x7F);
+					}
 
-						char fontChar[] = new char[] {font(character * 2), font(character * 2 + 1)};
+					char fontChar[] = new char[] {font(character * 2), font(character * 2 + 1)};
 
-						if(!blink || !blinkOn) {
-							for(int i = 0; i < 4; ++i) {
-								int word = fontChar[((i >= 2) ? 1 : 0) * 1]; //java, plz, why can't you cast boolean to int ?
-								int hword = (word >> (((i % 2) == 0 ? 1 : 0) * 8)) & 0xFF; //plz java plz
-								for(int j = 0; j < 8; ++j) {
-									int pixel = (hword >> j) & 1;
-									int px = BORDER_WIDTH + x * 4 + i;
-									int py = BORDER_WIDTH + y * 8 + j;
-									if(pixel == 1) {
-										colorBuffer2D[px][py][0] = red(palette(fgCol));
-										colorBuffer2D[px][py][1] = green(palette(fgCol));
-										colorBuffer2D[px][py][2] = blue(palette(fgCol));
-									} else {
-										colorBuffer2D[px][py][0] = red(palette(bgCol));
-										colorBuffer2D[px][py][1] = green(palette(bgCol));
-										colorBuffer2D[px][py][2] = blue(palette(bgCol));
-									}
+					if(!blink || !blinkOn) {
+						for(int i = 0; i < 4; ++i) {
+							int word = fontChar[((i >= 2) ? 1 : 0) * 1]; //java, plz, why can't you cast boolean to int ?
+							int hword = (word >> (((i % 2) == 0 ? 1 : 0) * 8)) & 0xFF; //plz java plz
+							for(int j = 0; j < 8; ++j) {
+								int pixel = (hword >> j) & 1;
+								int px = BORDER_WIDTH + x * 4 + i;
+								int py = BORDER_WIDTH + y * 8 + j;
+								if(pixel == 1) {
+									colorBuffer2D[px][py][0] = red(palette(fgCol));
+									colorBuffer2D[px][py][1] = green(palette(fgCol));
+									colorBuffer2D[px][py][2] = blue(palette(fgCol));
+								} else {
+									colorBuffer2D[px][py][0] = red(palette(bgCol));
+									colorBuffer2D[px][py][1] = green(palette(bgCol));
+									colorBuffer2D[px][py][2] = blue(palette(bgCol));
 								}
 							}
 						}
