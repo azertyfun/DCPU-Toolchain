@@ -2,7 +2,6 @@ package tk.azertyfun.dcputoolchain.emulator;
 
 import com.jsyn.JSyn;
 import com.jsyn.Synthesizer;
-import com.jsyn.devices.AudioDeviceManager;
 import com.jsyn.unitgen.*;
 
 import javax.sound.sampled.*;
@@ -16,8 +15,8 @@ public class Speaker extends DCPUHardware {
 
 	private Synthesizer synth;
 
-	private SineOscillator sineOscillator0 = new SineOscillator();
-	private SineOscillator sineOscillator1 = new SineOscillator();
+	private SquareOscillator squareOscillator0 = new SquareOscillator();
+	private SquareOscillator squareOscillator1 = new SquareOscillator();
 	private LineOut lineOut = new LineOut();
 
 
@@ -27,18 +26,18 @@ public class Speaker extends DCPUHardware {
 
 		synth = JSyn.createSynthesizer();
 		synth.add(lineOut);
-		synth.add(sineOscillator0);
-		synth.add(sineOscillator1);
+		synth.add(squareOscillator0);
+		synth.add(squareOscillator1);
 
 		synth.start();
 		lineOut.start();
-		sineOscillator0.start();
-		sineOscillator1.start();
+		squareOscillator0.start();
+		squareOscillator1.start();
 
-		sineOscillator0.output.connect(0, lineOut.input, 0);
-		sineOscillator0.output.connect(0, lineOut.input, 1);
-		sineOscillator1.output.connect(0, lineOut.input, 0);
-		sineOscillator1.output.connect(0, lineOut.input, 1);
+		squareOscillator0.output.connect(0, lineOut.input, 0);
+		squareOscillator0.output.connect(0, lineOut.input, 1);
+		squareOscillator1.output.connect(0, lineOut.input, 0);
+		squareOscillator1.output.connect(0, lineOut.input, 1);
 	}
 
 	@Override
@@ -53,18 +52,18 @@ public class Speaker extends DCPUHardware {
 		switch(a) {
 			case 0: //SET_FREQUENCY_CHANNEL_1
 				if(dcpu.registers[1] != 0) {
-					sineOscillator0.amplitude.set(0.4);
-					sineOscillator0.frequency.set(dcpu.registers[1]);
+					squareOscillator0.amplitude.set(0.05);
+					squareOscillator0.frequency.set(dcpu.registers[1]);
 				} else {
-					sineOscillator0.amplitude.set(0.0);
+					squareOscillator0.amplitude.set(0.0);
 				}
 				break;
 			case 1: //SET_FREQUENCY_CHANNEL_2
 				if(dcpu.registers[1] != 0) {
-					sineOscillator1.amplitude.set(0.3);
-					sineOscillator1.frequency.set(dcpu.registers[1]);
+					squareOscillator1.amplitude.set(0.03);
+					squareOscillator1.frequency.set(dcpu.registers[1]);
 				} else {
-					sineOscillator1.amplitude.set(0.0);
+					squareOscillator1.amplitude.set(0.0);
 				}
 				break;
 		}
@@ -72,14 +71,14 @@ public class Speaker extends DCPUHardware {
 
 	@Override
 	public void powerOff() {
-		sineOscillator0.amplitude.set(0);
-		sineOscillator1.amplitude.set(0);
+		squareOscillator0.amplitude.set(0);
+		squareOscillator1.amplitude.set(0);
 	}
 
 	@Override
 	public void powerOn() {
-		sineOscillator0.amplitude.set(0);
-		sineOscillator1.amplitude.set(0);
+		squareOscillator0.amplitude.set(0);
+		squareOscillator1.amplitude.set(0);
 	}
 
 	private byte getByteValue(double angle) {
