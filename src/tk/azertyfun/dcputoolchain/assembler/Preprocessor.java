@@ -33,6 +33,12 @@ public class Preprocessor {
 				else
 					throw new ParsingException("Error: Excpected 2 arguments for magic directive, got " + (splitted.length - 1) + " at " + line.getFile() + ":" + line.getLine() + " (" + line.getOriginal_line() + ")");
 				line.setLine(""); //Set the line for deletion
+			} else if(splitted[0].equalsIgnoreCase(".org") || splitted[0].equalsIgnoreCase("#org")) {
+				if(splitted.length == 2)
+					sourceManager.setOffset(Parser.parseNumber(splitted[1], line));
+				else
+					throw new ParsingException("Error: Expected 1 arguments for org directive, got " + (splitted.length - 1) + " at " + line.getFile() + ":" + line.getLine() + " (" + line.getOriginal_line() + ")");
+				line.setLine(""); //Set the line for deletion
 			}
 		}
 

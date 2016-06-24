@@ -13,6 +13,8 @@ public class SourceManager {
 	private LinkedList<Label> labels = new LinkedList<>();
 	private HashMap<Character, Character> magic = new HashMap<>();
 
+	private char offset = 0;
+
 	public SourceManager() {
 
 	}
@@ -60,6 +62,10 @@ public class SourceManager {
 		this.magic.put(location, magic);
 	}
 
+	public void setOffset(char offset) {
+		this.offset = offset;
+	}
+
 	public LinkedList<String> getS_labels() {
 		return s_labels;
 	}
@@ -80,5 +86,9 @@ public class SourceManager {
 
 	public HashMap<Character, Character> getMagic() {
 		return magic;
+	}
+
+	public char getOffset() {
+		return offset;
 	}
 }

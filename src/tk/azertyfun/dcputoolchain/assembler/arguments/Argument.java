@@ -7,10 +7,10 @@ import java.util.HashMap;
 public abstract class Argument {
 	protected Value value = new Value('\0');
 
-	public void makeValueLiteral(HashMap<String, Character> labels) throws ParsingException {
+	public void makeValueLiteral(HashMap<String, Character> labels, char offset) throws ParsingException {
 		if(!value.isLiteral) {
 			if(labels.containsKey(value.label.toUpperCase()))
-				value.literal = labels.get(value.label.toUpperCase());
+				value.literal = (char) (labels.get(value.label.toUpperCase()) + offset);
 			else
 				throw new ParsingException("Error: Can't find label declaration for " + value.label);
 			//value.isLiteral = true;

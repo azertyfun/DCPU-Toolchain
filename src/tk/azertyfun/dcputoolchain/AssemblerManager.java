@@ -100,7 +100,7 @@ public class AssemblerManager {
 			System.out.print("Optimizing... ");
 			start = System.currentTimeMillis();
 
-			FinalOptimizer finalOptimizer = new FinalOptimizer(tokens, optimize_shortLiterals);
+			FinalOptimizer finalOptimizer = new FinalOptimizer(sourceManager, tokens, optimize_shortLiterals);
 			finalOptimizer.optimize();
 
 			System.out.println("Done in " + (System.currentTimeMillis() - start) + " ms.");

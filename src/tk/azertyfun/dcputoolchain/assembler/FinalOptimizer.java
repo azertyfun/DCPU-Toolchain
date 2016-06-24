@@ -2,11 +2,14 @@ package tk.azertyfun.dcputoolchain.assembler;
 
 import tk.azertyfun.dcputoolchain.assembler.arguments.ArgumentOptimizable;
 import tk.azertyfun.dcputoolchain.assembler.exceptions.ParsingException;
+import tk.azertyfun.dcputoolchain.assembler.sourceManagement.SourceManager;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 
 public class FinalOptimizer {
+
+	private SourceManager sourceManager;
 
 	private LinkedList<Token> tokens;
 
@@ -14,7 +17,8 @@ public class FinalOptimizer {
 
 	private boolean optimizeShortLiterals;
 
-	public FinalOptimizer(LinkedList<Token> tokens, boolean optimizeShortLiterals) {
+	public FinalOptimizer(SourceManager sourceManager, LinkedList<Token> tokens, boolean optimizeShortLiterals) {
+		this.sourceManager = sourceManager;
 		this.tokens = tokens;
 		this.optimizeShortLiterals = optimizeShortLiterals;
 	}
@@ -38,8 +42,8 @@ public class FinalOptimizer {
 			}
 			for (Token token : tokens) {
 				if (!token.isDat() && !token.isLabel()) {
-					token.getA().makeValueLiteral(labelToValue);
-					token.getB().makeValueLiteral(labelToValue);
+					token.getA().makeValueLiteral(labelToValue, sourceManager.getOffset());
+					token.getB().makeValueLiteral(labelToValue, sourceManager.getOffset());
 				} else if(token.isDat()) {
 					token.makeDatValueLiteral(labelToValue);
 				}
