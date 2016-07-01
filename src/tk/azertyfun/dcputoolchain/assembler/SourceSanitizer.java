@@ -57,10 +57,10 @@ public class SourceSanitizer {
 			line.replace_regexp("\n+$", ""); //Remove multiple \n
 
 			//Change PICK n to [SP+n]
-			Pattern p = Pattern.compile("[Pp][Ii][Cc][Kk] ([0-9]+)");
+			Pattern p = Pattern.compile("[Pp][Ii][Cc][Kk] ([0-9xa-fA-F]+)");
 			Matcher m = p.matcher(line.getLine());
 			while(m.find()) {
-				line.replace_regexp("[Pp][Ii][Cc][Kk] ([0-9]+)", "[SP+" + m.group(1) + "]");
+				line.replace_regexp("[Pp][Ii][Cc][Kk] ([0-9xa-fA-F]+)", "[SP+" + m.group(1) + "]");
 			}
 
 			//Change [A + C], [C + D] n to [A+B],[C+D]. Otherwise, the next regex will replace both...
