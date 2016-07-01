@@ -39,6 +39,8 @@ public class Preprocessor {
 				else
 					throw new ParsingException("Error: Expected 1 arguments for org directive, got " + (splitted.length - 1) + " at " + line.getFile() + ":" + line.getLine() + " (" + line.getOriginal_line() + ")");
 				line.setLine(""); //Set the line for deletion
+			} else if(splitted[0].equalsIgnoreCase(".globl")) { // We don't have a linker yet so we just ignore it (it is output by llvm-dcpu16)
+				line.setLine(""); //Set the line for deletion
 			}
 		}
 
