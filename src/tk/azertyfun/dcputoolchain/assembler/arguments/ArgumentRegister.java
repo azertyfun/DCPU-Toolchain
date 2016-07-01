@@ -7,6 +7,8 @@ public class ArgumentRegister extends Argument  {
 	char register;
 
 	public ArgumentRegister(String argument, Line line) throws ParsingException {
+		super(line);
+
 		register = Parser.parseRegister(argument, line);
 	}
 

@@ -9,6 +9,8 @@ public class ArgumentAddressOfNextWord extends Argument {
 	boolean isA;
 
 	public ArgumentAddressOfNextWord(String argument, Line line, LinkedList<String> labels, boolean isA) throws ParsingException {
+		super(line);
+
 		this.isA = isA;
 
 		String content = argument.substring(1, argument.length() - 1);

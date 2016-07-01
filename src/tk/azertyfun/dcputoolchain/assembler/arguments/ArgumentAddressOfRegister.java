@@ -7,6 +7,8 @@ public class ArgumentAddressOfRegister extends Argument {
 	private char register;
 
 	public ArgumentAddressOfRegister(String argument, Line line) throws ParsingException {
+		super(line);
+
 		register = (char) (Parser.parseRegister("" + argument.charAt(1), line) + 0x08);
 	}
 

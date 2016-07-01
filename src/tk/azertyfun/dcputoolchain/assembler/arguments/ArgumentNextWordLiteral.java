@@ -12,6 +12,8 @@ public class ArgumentNextWordLiteral extends Argument implements ArgumentOptimiz
 	boolean isA;
 
 	public ArgumentNextWordLiteral(String argument, Line line, LinkedList<String> labels, boolean isA) throws ParsingException {
+		super(line);
+
 		this.isA = isA;
 
 		boolean isLabel = false;

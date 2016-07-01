@@ -1,8 +1,10 @@
 package tk.azertyfun.dcputoolchain.assembler.arguments;
 
-public class ArgumentPeek extends Argument {
-	public ArgumentPeek() {
+import tk.azertyfun.dcputoolchain.assembler.sourceManagement.Line;
 
+public class ArgumentPeek extends Argument {
+	public ArgumentPeek(Line line) {
+		super(line);
 	}
 
 	@Override

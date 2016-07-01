@@ -1,6 +1,12 @@
 package tk.azertyfun.dcputoolchain.assembler.arguments;
 
+import tk.azertyfun.dcputoolchain.assembler.sourceManagement.Line;
+
 public class ArgumentEX extends Argument {
+
+	public ArgumentEX(Line line) {
+		super(line);
+	}
 
 	@Override
 	public char getValue() {

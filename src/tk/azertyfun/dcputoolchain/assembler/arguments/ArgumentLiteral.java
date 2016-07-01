@@ -10,6 +10,7 @@ public class ArgumentLiteral extends Argument {
 	private boolean optimizeShortLiterals;
 
 	public ArgumentLiteral(String argument, Line line, LinkedList<String> labels, boolean optimizeShortLiterals) throws ParsingException {
+		super(line);
 
 		boolean isLabel = false;
 		for(String label : labels) {
@@ -27,7 +28,8 @@ public class ArgumentLiteral extends Argument {
 		this.optimizeShortLiterals = optimizeShortLiterals;
 	}
 
-	public ArgumentLiteral(char character) {
+	public ArgumentLiteral(char character, Line line) {
+		super(line);
 		value = new Value(character);
 	}
 

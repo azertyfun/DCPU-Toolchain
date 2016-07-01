@@ -1,6 +1,12 @@
 package tk.azertyfun.dcputoolchain.assembler.arguments;
 
+import tk.azertyfun.dcputoolchain.assembler.sourceManagement.Line;
+
 public class ArgumentNot extends Argument {
+	public ArgumentNot(Line line) {
+		super(line);
+	}
+
 	@Override
 	public char getValue() {
 		return 0;

@@ -10,6 +10,8 @@ public class ArgumentAddressOfRegisterPlusNextWord extends Argument {
 	private char register;
 
 	public ArgumentAddressOfRegisterPlusNextWord(String argument, Line line, LinkedList<String> labels) throws ParsingException {
+		super(line);
+
 		String[] splitted = argument.substring(1, argument.length() - 1).split("\\+");
 
 		/*
@@ -48,7 +50,7 @@ public class ArgumentAddressOfRegisterPlusNextWord extends Argument {
 			}
 
 			if (isLabel)
-				value = new Value(splitted[0]);
+				value = new Value(splitted[1]);
 			else
 				value = new Value(Parser.parseNumber(splitted[1], line));
 		}

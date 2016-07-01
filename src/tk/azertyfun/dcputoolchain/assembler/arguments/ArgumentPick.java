@@ -8,6 +8,8 @@ import java.util.LinkedList;
 public class ArgumentPick extends Argument {
 
 	public ArgumentPick(String argument, Line line, LinkedList<String> labels) throws ParsingException {
+		super(line);
+
 		String[] splitted = argument.substring(1, argument.length() - 1).split("\\+");
 		if(splitted.length != 2)
 			throw new ParsingException("Error: Can't parse [SP + next word] \"" + argument + "\": '" + line.getOriginal_line() + "\" in " + line.getFile() + ":" + line.getLineNumber());

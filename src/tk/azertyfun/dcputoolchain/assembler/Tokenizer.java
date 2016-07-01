@@ -31,12 +31,12 @@ public class Tokenizer {
 				if(arguments.length != 2)
 					throw new ParsingException("Error: " + (arguments.length < 2 ? "Not enough" : "Too many") + " arguments: \"" + line.getOriginal_line() + "\" in " + line.getFile() + ":" + line.getLineNumber());
 
-				tokens.add(new Token(Token.Opcodes.strings.get(token), false, getArgumentB(arguments[0], line), getArgumentA(arguments[1], line)));
+				tokens.add(new Token(Token.Opcodes.strings.get(token), false, getArgumentB(arguments[0], line), getArgumentA(arguments[1], line), line));
 			} else if(Token.SpecialOpcodes.strings.containsKey(token)) {
 				if(splitted.length != 2)
 					throw new ParsingException("Error: " + (splitted.length < 2 ? "Not enough" : "Too many") + " arguments: \"" + line.getOriginal_line() + "\" in " + line.getFile() + ":" + line.getLineNumber());
 
-				tokens.add(new Token(Token.SpecialOpcodes.strings.get(token), true, new ArgumentNot(), getArgumentA(splitted[1], line)));
+				tokens.add(new Token(Token.SpecialOpcodes.strings.get(token), true, new ArgumentNot(line), getArgumentA(splitted[1], line), line));
 			} else if(token.equals("DAT") || token.equals(".DAT") || token.equals("#DAT")) {
 				LinkedList<Value> values = new LinkedList<>();
 
@@ -102,11 +102,11 @@ public class Tokenizer {
 		else if(b.length() == 1) //B is a register
 			return new ArgumentRegister(b, line);
 		else if(b.equalsIgnoreCase("SP"))
-			return new ArgumentSP();
+			return new ArgumentSP(line);
 		else if(b.equalsIgnoreCase("PC"))
-			return new ArgumentPC();
+			return new ArgumentPC(line);
 		else if(b.equalsIgnoreCase("EX"))
-			return new ArgumentEX();
+			return new ArgumentEX(line);
 		else if(b.charAt(0) == '[') { //[register], [register + next word], [SP] (PEEK), [SP + next word] (PICK n) or [next word]
 			if (b.length() < 3)
 				throw new ParsingException("Error: Can't parse argument: \"" + b + "\"" + line.getOriginal_line() + "\" in " + line.getFile() + ":" + line.getLineNumber());
@@ -115,18 +115,18 @@ public class Tokenizer {
 			} else if (b.contains("+") && !b.contains("SP")) { //[register + next word]
 				return new ArgumentAddressOfRegisterPlusNextWord(b, line, sourceManager.getS_labels());
 			} else if (b.equalsIgnoreCase("[SP]") || b.equalsIgnoreCase("PEEK")) { //[SP] (PEEK)
-				return new ArgumentPeek();
+				return new ArgumentPeek(line);
 			} else if (b.substring(0, 3).equalsIgnoreCase("[SP")) {
 				return new ArgumentPick(b, line, sourceManager.getS_labels());
 			} else { //[next word]
 				return new ArgumentAddressOfNextWord(b, line, sourceManager.getS_labels(), false);
 			}
 		} else if(b.equalsIgnoreCase("PUSH")) {
-			return new ArgumentPush();
+			return new ArgumentPush(line);
 		} else if(b.equalsIgnoreCase("PEEK")) {
-			return new ArgumentPeek();
+			return new ArgumentPeek(line);
 		} else if(b.matches("'.'")) { //Character literal
-			return new ArgumentLiteral(b.charAt(1));
+			return new ArgumentLiteral(b.charAt(1), line);
 		} else //next word (literal)
 			return new ArgumentNextWordLiteral(b, line, sourceManager.getS_labels(), false);
 	}
@@ -137,11 +137,11 @@ public class Tokenizer {
 		else if(a.length() == 1) //A is a register
 			return new ArgumentRegister(a, line);
 		else if(a.equalsIgnoreCase("SP"))
-			return new ArgumentSP();
+			return new ArgumentSP(line);
 		else if(a.equalsIgnoreCase("PC"))
-			return new ArgumentPC();
+			return new ArgumentPC(line);
 		else if(a.equalsIgnoreCase("EX"))
-			return new ArgumentEX();
+			return new ArgumentEX(line);
 		else if(a.charAt(0) == '[') { //[register], [register + next word], [SP] (PEEK), [SP + next word] (PICK n) or [next word]
 			if(a.length() < 3)
 				throw new ParsingException("Error: Can't parse argument: \"" + a + "\"" + line.getOriginal_line() + "\" in " + line.getFile() + ":" + line.getLineNumber());
@@ -150,18 +150,18 @@ public class Tokenizer {
 			} else if(a.contains("+") && !a.contains("SP")) { //[register + next word]
 				return new ArgumentAddressOfRegisterPlusNextWord(a, line, sourceManager.getS_labels());
 			} else if(a.equalsIgnoreCase("[SP]")) { //[SP] (PEEK)
-				return new ArgumentPeek();
+				return new ArgumentPeek(line);
 			} else if(a.substring(0, 3).equalsIgnoreCase("[SP")) {
 				return new ArgumentPick(a, line, sourceManager.getS_labels());
 			} else { //[next word]
 				return new ArgumentAddressOfNextWord(a, line, sourceManager.getS_labels(), true);
 			}
 		} else if(a.equalsIgnoreCase("POP")) {
-			return new ArgumentPop();
+			return new ArgumentPop(line);
 		} else if(a.equalsIgnoreCase("PEEK")) {
-			return new ArgumentPeek();
+			return new ArgumentPeek(line);
 		} else if(a.matches("'.'")) { //Character literal
-			return new ArgumentLiteral(a.charAt(1));
+			return new ArgumentLiteral(a.charAt(1), line);
 		} else //next word (literal)
 			return new ArgumentNextWordLiteral(a, line, sourceManager.getS_labels(), true);
 	}

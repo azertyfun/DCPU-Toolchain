@@ -1,6 +1,12 @@
 package tk.azertyfun.dcputoolchain.assembler.arguments;
 
+import tk.azertyfun.dcputoolchain.assembler.sourceManagement.Line;
+
 public class ArgumentPop extends Argument {
+
+	public ArgumentPop(Line line) {
+		super(line);
+	}
 
 	@Override
 	public char getValue() {

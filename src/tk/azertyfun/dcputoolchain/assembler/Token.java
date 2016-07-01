@@ -3,6 +3,7 @@ package tk.azertyfun.dcputoolchain.assembler;
 import tk.azertyfun.dcputoolchain.assembler.arguments.Argument;
 import tk.azertyfun.dcputoolchain.assembler.arguments.Value;
 import tk.azertyfun.dcputoolchain.assembler.exceptions.ParsingException;
+import tk.azertyfun.dcputoolchain.assembler.sourceManagement.Line;
 
 import java.util.HashMap;
 
@@ -14,18 +15,20 @@ public class Token {
 	private boolean isDat, isLabel;
 	private Value datValue;
 	private String label;
+	private Line line;
 
 	public Token(Value value) {
 		this.isDat = true;
 		this.datValue = value;
 	}
 
-	public Token(char opcode, boolean special, Argument b, Argument a) {
+	public Token(char opcode, boolean special, Argument b, Argument a, Line line) {
 		this.opcode = opcode;
 		this.special = special;
 		this.isDat = false;
 		A = a;
 		B = b;
+		this.line = line;
 	}
 
 	public Token(String label) {
@@ -50,7 +53,7 @@ public class Token {
 			if(labels.containsKey(datValue.getLabel().toUpperCase()))
 				datValue.setLiteral(labels.get(datValue.getLabel().toUpperCase()));
 			else
-				throw new ParsingException("Error: Can't find label declaration for " + datValue.getLabel());
+				throw new ParsingException("Error: Can't find label declaration for " + datValue.getLabel() + " at " + line.getFile() + ":" + line.getLine() + " (" + line.getOriginal_line() + ")");
 			//value.isLiteral = true;
 		}
 	}
