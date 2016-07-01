@@ -89,7 +89,7 @@ public class Tokenizer {
 					throw new ParsingException("Error: " + (splitted.length < 2 ? "Not enough" : "Too many") + " arguments: \"" + line.getOriginal_line() + "\" in " + line.getFile() + ":" + line.getLineNumber());
 				tokens.add(new Token(splitted[1]));
 			} else {
-				throw new ParsingException("Error: Unkown opcode \"" + splitted[0] + "\": " + line.getOriginal_line() + "\" in " + line.getFile() + ":" + line.getLineNumber());
+				throw new ParsingException("Error: Unknown opcode \"" + splitted[0] + "\": " + line.getOriginal_line() + "\" in " + line.getFile() + ":" + line.getLineNumber());
 			}
 		}
 
