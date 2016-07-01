@@ -121,7 +121,8 @@ public class DebuggerInterface extends JFrame {
 		dcpu.setCallback(new DCPU.DebuggerCallback() {
 			@Override
 			public void broke() {
-				runpause();
+				if(!dcpu.isPausing())
+					runpause();
 			}
 
 			@Override
@@ -295,7 +296,7 @@ public class DebuggerInterface extends JFrame {
 					if(input.length() > 2 && input.substring(0, 2).equalsIgnoreCase("0x")) {
 						currentAddress = (char) Integer.parseInt(input.substring(2, input.length()), 16);
 					} else {
-						currentAddress = dcpu.get(Integer.parseInt(input));
+						currentAddress = (char) Integer.parseInt(input);
 					}
 				} catch(NumberFormatException e) {
 					//A JOptionPane should display an error, but since they crash on me I'm too lazy to implement one myself.
@@ -346,11 +347,20 @@ public class DebuggerInterface extends JFrame {
 				}
 			}
 
-			char[] ram = new char[32];
-			for(int i = 0; i < 32; ++i) {
-				ram[i] = dcpu.get(currentAddress + i - 16);
+			Disassembler disassembler;
+			if(currentAddress > 16) {
+				char[] ram = new char[32];
+				for(int i = 0; i < 32; ++i) {
+					ram[i] = dcpu.get(currentAddress + i - 16);
+				}
+				disassembler = new Disassembler(ram, dcpu.getCurrentInstruction(), (char) (currentAddress - 16));
+			} else {
+				char[] ram = new char[32];
+				for(int i = 0; i < 32; ++i) {
+					ram[i] = dcpu.get(currentAddress + i);
+				}
+				disassembler = new Disassembler(ram, dcpu.getCurrentInstruction(), (char) 0);
 			}
-			Disassembler disassembler = new Disassembler(ram, dcpu.getCurrentInstruction(), (char) (currentAddress - 16));
 			LinkedHashMap<String, Boolean> disassembled = disassembler.disassemble();
 			for(String key : disassembled.keySet()) {
 				if(disassembled.get(key))

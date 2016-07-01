@@ -107,7 +107,10 @@ public class Disassembler {
 				instruction += " " + get(a, true);
 			} else {
 				instruction += opcodes.get(opcode);
-				instruction += " " + get(b, false) + ", " + get(a, true);
+				// We get the strings first because when we have a three word long instruction, it's a then b.
+				String s_a = get(a, true);
+				String s_b = get(b, false);
+				instruction += " " + s_b + ", " + s_a;
 			}
 
 			boolean highlight = false;
