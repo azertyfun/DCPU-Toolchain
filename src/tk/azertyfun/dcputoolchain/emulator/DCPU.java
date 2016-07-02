@@ -41,6 +41,7 @@ public class DCPU extends Thread implements Identifiable {
 
 	private DebuggerCallback debuggerCallback;
 	private char currentInstruction = 0;
+	private boolean queueingEnabled;
 
 	public DCPU(String id) {
 		this.id = id;
@@ -735,6 +736,10 @@ public class DCPU extends Thread implements Identifiable {
 
 	public char getIa() {
 		return ia;
+	}
+
+	public boolean isQueueingEnabled() {
+		return queueingEnabled;
 	}
 
 	public interface DebuggerCallback {

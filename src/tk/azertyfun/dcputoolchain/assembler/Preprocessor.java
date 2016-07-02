@@ -18,7 +18,7 @@ public class Preprocessor {
 
 	public void processDefines() throws ParsingException {
 		for(Line line : sourceManager.getLines()) {
-			String[] splitted = line.getLine().split(" ");
+			String[] splitted = line.getLine().replace(",", " ").replace("  ", " ").split(" ");
 			if(splitted[0].equalsIgnoreCase(".define") || splitted[0].equalsIgnoreCase("#define")) {
 				String define_name = splitted[1];
 				String define_body = "";

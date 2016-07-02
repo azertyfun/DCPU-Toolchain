@@ -37,7 +37,7 @@ public class Tokenizer {
 					throw new ParsingException("Error: " + (splitted.length < 2 ? "Not enough" : "Too many") + " arguments: \"" + line.getOriginal_line() + "\" in " + line.getFile() + ":" + line.getLineNumber());
 
 				tokens.add(new Token(Token.SpecialOpcodes.strings.get(token), true, new ArgumentNot(line), getArgumentA(splitted[1], line), line));
-			} else if(token.equals("DAT") || token.equals(".DAT") || token.equals("#DAT")) {
+			} else if(token.equals("DAT") || token.equals(".DAT") || token.equals("#DAT") || token.equals(".WORD") || token.equals("#WORD")) {
 				LinkedList<Value> values = new LinkedList<>();
 
 				if(splitted.length != 2) { //DAT 0 1 2 3 syntax instead of DAT 0, 1, 2, 3

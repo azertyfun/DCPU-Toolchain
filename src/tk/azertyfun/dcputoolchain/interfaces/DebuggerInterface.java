@@ -384,7 +384,8 @@ public class DebuggerInterface extends JFrame {
 					"A: 0x" + String.format("%04x", (int) dcpu.get(0x10000)) + ", B: 0x" + String.format("%04x", (int) dcpu.get(0x10001)) + ", C: 0x" + String.format("%04x", (int) dcpu.get(0x10002)) + "<br />" +
 					"X: 0x" + String.format("%04x", (int) dcpu.get(0x10003)) + ", Y: 0x" + String.format("%04x", (int) dcpu.get(0x10004)) + ", Z: 0x" + String.format("%04x", (int) dcpu.get(0x10005)) + "<br />" +
 					"I: 0x" + String.format("%04x", (int) dcpu.get(0x10006)) + ", J: 0x" + String.format("%04x", (int) dcpu.get(0x10007)) + "<br />" +
-					"PC: 0x" + String.format("%04x", (int) dcpu.get(0x10009)) + ", SP: 0x" + String.format("%04x", (int) dcpu.get(0x10008)) + ", EX: 0x" + String.format("%04x", (int) dcpu.get(0x1000a)) + ", IA: 0x" + String.format("%04x", (int) dcpu.get(0x1000b)) +
+					"PC: 0x" + String.format("%04x", (int) dcpu.get(0x10009)) + ", SP: 0x" + String.format("%04x", (int) dcpu.get(0x10008)) + ", EX: 0x" + String.format("%04x", (int) dcpu.get(0x1000a)) + ", IA: 0x" + String.format("%04x", (int) dcpu.get(0x1000b)) + "<br />" +
+					"Queuing enabled: " + (dcpu.isQueueingEnabled() ? "true" : "false") +
 					"</body>" +
 					"</html>");
 
@@ -444,7 +445,8 @@ public class DebuggerInterface extends JFrame {
 				"A: -, B: -, C: -<br />" +
 				"X: -, Y: -, Z: -<br />" +
 				"I: -, J: -<br />" +
-				"PC: -, SP: -, EX: -, IA: -" +
+				"PC: -, SP: -, EX: -, IA: -<br />" +
+				"Queuing enabled: true" +
 				"</body>" +
 				"</html>");
 		stack.setText("<html>" +
