@@ -14,20 +14,6 @@ public class LEM1802 extends DCPUHardware {
 	public static final int START_DURATION = 60;
 	public static final int BORDER_WIDTH = 4;
 	private final static int[][][] bootImage = new int[128][96][3];
-	static {
-		try {
-			BufferedImage image = ImageIO.read(new File("res/boot.png"));
-			for(int y = 0; y < 96; ++y) {
-				for(int x = 0; x < 128; ++x) {
-					bootImage[x][y][0] = (image.getRGB(x, y) >> 16) & 0xFF;
-					bootImage[x][y][1] = (image.getRGB(x, y) >> 8) & 0xFF;
-					bootImage[x][y][2] = (image.getRGB(x, y)) & 0xFF;
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 
 	protected boolean blinkOn;
 	protected int blinkDelay;
@@ -87,6 +73,19 @@ public class LEM1802 extends DCPUHardware {
 	public LEM1802(String id) {
 		super(TYPE, REVISION, MANUFACTURER);
 		this.id = id;
+
+		try {
+			BufferedImage image = ImageIO.read(getClass().getResourceAsStream("/boot.png"));
+			for (int y = 0; y < 96; ++y) {
+				for (int x = 0; x < 128; ++x) {
+					bootImage[x][y][0] = (image.getRGB(x, y) >> 16) & 0xFF;
+					bootImage[x][y][1] = (image.getRGB(x, y) >> 8) & 0xFF;
+					bootImage[x][y][2] = (image.getRGB(x, y)) & 0xFF;
+				}
+			}
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void render() {

@@ -134,8 +134,8 @@ public class KeyboardDisplay extends JFrame implements KeyListener, CallbackIsKe
 		public CustomPanel() {
 			super();
 			try {
-				img = ImageIO.read(new File("res/keyboard.png"));
-				img_nofocus = ImageIO.read(new File("res/keyboard_nofocus.png"));
+				img = ImageIO.read(getClass().getResourceAsStream("/keyboard.png"));
+				img_nofocus = ImageIO.read(getClass().getResourceAsStream("/keyboard_nofocus.png"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

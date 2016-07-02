@@ -7,6 +7,7 @@
 package tk.azertyfun.dcputoolchain.emulator;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
@@ -51,16 +52,15 @@ public class DCPU extends Thread implements Identifiable {
 		stopped = true;
 	}
 
-	public void setRam(String path, boolean little_endian) throws NoSuchFileException, IOException {
-		byte[] ram_b = Files.readAllBytes(Paths.get(path));
-		char[] ram = new char[ram_b.length / 2];
+	public void setRam(InputStream inputStream, boolean little_endian) throws NoSuchFileException, IOException {
+		char[] ram = new char[inputStream.available() / 2];
 		for(int i = 0; i < ram.length; ++i) {
 			if(little_endian) {
-				ram[i] = (char) (ram_b[i * 2 + 1] << 8);
-				ram[i] |= (char) (ram_b[i * 2] & 0xFF);
+				ram[i] = (char) (inputStream.read() & 0xFF);
+				ram[i] |= (char) (inputStream.read() << 8);
 			} else {
-				ram[i] = (char) (ram_b[i * 2] << 8);
-				ram[i] |= (char) (ram_b[i * 2 + 1] & 0xFF);
+				ram[i] = (char) (inputStream.read() << 8);
+				ram[i] |= (char) (inputStream.read() & 0xFF);
 			}
 		}
 

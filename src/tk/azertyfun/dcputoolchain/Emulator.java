@@ -246,7 +246,6 @@ public class Emulator implements CallbackStop {
 		}
 
 		try {
-			File romFile = new File("res/rom.bin");
 			if(assemble) {
 				File tmpFile = File.createTempFile("DCPUToolchain", Long.toString(System.currentTimeMillis()));
 				AssemblerManager assemblerManager;
@@ -270,8 +269,6 @@ public class Emulator implements CallbackStop {
 				bootDrive.powerOn();
 
 				hardware.add(bootDrive);
-
-				dcpu.setRam(romFile.getAbsolutePath(), rom_little_endian);
 			} else {
 				M35FD bootDrive;
 				if(bootloader) {
@@ -302,9 +299,8 @@ public class Emulator implements CallbackStop {
 				bootDrive.powerOn();
 
 				hardware.add(bootDrive);
-
-				dcpu.setRam(romFile.getAbsolutePath(), rom_little_endian);
 			}
+			dcpu.setRam(getClass().getResourceAsStream("/rom.bin"), rom_little_endian);
 
 			if(debugger) {
 				debuggerInterface = new DebuggerInterface(dcpu, ticking, this);
