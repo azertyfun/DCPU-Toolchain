@@ -213,7 +213,6 @@ public class Emulator implements CallbackStop {
 
 				if(!console) {
 					LemDisplay lemDisplay = new LemDisplay((LEM1802) hardware.getLast());
-					lemDisplay.start();
 					lemDisplays.add(lemDisplay);
 				}
 			}

@@ -1,118 +1,102 @@
 package tk.azertyfun.dcputoolchain.interfaces;
 
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWKeyCallback;
-import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.opengl.GL;
 import tk.azertyfun.dcputoolchain.emulator.LEM1802;
 import tk.azertyfun.dcputoolchain.emulator.Texture;
 
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glVertex2f;
-import static org.lwjgl.system.MemoryUtil.NULL;
+import javax.swing.*;
+import java.awt.*;
 
-public class LemDisplay extends Thread {
+public class LemDisplay extends JFrame {
 
-	public final int WIDTH = 128;
-	public final int HEIGHT = 96;
+	public static final int BORDER_WIDTH = 4;
 
 	public final int SCALE = 5;
-	public final int REAL_WIDTH = (WIDTH +8) * SCALE;
-	public final int REAL_HEIGHT = (HEIGHT +8) * SCALE;
+	public final int WIDTH = (128 + BORDER_WIDTH * 2) * SCALE;
+	public final int HEIGHT = (96 + BORDER_WIDTH * 2) * SCALE;
 
-	private GLFWErrorCallback errorCallback;
-	private GLFWKeyCallback keyCallback;
+	private RepaintThread repaintThread;
 
-	private long window;
+	private CustomPanel customPanel = new CustomPanel();
 
 	protected LEM1802 lem1802;
 
 	public LemDisplay(LEM1802 lem1802) {
 		this.lem1802 = lem1802;
+
+		this.setResizable(false);
+		//this.setSize(WIDTH, HEIGHT);
+		this.setTitle("DCPU Emulator Display for techcompliant");
+
+		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+
+		customPanel.setBounds(0, 0, WIDTH, HEIGHT);
+		this.setSize(WIDTH, HEIGHT);
+		repaintThread = new RepaintThread();
+		repaintThread.start();
+		this.add(customPanel);
+
+		getContentPane().setPreferredSize(new Dimension(WIDTH, HEIGHT));
+
+		this.pack();
+		this.setLocationByPlatform(true);
+		this.setVisible(true);
 	}
 
-	public void run() {
-		try {
-			init();
-			loop();
-		} finally {
-			glfwTerminate();
-			errorCallback.release();
+	public void close() {
+		repaintThread.stopped = true;
+		setVisible(false);
+		dispose();
+	}
+
+	private class CustomPanel extends JPanel {
+		@Override
+		public Dimension getPreferredSize() {
+			return new Dimension(LemDisplay.this.WIDTH, LemDisplay.this.WIDTH);
 		}
-	}
 
-	private void init() {
-		glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
-
-		if(glfwInit() != GLFW_TRUE)
-			throw new IllegalStateException("Could not initialize GLFW. Screen will not be displayed.");
-
-		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
-		window = glfwCreateWindow(REAL_WIDTH, REAL_HEIGHT, "DCPU Emulator Display for techcompliant", NULL, NULL);
-		if(window == NULL)
-			throw new RuntimeException("Could not create the GLFW window. Screen will not be displayed.");
-
-		/* glfwSetKeyCallback(window, keyCallback = new GLFWKeyCallback() {
-			@Override
-			public void invoke(long window, int key, int scancode, int action, int mods) {
-			}
-		}); */
-
-		//Center the window on the screen. Not ideal but afaik there is no way to let the display manager handle things.
-		GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-		glfwSetWindowPos(
-				window,
-				(vidMode.width() - REAL_WIDTH) / 2,
-				(vidMode.height() - REAL_HEIGHT) / 2
-		);
-
-		glfwMakeContextCurrent(window);
-		glfwSwapInterval(1);
-		glfwShowWindow(window);
-	}
-
-	private void loop() {
-		GL.createCapabilities();
-
-		glClearColor(0, 0, 0, 0);
-
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(0, REAL_WIDTH, REAL_HEIGHT, 0, 1, -1);
-		glMatrixMode(GL_MODELVIEW);
-
-		while(glfwWindowShouldClose(window) == GLFW_FALSE) {
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+		@Override
+		public void paintComponent(Graphics graphics) {
 			Texture texture = lem1802.getTexture();
 
 			if(texture != null) {
 				for (int x = 0; x < texture.getWidth(); ++x) {
 					for (int y = 0; y < texture.getHeight(); ++y) {
-						glColor3f(texture.getColors(x, y).red(), texture.getColors(x, y).green(), texture.getColors(x, y).blue());
-						glBegin(GL_QUADS);
-							glVertex2f(SCALE * x, SCALE * y);
-							glVertex2f(SCALE * (x + 1), SCALE * y);
-							glVertex2f(SCALE * (x + 1), SCALE * (y + 1));
-							glVertex2f(SCALE * x, SCALE * (y + 1));
-						glEnd();
+						try {
+							graphics.setColor(new Color(texture.getColors(x, y).red(), texture.getColors(x, y).green(), texture.getColors(x, y).blue()));
+							graphics.fillRect(SCALE * x, SCALE * y, SCALE * (x + 1), SCALE * (y + 1));
+						} catch(IllegalArgumentException e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}
 
-			glfwSwapBuffers(window);
-			glfwPollEvents();
 		}
 	}
 
-	public void close() {
-		if(glfwWindowShouldClose(window) != GLFW_TRUE)
-			glfwSetWindowShouldClose(window, GLFW_TRUE);
+	private class RepaintThread extends Thread {
+		public boolean stopped = false;
+
+		public RepaintThread() {
+		}
+
+		public void run() {
+			float expectedTime = 1000f / 10f;
+
+			while (!stopped) {
+				long start = System.currentTimeMillis();
+				customPanel.repaint();
+				long execTime = System.currentTimeMillis() - start;
+				if (expectedTime - execTime > 0) {
+					try {
+						Thread.sleep((long) (expectedTime - execTime));
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				} else {
+					System.err.println("woops " + (expectedTime - execTime));
+				}
+			}
+		}
 	}
 }

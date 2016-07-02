@@ -17,15 +17,11 @@ public class LEM1802 extends DCPUHardware {
 	static {
 		try {
 			BufferedImage image = ImageIO.read(new File("res/boot.png"));
-			byte[] bootImage_raw = ((DataBufferByte) image.getData().getDataBuffer()).getData();
-			int pos = 0;
 			for(int y = 0; y < 96; ++y) {
 				for(int x = 0; x < 128; ++x) {
-					bootImage[x][y][0] = bootImage_raw[pos * 3 + 2];
-					bootImage[x][y][1] = bootImage_raw[pos * 3 + 1];
-					bootImage[x][y][2] = bootImage_raw[pos * 3];
-
-					pos++;
+					bootImage[x][y][0] = (image.getRGB(x, y) >> 16) & 0xFF;
+					bootImage[x][y][1] = (image.getRGB(x, y) >> 8) & 0xFF;
+					bootImage[x][y][2] = (image.getRGB(x, y)) & 0xFF;
 				}
 			}
 		} catch (IOException e) {
@@ -171,7 +167,7 @@ public class LEM1802 extends DCPUHardware {
 					} else if(x < BORDER_WIDTH || (x < 128 + 2 * BORDER_WIDTH && x >= 128 + BORDER_WIDTH)) {
 						colors[x][y] = new Texture.Color(red(palette(borderColor)), green(palette(borderColor)), blue(palette(borderColor)));
 					} else {
-						colors[x][y] = new Texture.Color((char) bootImage[x - BORDER_WIDTH][y - BORDER_WIDTH][0], (char) bootImage[x - BORDER_WIDTH][y - BORDER_WIDTH][1], (char) bootImage[x - BORDER_WIDTH][y - BORDER_WIDTH][2]);
+						colors[x][y] = new Texture.Color(bootImage[x - BORDER_WIDTH][y - BORDER_WIDTH][0] / 255f, bootImage[x - BORDER_WIDTH][y - BORDER_WIDTH][1] / 255f, bootImage[x - BORDER_WIDTH][y - BORDER_WIDTH][2] / 255f);
 					}
 					pos++;
 				}
