@@ -165,11 +165,23 @@ public class DebuggerInterface extends JFrame {
 				label.setText("Generic clock: ");
 
 				JLabel ticksLabel = new JLabel("Ticks: ");
-				((GenericClock) dcpuHardware).addCallback(ticks -> ticksLabel.setText("Ticks: " + ticks));
 				panel.add(ticksLabel);
 				JButton addTick = new JButton("Add tick to clock");
 				addTick.addActionListener(actionEvent -> ((GenericClock) dcpuHardware).addTick());
 				panel.add(addTick);
+				JLabel interruptLabel = new JLabel("Interrupt: 0x0000");
+				panel.add(interruptLabel);
+				((GenericClock) dcpuHardware).addCallback(new GenericClock.ClockCallback() {
+					@Override
+					public void ticksChanged(int ticks) {
+						ticksLabel.setText("Ticks: " + ticks);
+					}
+
+					@Override
+					public void interruptMessageChanged(char interruptMessage) {
+						interruptLabel.setText("Interrupt: 0x" + String.format("%04x", (int) interruptMessage));
+					}
+				});
 			} else if(dcpuHardware instanceof GenericKeyboard) {
 				label.setText("Generic Keyboard: ");
 				JLabel keyboardInfoKey = new JLabel("Last pressed key: ");
@@ -178,7 +190,7 @@ public class DebuggerInterface extends JFrame {
 
 					@Override
 					public void pressedKey(char key) {
-						keyboardInfoKey.setText("Last pressed key: '" + key + "' (" + (int) key + ")");
+						keyboardInfoKey.setText("Last pressed key: '" + key + "' (" + key + ")");
 					}
 
 					@Override
@@ -191,6 +203,36 @@ public class DebuggerInterface extends JFrame {
 				panel.add(keyboardInfoKeyCode);
 			} else if(dcpuHardware instanceof LEM1802) {
 				label.setText("LEM1802: ");
+				JLabel vram = new JLabel("Video RAM: 0x0000");
+				JLabel cram = new JLabel("Color RAM: 0x0000");
+				JLabel fram = new JLabel("Font RAM: 0x0000");
+				JLabel color = new JLabel("Border color: 0x0000");
+				panel.add(vram);
+				panel.add(cram);
+				panel.add(fram);
+				panel.add(color);
+				((LEM1802) dcpuHardware).addCallback(new LEM1802.LemCallback() {
+
+					@Override
+					public void vramChanged(char p) {
+						vram.setText("Video RAM: 0x" + String.format("%04x", (int) p));
+					}
+
+					@Override
+					public void cramChanged(char p) {
+						cram.setText("Color RAM: 0x" + String.format("%04x", (int) p));
+					}
+
+					@Override
+					public void framChanged(char p) {
+						fram.setText("Font RAM: 0x" + String.format("%04x", (int) p));
+					}
+
+					@Override
+					public void borderColorChanged(char c) {
+						color.setText("Border color: 0x" + String.format("%04x", (int) c));
+					}
+				});
 			} else if(dcpuHardware instanceof M35FD) {
 				label.setText("M35FD: ");
 

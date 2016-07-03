@@ -22,8 +22,11 @@ public class GenericClock extends DCPUHardware {
 			interval = dcpu.registers[1];
 		if(a == 1)
 			dcpu.registers[2] = ticks;
-		if(a == 2)
+		if(a == 2) {
 			interruptMessage = dcpu.registers[1];
+			for(ClockCallback clockCallback : clockCallbacks)
+				clockCallback.interruptMessageChanged(interruptMessage);
+		}
 	}
 
 	@Override
@@ -67,6 +70,7 @@ public class GenericClock extends DCPUHardware {
 	}
 
 	public interface ClockCallback {
-		public void ticksChanged(int ticks);
+		void ticksChanged(int ticks);
+		void interruptMessageChanged(char interruptMessage);
 	}
 }

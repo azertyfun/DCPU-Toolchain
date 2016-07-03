@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 
 public class LEM1802 extends DCPUHardware {
 
@@ -19,6 +20,8 @@ public class LEM1802 extends DCPUHardware {
 	protected int blinkDelay;
 
 	protected boolean renderedLastTick = false;
+
+	private LinkedList<LemCallback> lemCallbacks = new LinkedList<>();
 
 	/*
 	 * This font originally comes from SirCmpwn's Tomato, and has been used by paul here: http://hastebin.com/opumobutuf.cs
@@ -198,18 +201,26 @@ public class LEM1802 extends DCPUHardware {
 					startDelay = START_DURATION;
 				}
 				screenMemMap = dcpu.registers[1];
+				for(LemCallback lemCallback : lemCallbacks)
+					lemCallback.vramChanged((char) screenMemMap);
 				break;
 			case 1: //MEM_MAP_FONT
 				fontMemMap = dcpu.registers[1];
+				for(LemCallback lemCallback : lemCallbacks)
+					lemCallback.framChanged((char) fontMemMap);
 				break;
 			case 2: //MEM_MAP_PALETTE
 				paletteMemMap = dcpu.registers[1];
+				for(LemCallback lemCallback : lemCallbacks)
+					lemCallback.cramChanged((char) paletteMemMap);
 				break;
 			case 3: //SET_BORDER_COLOR
 				borderColor = (char) (dcpu.registers[1] & 0xF);
 				/* borderColor[0] = (char) (((palette(col) & 0xF00) >> 4) | 0xF);
 				borderColor[1] = (char) ((palette(col) & 0xF0) | 0xF);
 				borderColor[2] = (char) (((palette(col) & 0xF) << 4) | 0xF); */
+				for(LemCallback lemCallback : lemCallbacks)
+					lemCallback.borderColorChanged((char) borderColor);
 				break;
 			case 4: //MEM_DUMP_FONT
 				offset = dcpu.registers[1];
@@ -349,5 +360,16 @@ public class LEM1802 extends DCPUHardware {
 
 	public void setBorderColor(char borderColor) {
 		this.borderColor = borderColor;
+	}
+
+	public void addCallback(LemCallback lemCallback) {
+		lemCallbacks.add(lemCallback);
+	}
+
+	public interface LemCallback {
+		void vramChanged(char p);
+		void cramChanged(char p);
+		void framChanged(char p);
+		void borderColorChanged(char color);
 	}
 }
