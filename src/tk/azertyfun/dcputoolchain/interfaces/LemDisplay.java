@@ -4,13 +4,13 @@ import tk.azertyfun.dcputoolchain.emulator.LEM1802;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class LemDisplay extends JFrame {
+public class LemDisplay extends JFrame implements ActionListener {
 	public final int SCALE = 5;
 	public final int WIDTH = (LEM1802.WIDTH_PIXELS + LEM1802.BORDER_WIDTH * 2) * SCALE;
 	public final int HEIGHT = (LEM1802.HEIGHT_PIXELS + LEM1802.BORDER_WIDTH * 2) * SCALE;
-
-	private RepaintThread repaintThread;
 
 	private CustomPanel customPanel = new CustomPanel();
 
@@ -18,9 +18,13 @@ public class LemDisplay extends JFrame {
 
 	private float fps = 10f;
 
+	private Timer timer;
+
 	public LemDisplay(LEM1802 lem1802, float fps) {
 		this.lem1802 = lem1802;
 		this.fps = fps;
+		timer = new Timer((int) (1000f / fps), this);
+		timer.start();
 
 		this.setResizable(false);
 		this.setTitle("DCPU Emulator Display for techcompliant");
@@ -28,8 +32,8 @@ public class LemDisplay extends JFrame {
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
 		customPanel.setBounds(0, 0, WIDTH, HEIGHT);
-		repaintThread = new RepaintThread();
-		repaintThread.start();
+		//repaintThread = new RepaintThread();
+		//repaintThread.start();
 		this.add(customPanel);
 
 		getContentPane().setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -42,9 +46,16 @@ public class LemDisplay extends JFrame {
 	}
 
 	public void close() {
-		repaintThread.stopped = true;
+		timer.stop();
 		setVisible(false);
 		dispose();
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent actionEvent) {
+		if(actionEvent.getSource() == timer) {
+			customPanel.repaint();
+		}
 	}
 
 	private class CustomPanel extends JPanel {
@@ -57,33 +68,6 @@ public class LemDisplay extends JFrame {
 		public void paintComponent(Graphics graphics) {
 			super.paintComponent(graphics);
 			lem1802.render(graphics, SCALE);
-		}
-	}
-
-	private class RepaintThread extends Thread {
-		public boolean stopped = false;
-
-		public RepaintThread() {
-			this.setName("LEM1802 Display Render Thread");
-		}
-
-		public void run() {
-			float expectedTime = 1000f / fps;
-
-			while (!stopped) {
-				long start = System.currentTimeMillis();
-				customPanel.repaint();
-				long execTime = System.currentTimeMillis() - start;
-				if (expectedTime - execTime > 0) {
-					try {
-						Thread.sleep((long) (expectedTime - execTime));
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				} else {
-					System.err.println("LEM1802 Display is lagging behind by " + (expectedTime - execTime) + " ms!");
-				}
-			}
 		}
 	}
 }
