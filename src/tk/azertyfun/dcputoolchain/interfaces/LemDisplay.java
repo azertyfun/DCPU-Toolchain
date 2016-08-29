@@ -1,18 +1,14 @@
 package tk.azertyfun.dcputoolchain.interfaces;
 
 import tk.azertyfun.dcputoolchain.emulator.LEM1802;
-import tk.azertyfun.dcputoolchain.emulator.Texture;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class LemDisplay extends JFrame {
-
-	public static final int BORDER_WIDTH = 4;
-
 	public final int SCALE = 5;
-	public final int WIDTH = (128 + BORDER_WIDTH * 2) * SCALE;
-	public final int HEIGHT = (96 + BORDER_WIDTH * 2) * SCALE;
+	public final int WIDTH = (LEM1802.WIDTH_PIXELS + LEM1802.BORDER_WIDTH * 2) * SCALE;
+	public final int HEIGHT = (LEM1802.HEIGHT_PIXELS + LEM1802.BORDER_WIDTH * 2) * SCALE;
 
 	private RepaintThread repaintThread;
 
@@ -20,22 +16,25 @@ public class LemDisplay extends JFrame {
 
 	protected LEM1802 lem1802;
 
-	public LemDisplay(LEM1802 lem1802) {
+	private float fps = 10f;
+
+	public LemDisplay(LEM1802 lem1802, float fps) {
 		this.lem1802 = lem1802;
+		this.fps = fps;
 
 		this.setResizable(false);
-		//this.setSize(WIDTH, HEIGHT);
 		this.setTitle("DCPU Emulator Display for techcompliant");
 
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
 		customPanel.setBounds(0, 0, WIDTH, HEIGHT);
-		this.setSize(WIDTH, HEIGHT);
 		repaintThread = new RepaintThread();
 		repaintThread.start();
 		this.add(customPanel);
 
 		getContentPane().setPreferredSize(new Dimension(WIDTH, HEIGHT));
+
+		customPanel.setDoubleBuffered(false);
 
 		this.pack();
 		this.setLocationByPlatform(true);
@@ -51,26 +50,13 @@ public class LemDisplay extends JFrame {
 	private class CustomPanel extends JPanel {
 		@Override
 		public Dimension getPreferredSize() {
-			return new Dimension(LemDisplay.this.WIDTH, LemDisplay.this.WIDTH);
+			return new Dimension(LemDisplay.this.WIDTH, LemDisplay.this.HEIGHT);
 		}
 
 		@Override
 		public void paintComponent(Graphics graphics) {
-			Texture texture = lem1802.getTexture();
-
-			if(texture != null) {
-				for (int x = 0; x < texture.getWidth(); ++x) {
-					for (int y = 0; y < texture.getHeight(); ++y) {
-						try {
-							graphics.setColor(new Color(texture.getColors(x, y).red(), texture.getColors(x, y).green(), texture.getColors(x, y).blue()));
-							graphics.fillRect(SCALE * x, SCALE * y, SCALE * (x + 1), SCALE * (y + 1));
-						} catch(IllegalArgumentException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-
+			super.paintComponent(graphics);
+			lem1802.render(graphics, SCALE);
 		}
 	}
 
@@ -78,10 +64,11 @@ public class LemDisplay extends JFrame {
 		public boolean stopped = false;
 
 		public RepaintThread() {
+			this.setName("LEM1802 Display Render Thread");
 		}
 
 		public void run() {
-			float expectedTime = 1000f / 10f;
+			float expectedTime = 1000f / fps;
 
 			while (!stopped) {
 				long start = System.currentTimeMillis();
@@ -94,7 +81,7 @@ public class LemDisplay extends JFrame {
 						e.printStackTrace();
 					}
 				} else {
-					System.err.println("woops " + (expectedTime - execTime));
+					System.err.println("LEM1802 Display is lagging behind by " + (expectedTime - execTime) + " ms!");
 				}
 			}
 		}

@@ -2,7 +2,8 @@ package tk.azertyfun.dcputoolchain.emulator;
 
 import com.jsyn.JSyn;
 import com.jsyn.Synthesizer;
-import com.jsyn.unitgen.*;
+import com.jsyn.unitgen.LineOut;
+import com.jsyn.unitgen.SquareOscillator;
 
 import javax.sound.sampled.*;
 import java.io.ByteArrayInputStream;

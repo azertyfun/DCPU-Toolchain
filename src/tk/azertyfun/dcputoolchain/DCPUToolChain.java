@@ -89,6 +89,7 @@ public class DCPUToolChain {
 				"  --clock                    Adds a clock device.\n" +
 				"  --keyboard                 Adds a keyboard device.\n" +
 				"  --lem1802                  Adds a LEM1802 device.\n" +
+				"  --lem1802-fps=fps          Sets LEM1802 refresh rate to <fps> (if not in console mode). Default is 30.\n" +
 				"  --edc                      Adds an EDC device.\n" +
 				"  --M35FD=path/to/file       Adds an M35FD device with a floppy stored in path/to/file.\n" +
 				"  --M525HD=path/to/file      Adds an M525HD device with a hard disk stored in path/to/file.\n" +

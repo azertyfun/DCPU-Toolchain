@@ -1,9 +1,8 @@
 package tk.azertyfun.dcputoolchain.emulator;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 
@@ -14,12 +13,11 @@ public class LEM1802 extends DCPUHardware {
 	public static final int HEIGHT_PIXELS = 96;
 	public static final int START_DURATION = 60;
 	public static final int BORDER_WIDTH = 4;
-	private final static int[][][] bootImage = new int[128][96][3];
 
 	protected boolean blinkOn;
 	protected int blinkDelay;
 
-	protected boolean renderedLastTick = false;
+	BufferedImage bootImage;
 
 	private LinkedList<LemCallback> lemCallbacks = new LinkedList<>();
 
@@ -66,8 +64,6 @@ public class LEM1802 extends DCPUHardware {
 
 	private int screenMemMap, fontMemMap, paletteMemMap, startDelay;
 	private char borderColor = 0x0;
-	private Texture texture;
-	private int[] averageColor;
 	private char[] videoRam;
 	private char[] fontRam;
 	private char[] paletteRam;
@@ -78,28 +74,17 @@ public class LEM1802 extends DCPUHardware {
 		this.id = id;
 
 		try {
-			BufferedImage image = ImageIO.read(getClass().getResourceAsStream("/boot.png"));
-			for (int y = 0; y < 96; ++y) {
-				for (int x = 0; x < 128; ++x) {
-					bootImage[x][y][0] = (image.getRGB(x, y) >> 16) & 0xFF;
-					bootImage[x][y][1] = (image.getRGB(x, y) >> 8) & 0xFF;
-					bootImage[x][y][2] = (image.getRGB(x, y)) & 0xFF;
-				}
-			}
-		} catch(IOException e) {
+			bootImage = ImageIO.read(getClass().getResourceAsStream("/boot.png"));
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void render() {
-		int avg_red = 0, avg_green = 0, avg_blue = 0;
-		Texture.Color colors[][] = new Texture.Color[WIDTH_PIXELS + 2 * BORDER_WIDTH][HEIGHT_PIXELS + 2 * BORDER_WIDTH];
-
+	public void render(Graphics g, int scale) {
 		if((screenMemMap != 0 || useGivenBuffers) && startDelay == 0) {
 			/*
 			 * This ram to texture algorithm is heavily inspired from mappum's in his javascript emulator. Check it out there : https://github.com/mappum/DCPU-16/blob/master/lib/LEM1802.js
 			 */
-			float colorBuffer2D[][][] = new float[128 + 2 * BORDER_WIDTH][96 + 2 * BORDER_WIDTH][3];
 			int pos = 0;
 			for(int y = 0; y < 12; ++y) {
 				for(int x = 0; x < 32; ++x) {
@@ -130,66 +115,35 @@ public class LEM1802 extends DCPUHardware {
 								int px = BORDER_WIDTH + x * 4 + i;
 								int py = BORDER_WIDTH + y * 8 + j;
 								if(pixel == 1) {
-									colorBuffer2D[px][py][0] = red(palette(fgCol));
-									colorBuffer2D[px][py][1] = green(palette(fgCol));
-									colorBuffer2D[px][py][2] = blue(palette(fgCol));
+									g.setColor(new Color(red(palette(fgCol)), green(palette(fgCol)), blue(palette(fgCol))));
 								} else {
-									colorBuffer2D[px][py][0] = red(palette(bgCol));
-									colorBuffer2D[px][py][1] = green(palette(bgCol));
-									colorBuffer2D[px][py][2] = blue(palette(bgCol));
+									g.setColor(new Color(red(palette(bgCol)), green(palette(bgCol)), blue(palette(bgCol))));
 								}
+								g.fillRect(px * scale, py * scale, px * scale + scale, py * scale + scale);
 							}
 						}
 					}
 					pos++;
 				}
 			}
-			for(int y = 95 + 2 * BORDER_WIDTH; y >=0 ; --y) {
-				for(int x = 0; x < 128 + 2 * BORDER_WIDTH; ++x) {
-					if(y < BORDER_WIDTH || (y < 96 + 2 * BORDER_WIDTH && y >= 96 + BORDER_WIDTH)) {
-						colors[x][y] = new Texture.Color(red(palette(borderColor)), green(palette(borderColor)), blue(palette(borderColor)));
-					} else if(x < BORDER_WIDTH || (x < 128 + 2 * BORDER_WIDTH && x >= 128 + BORDER_WIDTH)) {
-						colors[x][y] = new Texture.Color(red(palette(borderColor)), green(palette(borderColor)), blue(palette(borderColor)));
-					} else {
-						colors[x][y] = new Texture.Color(colorBuffer2D[x][y][0], colorBuffer2D[x][y][1], colorBuffer2D[x][y][2]);
-					}
-				}
-			}
 
-			avg_red /= (float) colors.length / 3.0f;
-			avg_green /= (float) colors.length / 3.0f;
-			avg_blue /= (float) colors.length / 3.0f;
+			g.setColor(new Color(red(palette(borderColor)), green(palette(borderColor)), blue(palette(borderColor))));
+			g.fillRect(0, 0, BORDER_WIDTH * scale, HEIGHT_PIXELS * scale + BORDER_WIDTH * 2 * scale);
+			g.fillRect(0, 0, WIDTH_PIXELS * scale + BORDER_WIDTH * 2 * scale, BORDER_WIDTH * scale);
+			g.fillRect(BORDER_WIDTH * scale + WIDTH_PIXELS * scale, BORDER_WIDTH * scale, WIDTH_PIXELS * scale + 2 * BORDER_WIDTH * scale, HEIGHT_PIXELS * scale + 2 * BORDER_WIDTH * scale);
+			g.fillRect(BORDER_WIDTH * scale, BORDER_WIDTH * scale + HEIGHT_PIXELS * scale, WIDTH_PIXELS * scale + 2 * BORDER_WIDTH * scale, HEIGHT_PIXELS * scale + 2 * BORDER_WIDTH * scale);
 		} else {
-			int pos = 0;
-			for(int y = 95 + 2 * BORDER_WIDTH; y >=0 ; --y) {
-				for(int x = 0; x < 128 + 2 * BORDER_WIDTH; ++x) {
-					char borderColor = (char) (startDelay * 16 / START_DURATION);
-					if(y < BORDER_WIDTH || (y < 96 + 2 * BORDER_WIDTH && y >= 96 + BORDER_WIDTH)) {
-						colors[x][y] = new Texture.Color(red(palette(borderColor)), green(palette(borderColor)), blue(palette(borderColor)));
-					} else if(x < BORDER_WIDTH || (x < 128 + 2 * BORDER_WIDTH && x >= 128 + BORDER_WIDTH)) {
-						colors[x][y] = new Texture.Color(red(palette(borderColor)), green(palette(borderColor)), blue(palette(borderColor)));
-					} else {
-						colors[x][y] = new Texture.Color(bootImage[x - BORDER_WIDTH][y - BORDER_WIDTH][0] / 255f, bootImage[x - BORDER_WIDTH][y - BORDER_WIDTH][1] / 255f, bootImage[x - BORDER_WIDTH][y - BORDER_WIDTH][2] / 255f);
-					}
-					pos++;
-				}
-			}
-			avg_red /= (float) colors.length / 3.0f;
-			avg_green /= (float) colors.length / 3.0f;
-			avg_blue /= (float) colors.length / 3.0f;
+			char borderColor = (char) (startDelay * 16 / START_DURATION);
+
+			g.setColor(new Color(red(palette(borderColor)), green(palette(borderColor)), blue(palette(borderColor))));
+			g.fillRect(0, 0, BORDER_WIDTH * scale, HEIGHT_PIXELS * scale + BORDER_WIDTH * 2 * scale);
+			g.fillRect(0, 0, WIDTH_PIXELS * scale + BORDER_WIDTH * 2 * scale, BORDER_WIDTH * scale);
+			g.fillRect(BORDER_WIDTH * scale + WIDTH_PIXELS * scale, BORDER_WIDTH * scale, WIDTH_PIXELS * scale + 2 * BORDER_WIDTH * scale, HEIGHT_PIXELS * scale + 2 * BORDER_WIDTH * scale);
+			g.fillRect(BORDER_WIDTH * scale, BORDER_WIDTH * scale + HEIGHT_PIXELS * scale, WIDTH_PIXELS * scale + 2 * BORDER_WIDTH * scale, HEIGHT_PIXELS * scale + 2 * BORDER_WIDTH * scale);
+
+			if(bootImage != null) // If the file boot.png doesn't exist or is corrupt, bootImage will be null
+				g.drawImage(bootImage.getScaledInstance(WIDTH_PIXELS * scale, HEIGHT_PIXELS * scale, BufferedImage.SCALE_REPLICATE), BORDER_WIDTH * scale, BORDER_WIDTH * scale, null);
 		}
-
-		averageColor = new int[] {avg_red, avg_green, avg_blue};
-
-		texture = new Texture(WIDTH_PIXELS + BORDER_WIDTH * 2, HEIGHT_PIXELS + BORDER_WIDTH * 2, colors);
-	}
-
-	public Texture getTexture() {
-		return texture;
-	}
-
-	public int[] getAverageColor() {
-		return averageColor;
 	}
 
 	public void interrupt() {
@@ -216,9 +170,6 @@ public class LEM1802 extends DCPUHardware {
 				break;
 			case 3: //SET_BORDER_COLOR
 				borderColor = (char) (dcpu.registers[1] & 0xF);
-				/* borderColor[0] = (char) (((palette(col) & 0xF00) >> 4) | 0xF);
-				borderColor[1] = (char) ((palette(col) & 0xF0) | 0xF);
-				borderColor[2] = (char) (((palette(col) & 0xF) << 4) | 0xF); */
 				for(LemCallback lemCallback : lemCallbacks)
 					lemCallback.borderColorChanged((char) borderColor);
 				break;
@@ -282,18 +233,10 @@ public class LEM1802 extends DCPUHardware {
 			blinkOn = !blinkOn;
 			blinkDelay = 30;
 		}
-
-		if(!renderedLastTick) {
-			render();
-			renderedLastTick = true;
-		} else {
-			renderedLastTick = false;
-		}
 	}
 
 	@Override
 	public void powerOff() {
-		averageColor = new int[] {0, 0, 0};
 		screenMemMap = 0;
 		fontMemMap = 0;
 		paletteMemMap = 0;

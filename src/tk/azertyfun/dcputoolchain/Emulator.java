@@ -1,7 +1,7 @@
 package tk.azertyfun.dcputoolchain;
 
-import tk.azertyfun.dcputoolchain.interfaces.*;
 import tk.azertyfun.dcputoolchain.emulator.*;
+import tk.azertyfun.dcputoolchain.interfaces.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -51,6 +51,7 @@ public class Emulator implements CallbackStop {
 		boolean debugger = false;
 		boolean optimize_shortLiterals = true;
 		boolean addLem = false; //If we have to add a LEM, it must be initialized last because creating a JFrame after having initialized glfw will make java (at least with OpenJDK 8) crash.
+		float lem_fps = 30f;
 
 		if(args.length > 2) {
 
@@ -198,6 +199,12 @@ public class Emulator implements CallbackStop {
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
+						} else if (splitted[0].equalsIgnoreCase("--LEM1802-FPS")) {
+							try {
+								lem_fps = Float.parseFloat(splitted[1]);
+							} catch(NumberFormatException e) {
+								System.err.println("Error: Could not parse FPS number \"" + splitted[1] + "\"");
+							}
 						} else {
 							System.err.println("Error: Unknown flag \"" + splitted[0] + "\"");
 							DCPUToolChain.usage();
@@ -212,7 +219,7 @@ public class Emulator implements CallbackStop {
 				hardware.getLast().powerOn();
 
 				if(!console) {
-					LemDisplay lemDisplay = new LemDisplay((LEM1802) hardware.getLast());
+					LemDisplay lemDisplay = new LemDisplay((LEM1802) hardware.getLast(), lem_fps);
 					lemDisplays.add(lemDisplay);
 				}
 			}
