@@ -21,21 +21,29 @@ public class GenericKeyboard extends DCPUHardware {
 	public void interrupt() {
 		int a = dcpu.registers[0];
 		switch(a) {
-			case 0:
+			case 0: // CLEAR_BUFFER
 				buffer_pointer = -1;
 				for(int i = 0; i < buffer.length; ++i) {
 					buffer[i] = 0;
 				}
+
+				for(KeyboardCallback keyboardCallback : keyboardCallbacks) {
+					keyboardCallback.changedBuffer(buffer);
+				}
 				break;
-			case 1:
+			case 1: // GET_NEXT
 				if(buffer_pointer == -1)
 					dcpu.registers[2] = 0;
 				else {
 					dcpu.registers[2] = buffer[buffer_pointer & 0x3F];
 					buffer[buffer_pointer-- & 0x3F] = 0;
 				}
+
+				for(KeyboardCallback keyboardCallback : keyboardCallbacks) {
+					keyboardCallback.changedBuffer(buffer);
+				}
 				break;
-			case 2:
+			case 2: // CHECK_KEY
 				if(callbackIsKeyDown != null) {
 					char b = dcpu.registers[1];
 					dcpu.registers[2] = callbackIsKeyDown.isKeyDown(b) ? (char) 1 : 0;
@@ -43,7 +51,7 @@ public class GenericKeyboard extends DCPUHardware {
 					dcpu.registers[2] = 0;
 				}
 				break;
-			case 3:
+			case 3: // SET_INTERRUPT
 				interruptMessage = dcpu.registers[1];
 				break;
 		}
@@ -56,6 +64,7 @@ public class GenericKeyboard extends DCPUHardware {
 
 		for(KeyboardCallback keyboardCallback : keyboardCallbacks) {
 			keyboardCallback.pressedKey(keyChar);
+			keyboardCallback.changedBuffer(buffer);
 		}
 	}
 
@@ -80,7 +89,8 @@ public class GenericKeyboard extends DCPUHardware {
 	}
 
 	public interface KeyboardCallback {
-		public void pressedKey(char key);
-		public void pressedKeyCode(int key);
+		void pressedKey(char key);
+		void pressedKeyCode(int key);
+		void changedBuffer(char[] buffer);
 	}
 }

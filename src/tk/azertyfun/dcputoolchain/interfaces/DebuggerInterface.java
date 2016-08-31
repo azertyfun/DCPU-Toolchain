@@ -186,6 +186,7 @@ public class DebuggerInterface extends JFrame {
 				label.setText("Generic Keyboard: ");
 				JLabel keyboardInfoKey = new JLabel("Last pressed key: ");
 				JLabel keyboardInfoKeyCode = new JLabel("Last pressed key code:");
+				JLabel keyboardBuffer = new JLabel("Buffer empty");
 				((GenericKeyboard) dcpuHardware).addCallback(new GenericKeyboard.KeyboardCallback() {
 
 					@Override
@@ -197,10 +198,26 @@ public class DebuggerInterface extends JFrame {
 					public void pressedKeyCode(int key) {
 						keyboardInfoKeyCode.setText("Last pressed key code: " + key);
 					}
+
+					@Override
+					public void changedBuffer(char[] buffer) {
+						String s = "";
+						for(char c : buffer) {
+							if(c == 0)
+								break;
+							s += String.valueOf(c) + ", ";
+						}
+						if(s.equals("")) {
+							keyboardBuffer.setText("Buffer empty");
+						} else {
+							keyboardBuffer.setText("Buffer: " + s.substring(0, s.length() - 2));
+						}
+					}
 				});
 
 				panel.add(keyboardInfoKey);
 				panel.add(keyboardInfoKeyCode);
+				panel.add(keyboardBuffer);
 			} else if(dcpuHardware instanceof LEM1802) {
 				label.setText("LEM1802: ");
 				JLabel vram = new JLabel("Video RAM: 0x0000");
