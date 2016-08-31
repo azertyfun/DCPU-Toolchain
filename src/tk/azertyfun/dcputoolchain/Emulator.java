@@ -50,7 +50,7 @@ public class Emulator implements CallbackStop {
 		char[] bootloader_data = new char[512];
 		boolean debugger = false;
 		boolean optimize_shortLiterals = true;
-		boolean addLem = false; //If we have to add a LEM, it must be initialized last because creating a JFrame after having initialized glfw will make java (at least with OpenJDK 8) crash.
+		int nLems = 0; // We need to add the lems at the end because of the --LEM1802-FPS switch
 		float lem_fps = 30f;
 
 		if(args.length > 2) {
@@ -81,7 +81,7 @@ public class Emulator implements CallbackStop {
 				} else if(args[i].equalsIgnoreCase("--disable-shortLiterals")) {
 					optimize_shortLiterals = false;
 				} else if(args[i].equalsIgnoreCase("--LEM1802")) {
-					addLem = true;
+					nLems++;
 				} else if(args[i].equalsIgnoreCase("--CLOCK")) {
 					hardware.add(hardwareTracker.requestClock());
 					hardware.getLast().connectTo(dcpu);
@@ -213,7 +213,7 @@ public class Emulator implements CallbackStop {
 				}
 			}
 
-			if(addLem) {
+			for(int i = 0; i < nLems; ++i) {
 				hardware.add(hardwareTracker.requestLem());
 				hardware.getLast().connectTo(dcpu);
 				hardware.getLast().powerOn();
