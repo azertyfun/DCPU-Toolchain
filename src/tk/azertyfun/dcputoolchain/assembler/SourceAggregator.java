@@ -27,7 +27,11 @@ public class SourceAggregator {
 	public SourceManager getSourceManager() throws IOException, ParsingException {
 		SourceManager sourceManager = new SourceManager();
 
-		File current_dir = (new File(file_path)).getParentFile();
+		File current_dir = (new File(file_path)).getAbsoluteFile().getParentFile();
+
+		if(current_dir == null) {
+			throw new IOException("Cannot get parent directory for " + (new File(file_path)).getAbsolutePath());
+		}
 
 		String line;
 		String original_line;
