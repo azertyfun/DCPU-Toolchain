@@ -277,35 +277,37 @@ public class Emulator implements CallbackStop {
 
 				hardware.add(bootDrive);
 			} else {
-				M35FD bootDrive;
-				if(bootloader) {
-					File tmpFile = File.createTempFile("DCPUToolchain", Long.toString(System.currentTimeMillis()));
-					byte[] input_file_data = Files.readAllBytes(Paths.get(input_file));
+				if(!input_file.equalsIgnoreCase("none")) {
+					M35FD bootDrive;
+					if (bootloader) {
+						File tmpFile = File.createTempFile("DCPUToolchain", Long.toString(System.currentTimeMillis()));
+						byte[] input_file_data = Files.readAllBytes(Paths.get(input_file));
 
-					byte[] bootloader_data_bytes = new byte[1024];
-					for (int i = 0; i < 512; ++i) {
-						if(little_endian != bootloader_little_endian) {
-							bootloader_data_bytes[i * 2] = (byte) (bootloader_data[i] & 0xFF);
-							bootloader_data_bytes[i * 2 + 1] = (byte) ((bootloader_data[i] >> 8) & 0xFF);
-						} else {
-							bootloader_data_bytes[i * 2] = (byte) ((bootloader_data[i] >> 8) & 0xFF);
-							bootloader_data_bytes[i * 2 + 1] = (byte) (bootloader_data[i] & 0xFF);
+						byte[] bootloader_data_bytes = new byte[1024];
+						for (int i = 0; i < 512; ++i) {
+							if (little_endian != bootloader_little_endian) {
+								bootloader_data_bytes[i * 2] = (byte) (bootloader_data[i] & 0xFF);
+								bootloader_data_bytes[i * 2 + 1] = (byte) ((bootloader_data[i] >> 8) & 0xFF);
+							} else {
+								bootloader_data_bytes[i * 2] = (byte) ((bootloader_data[i] >> 8) & 0xFF);
+								bootloader_data_bytes[i * 2 + 1] = (byte) (bootloader_data[i] & 0xFF);
+							}
 						}
+
+						FileOutputStream fos = new FileOutputStream(tmpFile);
+						fos.write(bootloader_data_bytes);
+						fos.write(input_file_data);
+						fos.close();
+
+						bootDrive = hardwareTracker.requestM35FD(tmpFile.getAbsolutePath(), little_endian);
+					} else {
+						bootDrive = hardwareTracker.requestM35FD(input_file, little_endian);
 					}
+					bootDrive.connectTo(dcpu);
+					bootDrive.powerOn();
 
-					FileOutputStream fos = new FileOutputStream(tmpFile);
-					fos.write(bootloader_data_bytes);
-					fos.write(input_file_data);
-					fos.close();
-
-					bootDrive = hardwareTracker.requestM35FD(tmpFile.getAbsolutePath(), little_endian);
-				} else {
-					bootDrive = hardwareTracker.requestM35FD(input_file, little_endian);
+					hardware.add(bootDrive);
 				}
-				bootDrive.connectTo(dcpu);
-				bootDrive.powerOn();
-
-				hardware.add(bootDrive);
 			}
 			dcpu.setRam(getClass().getResourceAsStream("/rom.bin"), rom_little_endian);
 

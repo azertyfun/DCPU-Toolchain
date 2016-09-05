@@ -75,7 +75,7 @@ public class DCPUToolChain {
 				"\n" +
 				"Usage:\n" +
 				"  java -jar DCPU-Toolchain.jar assemble <input file> <output file> [--bootloader=/path/to/file] [--big-endian] [--disable-shortLiterals]\n" +
-				"  java -jar DCPU-Toolchain.jar run <file> [--assemble] [--big-endian] [--rom-big-endian] [--bootloader=/path/to/file] [--debugger] [--clock] [--keyboard] [--lem1802] [--edc] [--M35FD=/path/to/file] [--M525HD=/path/to/file] [--console]\n" +
+				"  java -jar DCPU-Toolchain.jar run <file | none> [--assemble] [--big-endian] [--rom-big-endian] [--bootloader=/path/to/file] [--debugger] [--clock] [--keyboard] [--lem1802] [--edc] [--M35FD=/path/to/file] [--M525HD=/path/to/file] [--console]\n" +
 				"\n" +
 				"Options:\n" +
 				"  --assemble                 The specified input file is assembly instead of binary and must be assembled at runtime.\n" +
