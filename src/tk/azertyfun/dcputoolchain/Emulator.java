@@ -4,6 +4,7 @@ import tk.azertyfun.dcputoolchain.emulator.*;
 import tk.azertyfun.dcputoolchain.interfaces.*;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -52,6 +53,7 @@ public class Emulator implements CallbackStop {
 		boolean optimize_shortLiterals = true;
 		int nLems = 0; // We need to add the lems at the end because of the --LEM1802-FPS switch
 		float lem_fps = 30f;
+		String romFile = "";
 
 		if(args.length > 2) {
 
@@ -142,6 +144,8 @@ public class Emulator implements CallbackStop {
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
+						} else if(splitted[0].equalsIgnoreCase("--rom")) {
+							romFile = splitted[1];
 						} else if (splitted[0].equalsIgnoreCase("--M35FD")) {
 							try {
 								String disk_path = splitted[1];
@@ -309,7 +313,12 @@ public class Emulator implements CallbackStop {
 					hardware.add(bootDrive);
 				}
 			}
-			dcpu.setRam(getClass().getResourceAsStream("/rom.bin"), rom_little_endian);
+
+			if(romFile.equals("")) {
+				dcpu.setRam(getClass().getResourceAsStream("/rom.bin"), rom_little_endian);
+			} else {
+				dcpu.setRam(new FileInputStream(new File(romFile)), rom_little_endian);
+			}
 
 			if(debugger) {
 				debuggerInterface = new DebuggerInterface(dcpu, ticking, this);

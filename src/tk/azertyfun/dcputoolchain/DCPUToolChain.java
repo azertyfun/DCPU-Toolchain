@@ -79,8 +79,9 @@ public class DCPUToolChain {
 				"\n" +
 				"Options:\n" +
 				"  --assemble                 The specified input file is assembly instead of binary and must be assembled at runtime.\n" +
-				"  --big-endian               Treat binary files as big endian instead of little endian by default (does not affect res/rom.bin).\n" +
-				"  --rom-big-endian           Treat res/rom.bin as big endian instead of little endian by default.\n" +
+				"  --rom=rom                  Uses specified rom file instead of BOLD by default.\n" +
+				"  --big-endian               Treat binary files as big endian instead of little endian by default (does not affect the rom).\n" +
+				"  --rom-big-endian           Treat the rom as big endian instead of little endian by default.\n" +
 				"  --bootloader-big-endian    Treat the bootloader (set with optional --bootloader flag) as big endian instead of little endian by default.\n" +
 				"  --disks-big-endian         Treat the M35FD/M35HD as big endian instead of little endian by default.\n" +
 				"  --bootloader=path/to/file  If assembling, adds a bootloader at the beggining of the output floppy. If not, adds a bootloader internally to run a binary that doesn't have one.\n" +
