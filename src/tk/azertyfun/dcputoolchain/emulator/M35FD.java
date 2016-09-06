@@ -36,16 +36,13 @@ public class M35FD extends DCPUHardware {
 
 		byte[] disk_b = Files.readAllBytes(Paths.get(path));
 		char[] disk = new char[WORDS_PER_SECTOR * SECTORS_PER_TRACK * TRACKS];
-		if(disk_b.length / 2 > disk.length) {
-			throw new IllegalArgumentException("File " + path + " is too long for a M35FD.");
-		}
 		if(little_endian) {
-			for (int j = 0; j < disk_b.length / 2; ++j) {
+			for (int j = 0; j < Math.min(disk_b.length / 2, disk.length); ++j) {
 				disk[j] = (char) (disk_b[j * 2] & 0xFF);
 				disk[j] |= (char) (disk_b[j * 2 + 1] << 8);
 			}
 		} else {
-			for (int j = 0; j < disk_b.length / 2; ++j) {
+			for (int j = 0; j < Math.min(disk_b.length / 2, disk.length) / 2; ++j) {
 				disk[j] = (char) (disk_b[j * 2] << 8);
 				disk[j] |= (char) (disk_b[j * 2 + 1] & 0xFF);
 			}
