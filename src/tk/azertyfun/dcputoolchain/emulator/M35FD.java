@@ -42,7 +42,7 @@ public class M35FD extends DCPUHardware {
 				disk[j] |= (char) (disk_b[j * 2 + 1] << 8);
 			}
 		} else {
-			for (int j = 0; j < Math.min(disk_b.length / 2, disk.length) / 2; ++j) {
+			for (int j = 0; j < Math.min(disk_b.length / 2, disk.length); ++j) {
 				disk[j] = (char) (disk_b[j * 2] << 8);
 				disk[j] |= (char) (disk_b[j * 2 + 1] & 0xFF);
 			}
