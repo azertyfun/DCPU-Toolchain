@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 
 public class M525HD extends DCPUHardware {
-	public static final int TYPE = 0x525d4ac5, REVISION = 0x0001, MANUFACTURER = 0x1eb37e91;
+	public static final int TYPE = 0x4ac5525d, REVISION = 0x0001, MANUFACTURER = 0x1eb37e91;
 
 	public static final int TRACKS = 64*4, SECTORS_PER_TRACK = 20, WORDS_PER_SECTOR = 512;
 
