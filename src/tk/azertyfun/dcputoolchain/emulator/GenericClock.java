@@ -20,8 +20,10 @@ public class GenericClock extends DCPUHardware {
 		int a = dcpu.registers[0];
 		if(a == 0)
 			interval = dcpu.registers[1];
-		if(a == 1)
+		if(a == 1) {
 			dcpu.registers[2] = ticks;
+			ticks = 0;
+		}
 		if(a == 2) {
 			interruptMessage = dcpu.registers[1];
 			for(ClockCallback clockCallback : clockCallbacks)

@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 
 public class DebuggerInterface extends JFrame {
 	private Action goToAddressAction = new AbstractAction("Go to address (Ctrl+G)") {
@@ -200,7 +201,7 @@ public class DebuggerInterface extends JFrame {
 					}
 
 					@Override
-					public void changedBuffer(char[] buffer) {
+					public void changedBuffer(LinkedList<Character> buffer) {
 						String s = "";
 						for(char c : buffer) {
 							if(c == 0)
