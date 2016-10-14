@@ -60,6 +60,9 @@ public class CPUControl extends DCPUHardware implements InterruptListener {
 						break;
 				}
 
+				for(CPUControlCallback cpuControlCallback : cpuControlCallbacks)
+					cpuControlCallback.modeChanged(mode);
+
 				break;
 			case 0x0001: //SET_RUNTIME
 				runTime = (char) b;
