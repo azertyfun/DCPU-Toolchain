@@ -5,6 +5,7 @@ import tk.azertyfun.dcputoolchain.disassembler.Disassembler;
 import tk.azertyfun.dcputoolchain.emulator.*;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,6 +26,7 @@ public class DebuggerInterface extends JFrame {
 	private JEditorPane ramDump = new JEditorPane("text/html", ""), ramChar = new JEditorPane("text/html", ""), ramDisassembled = new JEditorPane("text/html", "");
 
 	private JLabel regs = new JLabel(), stack = new JLabel(), logs = new JLabel("Logs: ");
+	JLabel statusBar = new JLabel();
 
 	private DCPU dcpu;
 	private TickingThread tickingThread;
@@ -49,6 +51,13 @@ public class DebuggerInterface extends JFrame {
 		this.tickingThread = tickingThread;
 
 		setTitle("DCPU Emulator Debugger for techcompliant");
+
+		Panel mainPanel = new Panel();
+		mainPanel.setLayout(new BorderLayout());
+		getContentPane().add(mainPanel, BorderLayout.CENTER);
+		getContentPane().add(statusBar, BorderLayout.SOUTH);
+		statusBar.setHorizontalAlignment(SwingConstants.LEFT);
+		statusBar.setBorder(new BevelBorder(BevelBorder.LOWERED));
 
 		Panel buttonsPanel = new Panel();
 		buttonsPanel.setLayout(new GridLayout());
@@ -77,7 +86,7 @@ public class DebuggerInterface extends JFrame {
 		goToAddress.getActionMap().put("goToAddress", goToAddressAction);
 		goToAddress.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put((KeyStroke) goToAddressAction.getValue(Action.ACCELERATOR_KEY), "goToAddress");
 		buttonsPanel.add(goToAddress);
-		getContentPane().add(buttonsPanel, BorderLayout.NORTH);
+		mainPanel.add(buttonsPanel, BorderLayout.NORTH);
 
 		JPanel regsAndStack = new JPanel();
 		regsAndStack.setLayout(new BorderLayout());
@@ -91,7 +100,7 @@ public class DebuggerInterface extends JFrame {
 		stack.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
 		regsAndStack.add(stack, BorderLayout.SOUTH);
 
-		getContentPane().add(regsAndStack);
+		mainPanel.add(regsAndStack);
 
 		Panel viewers = new Panel();
 		BorderLayout layout = new BorderLayout();
@@ -129,6 +138,20 @@ public class DebuggerInterface extends JFrame {
 			@Override
 			public void log(char log) {
 				logs.setText(logs.getText() + ", 0x" + String.format("%04x", (int) log) + " ('" + log + "')");
+			}
+
+			@Override
+			public void invalidInstruction() {
+				broke();
+
+				statusBar.setText("Invalid instruction at 0x" + String.format("%04x", (int) dcpu.getPc()));
+			}
+
+			@Override
+			public void onFire() {
+				broke();
+
+				statusBar.setText("DCPU is on fire (interrupt stack overflow!)");
 			}
 		});
 
@@ -277,7 +300,7 @@ public class DebuggerInterface extends JFrame {
 			hardwarePanel.add(panel);
 		}
 		viewers.add(hardwarePanel, BorderLayout.EAST);
-		getContentPane().add(viewers, BorderLayout.SOUTH);
+		mainPanel.add(viewers, BorderLayout.SOUTH);
 
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.pack();

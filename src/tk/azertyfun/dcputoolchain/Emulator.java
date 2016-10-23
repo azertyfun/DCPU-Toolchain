@@ -82,6 +82,8 @@ public class Emulator implements CallbackStop {
 					disks_little_endian = false;
 				} else if(args[i].equalsIgnoreCase("--disable-shortLiterals")) {
 					optimize_shortLiterals = false;
+				} else if(args[i].equalsIgnoreCase("--break-on-invalid-instruction")) {
+					dcpu.setBreakOnInvalidInstruction(true);
 				} else if(args[i].equalsIgnoreCase("--LEM1802")) {
 					nLems++;
 				} else if(args[i].equalsIgnoreCase("--CLOCK")) {

@@ -40,6 +40,7 @@ public class DCPU extends Thread implements Identifiable {
 
 	private DebuggerCallback debuggerCallback;
 	private char currentInstruction = 0;
+	private boolean breakOnInvalidInstruction;
 
 	public DCPU(String id) {
 		this.id = id;
@@ -228,7 +229,14 @@ public class DCPU extends Thread implements Identifiable {
 							debuggerCallback.broke();
 						break;
 					default:
+						if(breakOnInvalidInstruction && debuggerCallback != null) {
+							debuggerCallback.invalidInstruction();
+						}
 						break;
+				}
+			} else {
+				if(breakOnInvalidInstruction && debuggerCallback != null) {
+					debuggerCallback.invalidInstruction();
 				}
 			}
 		} else {
@@ -413,6 +421,10 @@ public class DCPU extends Thread implements Identifiable {
 					registers[7]--;
 					return;
 				default:
+					if(breakOnInvalidInstruction && debuggerCallback != null) {
+						debuggerCallback.invalidInstruction();
+					}
+					break;
 			}
 			set(baddr, b);
 		}
@@ -424,6 +436,7 @@ public class DCPU extends Thread implements Identifiable {
 			if (interrupts.size() > MAX_QUEUE_SIZE) { //Woops, overflowed the interrupt queue - catching fire (insert evil laugh here)
 				interrupts.removeLast();
 				isOnFire = true;
+				debuggerCallback.onFire();
 			}
 		}
 
@@ -741,9 +754,17 @@ public class DCPU extends Thread implements Identifiable {
 		return isQueueingEnabled;
 	}
 
+	public void setBreakOnInvalidInstruction(boolean breakOnInvalidInstruction) {
+		this.breakOnInvalidInstruction = breakOnInvalidInstruction;
+	}
+
 	public interface DebuggerCallback {
 		void broke();
 
 		void log(char log);
+
+		void invalidInstruction();
+
+		void onFire();
 	}
 }
