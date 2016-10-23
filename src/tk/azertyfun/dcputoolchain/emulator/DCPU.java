@@ -146,6 +146,8 @@ public class DCPU extends Thread implements Identifiable {
 					char a = interrupts.getFirst();
 					if (ia > 0) {
 						isQueueingEnabled = true;
+						for(InterruptListener i : interruptListeners)
+							i.queueingEnabled(isQueueingEnabled);
 						ram[--sp & 0xFFFF] = pc;
 						ram[--sp & 0xFFFF] = registers[0];
 						registers[0] = a;
@@ -185,12 +187,17 @@ public class DCPU extends Thread implements Identifiable {
 						break;
 					case 0x0a: //IAS
 						ia = a;
-						if(ia != 0)
+						if(ia != 0) {
 							isQueueingEnabled = false;
+							for(InterruptListener i : interruptListeners)
+								i.queueingEnabled(isQueueingEnabled);
+						}
 						break;
 					case 0x0b: //RFI
 						cycles += 2;
 						isQueueingEnabled = false;
+						for(InterruptListener i : interruptListeners)
+							i.queueingEnabled(isQueueingEnabled);
 						registers[0] = ram[sp++ & 0xFFFF];
 						pc = ram[sp++ & 0xFFFF];
 						break;
@@ -200,6 +207,8 @@ public class DCPU extends Thread implements Identifiable {
 							isQueueingEnabled = false;
 						else
 							isQueueingEnabled = true;
+						for(InterruptListener i : interruptListeners)
+							i.queueingEnabled(isQueueingEnabled);
 						break;
 					case 0x10: //HWN
 						cycles++;
@@ -227,6 +236,11 @@ public class DCPU extends Thread implements Identifiable {
 					case 20: //BRK
 						if(debuggerCallback != null)
 							debuggerCallback.broke();
+						break;
+					case 21: //HLT
+						sleeping = true;
+						for(InterruptListener i : interruptListeners)
+							i.sleeping(sleeping);
 						break;
 					default:
 						if(breakOnInvalidInstruction && debuggerCallback != null) {
@@ -756,6 +770,10 @@ public class DCPU extends Thread implements Identifiable {
 
 	public void setBreakOnInvalidInstruction(boolean breakOnInvalidInstruction) {
 		this.breakOnInvalidInstruction = breakOnInvalidInstruction;
+	}
+
+	public boolean isSleeping() {
+		return sleeping;
 	}
 
 	public interface DebuggerCallback {

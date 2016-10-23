@@ -292,9 +292,28 @@ public class DebuggerInterface extends JFrame {
 				label.setText("CPU Control: ");
 
 				JLabel modeLabel = new JLabel("Mode: 0");
-				((CPUControl) dcpuHardware).addCallback(mode -> modeLabel.setText("Mode: " + mode));
+				JLabel queueingLabel = new JLabel("Queueing: true");
+				JLabel sleepingLabel = new JLabel("Sleeping: false");
+				((CPUControl) dcpuHardware).addCallback(new CPUControl.CPUControlCallback() {
+					@Override
+					public void modeChanged(int mode) {
+						modeLabel.setText("Mode: " + mode);
+					}
+
+					@Override
+					public void queueingEnabled(boolean queueingEnabled) {
+						queueingLabel.setText("Queueing: " + (queueingEnabled ? "true" : "false"));
+					}
+
+					@Override
+					public void sleeping(boolean sleeping) {
+						sleepingLabel.setText("Sleeping: " + (sleeping ? "true" : "false"));
+					}
+				});
 
 				panel.add(modeLabel);
+				panel.add(queueingLabel);
+				panel.add(sleepingLabel);
 			}
 			panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			hardwarePanel.add(panel);
@@ -468,7 +487,6 @@ public class DebuggerInterface extends JFrame {
 					"X: 0x" + String.format("%04x", (int) dcpu.get(0x10003)) + ", Y: 0x" + String.format("%04x", (int) dcpu.get(0x10004)) + ", Z: 0x" + String.format("%04x", (int) dcpu.get(0x10005)) + "<br />" +
 					"I: 0x" + String.format("%04x", (int) dcpu.get(0x10006)) + ", J: 0x" + String.format("%04x", (int) dcpu.get(0x10007)) + "<br />" +
 					"PC: 0x" + String.format("%04x", (int) dcpu.get(0x10009)) + ", SP: 0x" + String.format("%04x", (int) dcpu.get(0x10008)) + ", EX: 0x" + String.format("%04x", (int) dcpu.get(0x1000a)) + ", IA: 0x" + String.format("%04x", (int) dcpu.get(0x1000b)) + "<br />" +
-					"Queuing enabled: " + (dcpu.isQueueingEnabled() ? "true" : "false") +
 					"</body>" +
 					"</html>");
 
@@ -529,7 +547,6 @@ public class DebuggerInterface extends JFrame {
 				"X: -, Y: -, Z: -<br />" +
 				"I: -, J: -<br />" +
 				"PC: -, SP: -, EX: -, IA: -<br />" +
-				"Queuing enabled: true" +
 				"</body>" +
 				"</html>");
 		stack.setText("<html>" +

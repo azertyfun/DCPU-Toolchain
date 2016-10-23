@@ -133,6 +133,7 @@ public class Token {
 		public static final char HWI = 0x12;
 		public static final char LOG = 0x13;
 		public static final char BRK = 0x14;
+		public static final char HLT = 0x15;
 
 		public static final HashMap<String, Character> strings = new HashMap<>();
 		static {
@@ -147,6 +148,7 @@ public class Token {
 			strings.put("HWI", HWI);
 			strings.put("LOG", LOG);
 			strings.put("BRK", BRK);
+			strings.put("HLT", HLT);
 		}
 	}
 

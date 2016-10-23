@@ -62,7 +62,7 @@ public class Disassembler {
 		specialOpcodes.put((char) 0x12, "HWI");
 		specialOpcodes.put((char) 0x13, "LOG");
 		specialOpcodes.put((char) 0x14, "BRK");
-		specialOpcodes.put((char) 0x15, "0x0015");
+		specialOpcodes.put((char) 0x15, "HLT");
 		specialOpcodes.put((char) 0x16, "0x0016");
 		specialOpcodes.put((char) 0x17, "0x0017");
 		specialOpcodes.put((char) 0x18, "0x0018");

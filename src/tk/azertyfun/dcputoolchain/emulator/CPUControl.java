@@ -53,6 +53,10 @@ public class CPUControl extends DCPUHardware implements InterruptListener {
 					case Modes.SLEEP:
 						sleeping = true;
 						dcpu.sleeping = true;
+
+						for(CPUControlCallback callback : cpuControlCallbacks) {
+							callback.sleeping(sleeping);
+						}
 						break;
 					case Modes.POWER_OFF:
 						System.out.println("DCPU shut down by guest.");
@@ -102,12 +106,30 @@ public class CPUControl extends DCPUHardware implements InterruptListener {
 
 	@Override
 	public void interrupted() {
+		dcpu.sleeping = false;
 		if(sleeping) {
 			sleeping = false;
-			dcpu.sleeping = false;
 			mode = Modes.REDUCED_RATE;
 			dcpu.speed_hz = REDUCED_CLOCK_RATE;
 			dcpu.batchSize = REDUCED_CLOCK_RATE / 30;
+		}
+
+		for(CPUControlCallback callback : cpuControlCallbacks) {
+			callback.sleeping(dcpu.sleeping);
+		}
+	}
+
+	@Override
+	public void queueingEnabled(boolean isQueueingEnabled) {
+		for(CPUControlCallback callback : cpuControlCallbacks) {
+			callback.queueingEnabled(isQueueingEnabled);
+		}
+	}
+
+	@Override
+	public void sleeping(boolean sleeping) {
+		for(CPUControlCallback callback : cpuControlCallbacks) {
+			callback.sleeping(sleeping);
 		}
 	}
 
@@ -147,6 +169,10 @@ public class CPUControl extends DCPUHardware implements InterruptListener {
 	}
 
 	public interface CPUControlCallback {
-		public void modeChanged(int mode);
+		void modeChanged(int mode);
+
+		void queueingEnabled(boolean isQueueingEnabled);
+
+		void sleeping(boolean sleeping);
 	}
 }
