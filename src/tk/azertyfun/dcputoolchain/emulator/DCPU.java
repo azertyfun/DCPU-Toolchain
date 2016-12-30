@@ -409,26 +409,28 @@ public class DCPU extends Thread implements Identifiable {
 						skip();
 					return;
 				case 0x1a: //ADX
-					cycles++;
+					cycles += 2;
 					val = b + a + ex;
 					b = (char) val;
 					set(baddr, b);
 					ex = (char) (val >> 16);
 					return;
 				case 0x1b: //SBX
-					cycles++;
+					cycles += 2;
 					val = b - a + ex;
 					b = (char) val;
 					set(baddr, b);
 					ex = (char) (val >> 16);
 					return;
 				case 0x1e: //STI
+					cycles++;
 					b = a;
 					set(baddr, b);
 					registers[6]++;
 					registers[7]++;
 					return;
 				case 0x1f: //STD
+					cycles++;
 					b = a;
 					set(baddr, b);
 					registers[6]--;
